@@ -4,27 +4,27 @@ import 'package:lges_teacher_app/components/text_view.dart';
 import '../../constants/app_colors.dart';
 
 class CustomButton extends StatelessWidget {
-  const CustomButton(
-      {Key? key,
-      required this.onPressed,
-      required this.title,
-      this.textColor = AppColors.whiteColor,
-      this.outlineColor = AppColors.primaryDark,
-      this.backgroundColor = AppColors.primaryDark,
-      this.isOutlinedButton = false,
-      this.horizontalPadding = 0,
-      this.isRounded = true,
-      this.isEnabled = true,
-        this.fontSize = 16,
-      this.height = 44,
-        this.width = double.infinity,
-      this.disabledColor,
-      this.upperCase = false,
-      this.isLogoutButton = false,
-      this.hasIcon = false,
-      this.icon,
-      this.borderRadius = 16})
-      : super(key: key);
+  const CustomButton({
+    Key? key,
+    required this.onPressed,
+    required this.title,
+    this.textColor = AppColors.whiteColor,
+    this.outlineColor = AppColors.primaryDark,
+    this.backgroundColor = AppColors.primaryDark,
+    this.isOutlinedButton = false,
+    this.horizontalPadding = 0,
+    this.isRounded = true,
+    this.isEnabled = true,
+    this.fontSize = 16,
+    this.height = 50,
+    this.width = double.infinity,
+    this.disabledColor,
+    this.upperCase = false,
+    this.isLogoutButton = false,
+    this.hasIcon = false,
+    this.icon,
+    this.borderRadius = 16,
+  }) : super(key: key);
 
   final VoidCallback onPressed;
   final double? fontSize;
@@ -56,15 +56,16 @@ class CustomButton extends StatelessWidget {
         style: ElevatedButton.styleFrom(
           // splashFactory:
           //     isEnabled ? InkRipple.splashFactory : NoSplash.splashFactory,
-          backgroundColor:
-              isOutlinedButton ? Colors.transparent : backgroundColor,
+          backgroundColor: isOutlinedButton
+              ? Colors.transparent
+              : backgroundColor,
           disabledForegroundColor: AppColors.primaryDark.withOpacity(0.38),
           disabledBackgroundColor: AppColors.primaryDark.withOpacity(0.12),
           side: BorderSide(
             color: isEnabled
                 ? isLogoutButton
-                    ? Colors.transparent
-                    : outlineColor
+                      ? Colors.transparent
+                      : outlineColor
                 : Colors.transparent,
             width: 2,
           ),
@@ -78,11 +79,7 @@ class CustomButton extends StatelessWidget {
             if (hasIcon)
               Padding(
                 padding: const EdgeInsets.only(right: 8.0),
-                child: Icon(
-                  icon!,
-                  color: AppColors.whiteColor,
-                  size: 20,
-                ),
+                child: Icon(icon!, color: AppColors.whiteColor, size: 20),
               ),
             TextView(
               upperCase ? title.toUpperCase() : title.toString(),

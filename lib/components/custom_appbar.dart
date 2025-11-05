@@ -35,14 +35,21 @@ class CustomAppbar extends StatelessWidget implements PreferredSizeWidget {
       elevation: elevation,
       centerTitle: centerTitle,
       actions: actions,
-      leading: leading ?? GestureDetector(
+      leadingWidth: 70,
+      leading:
+          leading ??
+          InkWell(
+            borderRadius: BorderRadius.circular(50),
             onTap: () {
               NavRouter.pop(context);
             },
-            child: Container(
-              padding: const EdgeInsets.all(3),
-              margin: const EdgeInsets.only(left: 20),
-              child: SvgPicture.asset("assets/images/svg/ic_back_arrow.svg", height: 36,width: 50,),
+            child: Padding(
+              padding: const EdgeInsets.all(10) + EdgeInsets.only(left: 20),
+              child: SvgPicture.asset(
+                "assets/images/svg/ic_back_arrow.svg",
+                height: 36,
+                width: 50,
+              ),
             ),
           ),
       title: TextView(

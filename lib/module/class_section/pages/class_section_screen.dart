@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
@@ -180,9 +179,13 @@ class _ClassSectionScreenState extends State<ClassSectionScreen> {
                                   iconColor: AppColors.primaryDark,
                                   suffixIconPath: '',
                                   hint: 'Select Section',
-                                  items: sectionStatus.sections
-                                      .map((section) => section.sectionName)
-                                      .toList(),
+                                  items: sectionStatus.sections.isNotEmpty
+                                      ? sectionStatus.sections
+                                            .map(
+                                              (section) => section.sectionName,
+                                            )
+                                            .toList()
+                                      : [],
                                   onSelect: (String value) {
                                     setState(() {
                                       dropdownValueSection = value;
@@ -286,6 +289,9 @@ class _ClassSectionScreenState extends State<ClassSectionScreen> {
                                     .toString(),
                               );
 
+                              print(
+                                'Student attendance ${attendanceInput.toJson()}',
+                              );
                               NavRouter.push(
                                 context,
                                 AttendanceScreen(

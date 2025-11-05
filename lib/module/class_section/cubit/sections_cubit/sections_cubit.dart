@@ -18,21 +18,29 @@ class SectionsCubit extends Cubit<SectionsState> {
 
     try {
       SectionsModel sectionsModel = await _repository.getSections(classId);
-
       if (sectionsModel.result == ApiResult.success) {
-        emit(state.copyWith(
-          sectionsStatus: SectionsStatus.success,
-          sections: sectionsModel.data,
-        ));
+        final uniqueSections = sectionsModel.data.toSet().toList();
+        emit(
+          state.copyWith(
+            sectionsStatus: SectionsStatus.success,
+            sections: uniqueSections,
+          ),
+        );
       } else {
-        emit(state.copyWith(
+        emit(
+          state.copyWith(
             sectionsStatus: SectionsStatus.failure,
-            failure: HighPriorityException(sectionsModel.message)));
+            failure: HighPriorityException(sectionsModel.message),
+          ),
+        );
       }
     } on BaseFailure catch (e) {
-      emit(state.copyWith(
+      emit(
+        state.copyWith(
           sectionsStatus: SectionsStatus.failure,
-          failure: HighPriorityException(e.message)));
+          failure: HighPriorityException(e.message),
+        ),
+      );
     } catch (_) {}
   }
 }

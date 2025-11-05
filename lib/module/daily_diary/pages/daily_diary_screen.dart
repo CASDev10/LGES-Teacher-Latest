@@ -1,6 +1,5 @@
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:lges_teacher_app/components/base_scaffold.dart';
 import 'package:lges_teacher_app/components/custom_appbar.dart';
@@ -19,6 +18,7 @@ import '../../../constants/keys.dart';
 import '../../../core/di/service_locator.dart';
 import '../../home/repo/home_repo.dart';
 import '../cubit/diary_list_cubit/diary_list_state.dart';
+import '../widgets/diary_card_widget.dart';
 
 class DailyDiaryScreen extends StatefulWidget {
   @override
@@ -36,9 +36,12 @@ class _DailyDiaryScreenState extends State<DailyDiaryScreen> {
   void initState() {
     super.initState();
     if (_authRepository.user.userPrivileges?.isNotEmpty == true) {
-      userPrivileges = _authRepository.user.userPrivileges.toString().split(',');
+      userPrivileges = _authRepository.user.userPrivileges.toString().split(
+        ',',
+      );
     }
   }
+
   void _gotoAddDiary() {
     if (userPrivileges.isNotEmpty) {
       bool exists = false;
@@ -52,7 +55,9 @@ class _DailyDiaryScreenState extends State<DailyDiaryScreen> {
       }
       if (exists) {
         NavRouter.push(context, AddDailyDiaryScreen()).then((value) {
-          context.read<DiaryListCubit>().fetchDiaryList('1');
+          context.read<DiaryListCubit>().fetchDiaryList(
+            _authRepository.user.schoolId.toString(),
+          );
         });
       } else {
         Fluttertoast.showToast(msg: "You are not allowed to add diary!");
@@ -61,46 +66,258 @@ class _DailyDiaryScreenState extends State<DailyDiaryScreen> {
       Fluttertoast.showToast(msg: "You are not allowed to add diary!");
     }
   }
+
+  void _showFilterDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return Dialog(
+          backgroundColor: Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          insetPadding: const EdgeInsets.symmetric(horizontal: 24),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // 🔹 Header Row
+                Row(
+                  children: [
+                    const Icon(
+                      Icons.filter_alt_rounded,
+                      color: AppColors.primaryDark,
+                      size: 26,
+                    ),
+                    const SizedBox(width: 10),
+                    const Text(
+                      "Filter Diary Entries",
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w700,
+                        color: AppColors.primaryDark,
+                      ),
+                    ),
+                    const Spacer(),
+                    GestureDetector(
+                      onTap: () => Navigator.pop(context),
+                      child: const Icon(
+                        Icons.close_rounded,
+                        color: Colors.grey,
+                        size: 24,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 20),
+
+                // 🔸 From Date
+                CustomTextField(
+                  hintText: 'From Date',
+                  height: 50,
+                  inputType: TextInputType.text,
+                  fillColor: AppColors.lightGreyColor,
+                  hintColor: AppColors.primaryDark,
+                  fontWeight: FontWeight.w500,
+                  readOnly: true,
+                  fontSize: 16,
+                  suffixWidget: const Icon(
+                    Icons.calendar_month,
+                    color: AppColors.primaryDark,
+                  ),
+                  onTap: () async {
+                    fromDateController.text =
+                        await CustomDateTimePicker.selectDiaryDate(
+                          context,
+                          initialDate: DateTime.now(),
+                          firstDate: DateTime(2000, 01, 01),
+                          lastDate: DateTime.now(),
+                        );
+                  },
+                  controller: fromDateController,
+                ),
+
+                const SizedBox(height: 12),
+
+                // 🔸 To Date
+                CustomTextField(
+                  hintText: 'To Date',
+                  height: 50,
+                  inputType: TextInputType.text,
+                  fillColor: AppColors.lightGreyColor,
+                  hintColor: AppColors.primaryDark,
+                  fontWeight: FontWeight.w500,
+                  readOnly: true,
+                  fontSize: 16,
+                  suffixWidget: const Icon(
+                    Icons.calendar_month,
+                    color: AppColors.primaryDark,
+                  ),
+                  onTap: () async {
+                    toDateController.text =
+                        await CustomDateTimePicker.selectDiaryDate(
+                          context,
+                          initialDate: DateTime.now(),
+                          firstDate: DateTime(2000, 01, 01),
+                          lastDate: DateTime.now(),
+                        );
+                  },
+                  controller: toDateController,
+                ),
+
+                const SizedBox(height: 22),
+
+                // 🔘 Buttons
+                Row(
+                  children: [
+                    Expanded(
+                      child: OutlinedButton(
+                        onPressed: () {
+                          fromDateController.clear();
+                          toDateController.clear();
+                        },
+                        style: OutlinedButton.styleFrom(
+                          side: const BorderSide(color: Colors.grey),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                        ),
+                        child: const Text(
+                          "Clear",
+                          style: TextStyle(
+                            fontSize: 15,
+                            color: Colors.black87,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                          // 🔍 Apply filter logic here
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.primaryDark,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                        ),
+                        child: const Text(
+                          "Show",
+                          style: TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => DiaryListCubit(sl())
-        ..fetchDiaryList(_authRepository.user.schoolId.toString()),
+      create: (context) =>
+          DiaryListCubit(sl())
+            ..fetchDiaryList(_authRepository.user.schoolId.toString()),
       child: BaseScaffold(
-        appBar: const CustomAppbar(
+        appBar: CustomAppbar(
           'Diary Work',
           centerTitle: true,
+          actions: [
+            InkWell(
+              onTap: () {
+                _showFilterDialog(context);
+              },
+              child: Container(
+                height: 30,
+                width: 30,
+                margin: EdgeInsets.only(right: 20),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  color: Colors.white,
+                ),
+                child: Icon(
+                  Icons.filter_alt_outlined,
+                  color: AppColors.primaryDark,
+                ),
+              ),
+            ),
+          ],
         ),
         body: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 20) +
+          padding:
+              const EdgeInsets.symmetric(horizontal: 20) +
               const EdgeInsets.symmetric(vertical: 30),
           width: double.infinity,
           decoration: const BoxDecoration(
             color: AppColors.whiteColor,
             borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(50), topRight: Radius.circular(50)),
+              topLeft: Radius.circular(50),
+              topRight: Radius.circular(50),
+            ),
           ),
           child: Container(
             height: MediaQuery.of(context).size.height,
             child: Column(
               children: [
                 Expanded(
-                    child: SingleChildScrollView(
-                      child: Column(
-                        children: [
-                          const SizedBox(
-                            height: 12,
-                          ),
-                          BlocBuilder<DiaryListCubit, DiaryListState>(builder: (context, state){
-                            if (state.diaryListStatus == DiaryListStatus.loading) {
-                              return Center(
-                                child: LoadingIndicator(),
-                              );
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        const SizedBox(height: 12),
+                        BlocBuilder<DiaryListCubit, DiaryListState>(
+                          builder: (context, state) {
+                            if (state.diaryListStatus ==
+                                DiaryListStatus.loading) {
+                              return Center(child: LoadingIndicator());
                             }
-                            if(state.diaryListStatus == DiaryListStatus.success){
+                            if (state.diaryListStatus ==
+                                DiaryListStatus.success) {
                               return Column(
-                                children: List.generate(state.diaryList.length, (index) {
-                                  return CustomTextField(
+                                children: List.generate(
+                                  state.diaryList.length,
+                                  (index) {
+                                    return DiaryCard(
+                                      diary: state.diaryList[index],
+                                      onTap: () {
+                                        NavRouter.push(
+                                          context,
+                                          AddDailyDiaryScreen(
+                                            diary: state.diaryList[index],
+                                          ),
+                                        ).then((value) {
+                                          context
+                                              .read<DiaryListCubit>()
+                                              .fetchDiaryList(
+                                                _authRepository.user.schoolId
+                                                    .toString(),
+                                              );
+                                        });
+                                      },
+                                      onDelete: () {
+                                        showDeleteConfirmationDialog(
+                                          context,
+                                          onConfirm: () {
+                                            print("Diary deleted!");
+                                          },
+                                        );
+                                      },
+                                    ) /*ustomTextField(
                                     hintText: state.diaryList[index].subjectName,
                                     height: 50,
                                     inputType: TextInputType.text,
@@ -115,85 +332,23 @@ class _DailyDiaryScreenState extends State<DailyDiaryScreen> {
                                       height: 16,
                                     ),
                                     onTap: () {},
-                                  );
-                                }),
+                                  )*/;
+                                  },
+                                ),
                               );
                             }
-                            if (state.diaryListStatus == DiaryListStatus.failure) {
-                              return Center(
-                                child: Text(state.failure.message),
-                              );
+                            if (state.diaryListStatus ==
+                                DiaryListStatus.failure) {
+                              return Center(child: Text(state.failure.message));
                             }
                             return SizedBox();
-                          }),
-                        ],
-                      ),
-                    )),
-                const SizedBox(
-                  height: 20,
-                ),
-                Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(6),
-                    color: AppColors.grey1,
-                  ),
-                  padding: EdgeInsets.symmetric(
-                      horizontal: 10, vertical: 16),
-                  child: Column(
-                    children: [
-                      CustomTextField(
-                        hintText: 'From Date',
-                        height: 50,
-                        inputType: TextInputType.text,
-                        fillColor: AppColors.lightGreyColor,
-                        hintColor: AppColors.primaryDark,
-                        fontWeight: FontWeight.w500,
-                        readOnly: true,
-                        fontSize: 16,
-                        suffixWidget: SvgPicture.asset(
-                          'assets/images/svg/ic_drop_down.svg',
-                          color: AppColors.primaryDark,
+                          },
                         ),
-                        onTap: () async {
-                          fromDateController.text =
-                          await CustomDateTimePicker.selectDiaryDate(
-                              context);
-                        },
-                        controller: fromDateController,
-                      ),
-                      CustomTextField(
-                        hintText: 'To Date',
-                        height: 50,
-                        fontSize: 16,
-                        inputType: TextInputType.text,
-                        fillColor: AppColors.lightGreyColor,
-                        fontWeight: FontWeight.w500,
-                        hintColor: AppColors.primaryDark,
-                        readOnly: true,
-                        suffixWidget: SvgPicture.asset(
-                          'assets/images/svg/ic_drop_down.svg',
-                          color: AppColors.primaryDark,
-                        ),
-                        onTap: () async {
-                          toDateController.text =
-                          await CustomDateTimePicker.selectDiaryDate(
-                              context);
-                        },
-                        controller: toDateController,
-                      ),
-                      CustomButton(
-                        height: 44,
-                        borderRadius: 6,
-                        onPressed: () {},
-                        title: 'Show',
-                        isEnabled: true,
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
-                const SizedBox(
-                  height: 20,
-                ),
+                const SizedBox(height: 20),
                 CustomButton(
                   height: 50,
                   borderRadius: 15,
@@ -202,7 +357,7 @@ class _DailyDiaryScreenState extends State<DailyDiaryScreen> {
                   },
                   title: 'Add Diary Work',
                   isEnabled: true,
-                )
+                ),
               ],
             ),
           ),
@@ -212,4 +367,121 @@ class _DailyDiaryScreenState extends State<DailyDiaryScreen> {
       ),
     );
   }
+}
+
+Future<void> showDeleteConfirmationDialog(
+  BuildContext context, {
+  required VoidCallback onConfirm,
+}) async {
+  await showDialog(
+    context: context,
+    barrierDismissible: false,
+    builder: (context) {
+      return Dialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        elevation: 6,
+        insetPadding: const EdgeInsets.symmetric(horizontal: 24),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // 🗑️ Icon
+              Container(
+                height: 60,
+                width: 60,
+                decoration: BoxDecoration(
+                  color: Colors.red.withOpacity(0.1),
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(
+                  Icons.delete_outline_rounded,
+                  color: Colors.red,
+                  size: 32,
+                ),
+              ),
+
+              const SizedBox(height: 16),
+
+              // 🔸 Title
+              const Text(
+                "Delete Diary Entry?",
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w700,
+                  color: Colors.black87,
+                ),
+              ),
+
+              const SizedBox(height: 8),
+
+              // 📝 Subtitle
+              const Text(
+                "Are you sure you want to delete this diary entry?",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 14.5,
+                  height: 1.4,
+                  color: Colors.black54,
+                ),
+              ),
+
+              const SizedBox(height: 24),
+
+              // 🔘 Buttons Row
+              Row(
+                children: [
+                  Expanded(
+                    child: OutlinedButton(
+                      onPressed: () => Navigator.pop(context),
+                      style: OutlinedButton.styleFrom(
+                        side: BorderSide(color: Colors.grey.shade400),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                      ),
+                      child: const Text(
+                        "Cancel",
+                        style: TextStyle(
+                          fontSize: 15,
+                          color: Colors.black87,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                        onConfirm();
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.red,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        elevation: 0,
+                      ),
+                      child: const Text(
+                        "Delete",
+                        style: TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      );
+    },
+  );
 }

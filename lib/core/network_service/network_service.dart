@@ -21,13 +21,15 @@ class NetworkService {
       ..options.responseType = ResponseType.json;
     // enable network_service interceptor for logs in debug mode
     if (kDebugMode) {
-      dio.interceptors.add(LogInterceptor(
-        request: false,
-        requestHeader: false,
-        requestBody: true,
-        responseHeader: false,
-        responseBody: true,
-      ));
+      dio.interceptors.add(
+        LogInterceptor(
+          request: false,
+          requestHeader: false,
+          requestBody: true,
+          responseHeader: false,
+          responseBody: true,
+        ),
+      );
     }
     log(" 'DIO' configured with baseUrl ${flavors.config.baseUrl} ✓");
   }
@@ -78,7 +80,7 @@ class NetworkService {
         url,
         data: data,
         queryParameters: queryParameters,
-        options: options ?? Options(headers: sl<AuthRepository>().getHeaders(),),
+        options: options ?? Options(headers: sl<AuthRepository>().getHeaders()),
         cancelToken: cancelToken,
         onSendProgress: onSendProgress,
         onReceiveProgress: onReceiveProgress,
@@ -92,6 +94,35 @@ class NetworkService {
       throw const FormatException("BAD FORMAT, Unable to process the data");
     } catch (e) {
       log('DEFAULT CATCH EXCEPTION IN POST METHOD [NetworkApService] :: $e');
+    }
+  }
+
+  Future<dynamic> delete(
+    String url, {
+    Object? data,
+    Map<String, dynamic>? queryParameters,
+    Options? options,
+    CancelToken? cancelToken,
+    ProgressCallback? onSendProgress,
+    ProgressCallback? onReceiveProgress,
+  }) async {
+    try {
+      var response = await dio.delete(
+        url,
+        data: data,
+        queryParameters: queryParameters,
+        options: options ?? Options(headers: sl<AuthRepository>().getHeaders()),
+        cancelToken: cancelToken,
+      );
+      if (response.statusCode == 200 || response.statusCode == 204) {
+        return response.data;
+      }
+    } on DioException catch (error) {
+      throw BaseFailure.handleFailure(error);
+    } on FormatException catch (_) {
+      throw const FormatException("BAD FORMAT, Unable to process the data");
+    } catch (e) {
+      log('DEFAULT CATCH EXCEPTION IN DELETE METHOD [NetworkService] :: $e');
     }
   }
 }

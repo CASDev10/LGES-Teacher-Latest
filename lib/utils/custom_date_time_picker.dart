@@ -4,8 +4,10 @@ import 'package:month_year_picker/month_year_picker.dart';
 
 class CustomDateTimePicker {
   static Future<String?> displayTimePicker(BuildContext context) async {
-    var time =
-        await showTimePicker(context: context, initialTime: TimeOfDay.now());
+    var time = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.now(),
+    );
     if (time != null) {
       return changeTimeFormat(time);
     } else {
@@ -15,10 +17,11 @@ class CustomDateTimePicker {
 
   static Future<String> selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
-        context: context,
-        initialDate: DateTime.now(),
-        firstDate: DateTime(2015, 8),
-        lastDate: DateTime(2101));
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2015, 8),
+      lastDate: DateTime(2101),
+    );
     if (picked != null) {
       return changeDateFormat(picked);
     } else {
@@ -26,13 +29,19 @@ class CustomDateTimePicker {
     }
   }
 
-  static Future<String> selectDiaryDate(BuildContext context) async {
+  static Future<String> selectDiaryDate(
+    BuildContext context, {
+    DateTime? initialDate,
+    DateTime? firstDate,
+    DateTime? lastDate,
+  }) async {
     DateTime now = DateTime.now();
+
     final DateTime? picked = await showDatePicker(
       context: context,
-      initialDate: DateTime(now.year, now.month, now.day),
-      firstDate: DateTime(now.year, now.month, now.day),
-      lastDate: DateTime(2101),
+      initialDate: initialDate ?? DateTime(now.year, now.month, now.day),
+      firstDate: firstDate ?? DateTime(now.year, now.month, now.day),
+      lastDate: lastDate ?? DateTime(2101),
       selectableDayPredicate: (DateTime val) {
         return !dateComparision([], val);
       },
@@ -44,16 +53,17 @@ class CustomDateTimePicker {
       return '';
     }
   }
-static Future<String> selectMonthYear(BuildContext context) async {
+
+  static Future<String> selectMonthYear(BuildContext context) async {
     DateTime now = DateTime.now();
     final DateTime? picked = await showMonthYearPicker(
       context: context,
       initialDate: DateTime(now.year, now.month, now.day),
       firstDate: DateTime(now.year, now.month, now.day),
       lastDate: DateTime(2101),
-      selectableMonthYearPredicate: (DateTime val){
+      selectableMonthYearPredicate: (DateTime val) {
         return !dateComparision([], val);
-      }
+      },
     );
     if (picked != null) {
       return changeDateFormat(picked);
@@ -78,14 +88,19 @@ static Future<String> selectMonthYear(BuildContext context) async {
   static List<DateTime> getDaysInBetween(DateTime startDate, DateTime endDate) {
     List<DateTime> days = [];
     for (int i = 0; i <= endDate.difference(startDate).inDays; i++) {
-      days.add(DateTime.parse(
-          DateFormat("yyyy-MM-dd").format(startDate.add(Duration(days: i)))));
+      days.add(
+        DateTime.parse(
+          DateFormat("yyyy-MM-dd").format(startDate.add(Duration(days: i))),
+        ),
+      );
     }
     return days;
   }
 
   static bool reservedDateExistInRange(
-      List<DateTime> unAvailableDates, List<DateTime> selectedRange) {
+    List<DateTime> unAvailableDates,
+    List<DateTime> selectedRange,
+  ) {
     return unAvailableDates
         .toSet()
         .intersection(selectedRange.toSet())
@@ -99,12 +114,15 @@ static Future<String> selectMonthYear(BuildContext context) async {
     return formatted;
   }
 
-
-
   static String changeTimeFormat(TimeOfDay time) {
     DateTime now = DateTime.now();
-    DateTime dt =
-        DateTime(now.year, now.month, now.day, time.hour, time.minute);
+    DateTime dt = DateTime(
+      now.year,
+      now.month,
+      now.day,
+      time.hour,
+      time.minute,
+    );
     final DateFormat formatter = DateFormat.jm();
     final String formatted = formatter.format(dt);
     debugPrint(formatted); // something like 2013-04-20
@@ -113,6 +131,12 @@ static Future<String> selectMonthYear(BuildContext context) async {
 }
 
 String changeDateFormat(String inputDate) {
-  return DateFormat("yyyy-MM-dd'T'00:00:00.000")
-      .format(DateFormat('dd/MM/yyyy').parse(inputDate));
+  return DateFormat(
+    "yyyy-MM-dd'T'00:00:00.000",
+  ).format(DateFormat('dd/MM/yyyy').parse(inputDate));
+}
+
+String changeDateTimeFormat(DateTime inputDateTime, String format) {
+  DateTime dateTime = inputDateTime.toLocal();
+  return DateFormat(format).format(dateTime);
 }

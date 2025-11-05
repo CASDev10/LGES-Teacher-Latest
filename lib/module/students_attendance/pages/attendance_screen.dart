@@ -64,8 +64,8 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
       }
       return exists;
     } else {
-      return false;
       Fluttertoast.showToast(msg: "You are not allowed to add attendance!");
+      return false;
     }
   }
 
@@ -172,8 +172,14 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                 return Center(child: LoadingIndicator());
               } else if (state.studentAttendanceStatus ==
                   StudentAttendanceStatus.success) {
-                filterStudentAttendanceList = state.attendanceList;
-                studentAttendanceList = state.attendanceList;
+                studentAttendanceList = List.from(state.attendanceList)
+                  ..sort(
+                    (a, b) => a.studentName.toLowerCase().compareTo(
+                      b.studentName.toLowerCase(),
+                    ),
+                  );
+
+                filterStudentAttendanceList = List.from(studentAttendanceList);
                 return Padding(
                   padding:
                       const EdgeInsets.symmetric(horizontal: 20) +
@@ -373,6 +379,9 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                                             SubmitAttendanceInput
                                             submitAttendanceInput =
                                                 _onSubmitButtonPressed();
+                                            print(
+                                              submitAttendanceInput.toJson(),
+                                            );
                                             context
                                                 .read<SubmitAttendanceCubit>()
                                                 .submitAttendance(

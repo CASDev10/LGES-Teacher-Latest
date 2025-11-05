@@ -5,7 +5,6 @@ import 'package:flutter_svg/svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:lges_teacher_app/components/base_scaffold.dart';
 import 'package:lges_teacher_app/components/custom_button.dart';
-import 'package:lges_teacher_app/components/custom_dropdown.dart';
 import 'package:lges_teacher_app/config/routes/nav_router.dart';
 import 'package:lges_teacher_app/constants/app_colors.dart';
 import 'package:lges_teacher_app/constants/app_data.dart';
@@ -17,13 +16,9 @@ import 'package:lges_teacher_app/module/daily_diary/pages/daily_diary_screen.dar
 import 'package:lges_teacher_app/module/evaluation/models/student_evaluation_areas_input.dart';
 import 'package:lges_teacher_app/module/evaluation/pages/student_evaluation_screen.dart';
 import 'package:lges_teacher_app/module/exam_result/pages/exam_result_screen.dart';
-import 'package:lges_teacher_app/module/exam_result/pages/process_result_screen.dart';
-import 'package:lges_teacher_app/module/exam_result/pages/show_result_screen.dart';
 import 'package:lges_teacher_app/module/home/app_config_cubit/app_config_cubit.dart';
 import 'package:lges_teacher_app/module/home/app_config_cubit/app_config_state.dart';
-import 'package:lges_teacher_app/module/teacher_observation/pages/submit_observation_screen.dart';
-import 'package:lges_teacher_app/module/teacher_observation/pages/teacher_observation_screen.dart';
-import 'package:lges_teacher_app/module/teacher_observation/pages/teacher_remarks_screen.dart';
+import 'package:lges_teacher_app/module/leaves/pages/leaves_screen.dart';
 import 'package:lges_teacher_app/utils/display/dialogs/dialog_utils.dart';
 import 'package:lges_teacher_app/utils/extensions/extended_string.dart';
 
@@ -32,12 +27,12 @@ import '../../../components/loading_indicator.dart';
 import '../../../components/text_view.dart';
 import '../../../core/di/service_locator.dart';
 import '../../../utils/display/display_utils.dart';
-import '../../auth/models/auth_response.dart';
-import '../../auth/models/user_schools_model.dart';
+import '../../chat/pages/conversation_screen.dart';
 import '../../class_section/pages/class_section_screen.dart';
 import '../../evaluation/cubit/evaluation_areas_cubit/evaluation_areas_cubit.dart';
 import '../../evaluation/cubit/evaluation_areas_cubit/evaluation_areas_state.dart';
-import '../../evaluation/cubit/evaluation_remarks_cubit/evaluation_remarks_cubit.dart';
+import '../../file_sharing/pages/file_sharing_screen.dart';
+import '../../students_attendance/pages/attendance_filter_screen.dart';
 import '../repo/home_repo.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -84,6 +79,65 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
+  void _showAttendanceDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Text(
+                  "Select an Option",
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.primaryDark,
+                  ),
+                ),
+                const SizedBox(height: 20),
+                // ✅ Mark Attendance Button
+                CustomButton(
+                  title: "Mark Attendance",
+                  height: 45,
+                  onPressed: () {
+                    Navigator.pop(context);
+                    _gotoAttendance();
+                  },
+                ),
+                const SizedBox(height: 10),
+                // ✅ Attendance History Button
+                CustomButton(
+                  title: "Attendance History",
+                  height: 45,
+                  onPressed: () {
+                    Navigator.pop(context);
+                    NavRouter.push(context, AttendanceFilterScreen());
+                  },
+                ),
+                const SizedBox(height: 10),
+                // ❌ Close Button
+                CustomButton(
+                  title: "Cancel",
+                  height: 45,
+                  isOutlinedButton: true,
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(
@@ -104,253 +158,315 @@ class _HomeScreenState extends State<HomeScreen> {
             if (state.appConfigStatus == AppConfigStatus.loading) {
               return Center(child: LoadingIndicator());
             } else if (state.appConfigStatus == AppConfigStatus.success) {
-              return SafeArea(
-                child: Container(
-                  child: SingleChildScrollView(
-                    child: Column(
-                      children: [
-                        Container(
-                          height: 351,
-                          width: double.infinity,
-                          decoration: const BoxDecoration(
-                            image: DecorationImage(
-                              fit: BoxFit.cover,
-                              image: AssetImage(
-                                "assets/images/png/bg_home_top_view.png",
-                              ),
-                            ),
+              return SingleChildScrollView(
+                child: Column(
+                  children: [
+                    Container(
+                      height: 370,
+                      padding: EdgeInsets.only(top: 30),
+                      width: double.infinity,
+                      decoration: const BoxDecoration(
+                        image: DecorationImage(
+                          fit: BoxFit.cover,
+                          image: AssetImage(
+                            "assets/images/png/bg_home_top_view.png",
                           ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(20),
-                            child: Column(
+                        ),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(20),
+                        child: Column(
+                          children: [
+                            Row(
                               children: [
-                                Row(
-                                  children: [
-                                    SvgPicture.asset(
-                                      "assets/images/svg/ic_profile.svg",
-                                    ),
-                                    const SizedBox(width: 10),
-                                    Expanded(
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          TextView(
-                                            _repository.user.fullName
-                                                .toString(),
-                                            textAlign: TextAlign.left,
-                                            fontSize: 15,
-                                            color: AppColors.whiteColor,
-                                            fontWeight: FontWeight.w400,
-                                          ),
-                                          TextView(
-                                            _repository.user.schoolName
-                                                .toString(),
-                                            textAlign: TextAlign.left,
-                                            fontSize: 11,
-                                            maxLines: 2,
-                                            overflow: TextOverflow.ellipsis,
-                                            color: AppColors.whiteColor,
-                                            fontWeight: FontWeight.w400,
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    IconButton(
-                                      icon: Icon(
-                                        Icons.logout,
+                                SvgPicture.asset(
+                                  "assets/images/svg/ic_profile.svg",
+                                ),
+                                const SizedBox(width: 10),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      TextView(
+                                        _repository.user.fullName.toString(),
+                                        textAlign: TextAlign.left,
+                                        fontSize: 15,
                                         color: AppColors.whiteColor,
+                                        fontWeight: FontWeight.w400,
                                       ),
-                                      onPressed: () {
-                                        DialogUtils.confirmationDialog(
-                                          context: context,
-                                          title: 'Confirmation!',
-                                          content:
-                                              'Are you sure you want to logout from the app?',
-                                          onPressYes: () {
-                                            context.read<AuthCubit>()..logout();
-                                            NavRouter.pushAndRemoveUntil(
-                                              context,
-                                              LoginScreen(),
-                                            );
-                                          },
+                                      TextView(
+                                        _repository.user.schoolName.toString(),
+                                        textAlign: TextAlign.left,
+                                        fontSize: 11,
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
+                                        color: AppColors.whiteColor,
+                                        fontWeight: FontWeight.w400,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                IconButton(
+                                  icon: Icon(
+                                    Icons.logout,
+                                    color: AppColors.whiteColor,
+                                  ),
+                                  onPressed: () {
+                                    DialogUtils.confirmationDialog(
+                                      context: context,
+                                      title: 'Confirmation!',
+                                      content:
+                                          'Are you sure you want to logout from the app?',
+                                      onPressYes: () {
+                                        context.read<AuthCubit>()..logout();
+                                        NavRouter.pushAndRemoveUntil(
+                                          context,
+                                          LoginScreen(),
                                         );
                                       },
-                                    ),
-                                  ],
-                                ),
-                                SizedBox(height: 15),
-                                Align(
-                                  alignment: Alignment.center,
-                                  child: Image.asset(
-                                    height: 150,
-                                    "assets/images/png/app_logo.png",
-                                    width: 150,
-                                  ),
+                                    );
+                                  },
                                 ),
                               ],
                             ),
-                          ),
+                            SizedBox(height: 15),
+                            Align(
+                              alignment: Alignment.center,
+                              child: Image.asset(
+                                height: 150,
+                                "assets/images/png/app_logo.png",
+                                width: 150,
+                              ),
+                            ),
+                          ],
                         ),
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 20),
-                          child: Column(
+                      ),
+                    ),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: Column(
+                        children: [
+                          Row(
                             children: [
-                              Row(
-                                children: [
-                                  Expanded(
-                                    child: TextView(
-                                      "Our services".toUpperCase(),
-                                      color: AppColors.primaryDark,
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.w700,
-                                    ),
-                                  ),
-                                  Expanded(
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.end,
-                                      children: [
-                                        TextView(
-                                          "see all".toUpperCase(),
-                                          textAlign: TextAlign.end,
-                                          color: AppColors.darkGreyColor,
-                                          fontSize: 10,
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                                        const SizedBox(width: 5),
-                                        SvgPicture.asset(
-                                          "assets/images/svg/ic_forward_arrow.svg",
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
+                              Expanded(
+                                child: TextView(
+                                  "Our services".toUpperCase(),
+                                  color: AppColors.primaryDark,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w700,
+                                ),
                               ),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Expanded(
-                                    child: GestureDetector(
-                                      onTap: () {
-                                        _gotoAttendance();
-                                      },
-                                      child: HomeTabCard(
-                                        isSvg: false,
-                                        homeTabModel: HomeTabModel(
-                                          "Attendance",
-                                          "assets/images/png/attendance.png",
-                                        ),
-                                      ),
+                              Expanded(
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    TextView(
+                                      "see all".toUpperCase(),
+                                      textAlign: TextAlign.end,
+                                      color: AppColors.darkGreyColor,
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                    const SizedBox(width: 5),
+                                    SvgPicture.asset(
+                                      "assets/images/svg/ic_forward_arrow.svg",
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Expanded(
+                                child: GestureDetector(
+                                  onTap: () {
+                                    _showAttendanceDialog(context);
+                                  },
+                                  child: HomeTabCard(
+                                    isSvg: false,
+                                    homeTabModel: HomeTabModel(
+                                      "Attendance",
+                                      "assets/images/png/attendance.png",
                                     ),
                                   ),
-                                  Container(
-                                    width: 1,
-                                    color: AppColors.dividerColor,
-                                    height: 200,
-                                  ),
-                                  Expanded(
-                                    child: GestureDetector(
-                                      onTap: () {
-                                        NavRouter.push(
-                                          context,
-                                          DailyDiaryScreen(),
-                                        );
-                                      },
-                                      child: HomeTabCard(
-                                        homeTabModel: HomeTabModel(
-                                          "Daily Diary",
-                                          "assets/images/svg/ic_daily_diary.svg",
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
+                                ),
                               ),
                               Container(
-                                width: double.infinity,
+                                width: 1,
                                 color: AppColors.dividerColor,
-                                height: 1,
+                                height: 200,
                               ),
-
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Expanded(
-                                    child: GestureDetector(
-                                      child: HomeTabCard(
-                                        homeTabModel: HomeTabModel(
-                                          "Student Evaluation",
-                                          "assets/images/svg/ic_student_evaluation_tab.svg",
-                                        ),
-                                      ),
-                                      onTap: () {
-                                        showStudentEvaluationAreas(context);
-                                      },
+                              Expanded(
+                                child: GestureDetector(
+                                  onTap: () {
+                                    NavRouter.push(context, DailyDiaryScreen());
+                                  },
+                                  child: HomeTabCard(
+                                    homeTabModel: HomeTabModel(
+                                      "Daily Diary",
+                                      "assets/images/svg/ic_daily_diary.svg",
                                     ),
-                                  ),
-                                  Container(
-                                    width: 1,
-                                    color: AppColors.dividerColor,
-                                    height: 200,
-                                  ),
-                                  Expanded(
-                                    child: GestureDetector(
-                                      onTap: () {
-                                        DisplayUtils.showToast(
-                                          context,
-                                          'Coming Soon',
-                                        );
-                                      },
-                                      child: HomeTabCard(
-                                        homeTabModel: HomeTabModel(
-                                          "TIME TABLE",
-                                          "assets/images/svg/ic_time_table.svg",
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  // Expanded(
-                                  //   child: GestureDetector(
-                                  //     child: HomeTabCard(
-                                  //       homeTabModel: HomeTabModel(
-                                  //         "Teacher Observation",
-                                  //         "assets/images/svg/ic_teacher_observation.svg",
-                                  //       ),
-                                  //     ),
-                                  //     onTap: () {
-                                  //       NavRouter.push(
-                                  //         context,
-                                  //         TeacherObservationScreen(),
-                                  //       );
-                                  //     },
-                                  //   ),
-                                  // ),
-                                ],
-                              ),
-                              Container(
-                                width: double.infinity,
-                                color: AppColors.dividerColor,
-                                height: 1,
-                              ),
-                              GestureDetector(
-                                onTap: () {
-                                  NavRouter.push(context, ExamResultScreen());
-                                },
-                                child: HomeTabCard(
-                                  homeTabModel: HomeTabModel(
-                                    "Exam Result",
-                                    "assets/images/svg/ic_exam_result.svg",
                                   ),
                                 ),
                               ),
                             ],
                           ),
-                        ),
-                      ],
+                          Container(
+                            width: double.infinity,
+                            color: AppColors.dividerColor,
+                            height: 1,
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Expanded(
+                                child: GestureDetector(
+                                  child: HomeTabCard(
+                                    homeTabModel: HomeTabModel(
+                                      "Student Evaluation",
+                                      "assets/images/svg/ic_student_evaluation_tab.svg",
+                                    ),
+                                  ),
+                                  onTap: () {
+                                    showStudentEvaluationAreas(context);
+                                  },
+                                ),
+                              ),
+                              Container(
+                                width: 1,
+                                color: AppColors.dividerColor,
+                                height: 200,
+                              ),
+                              Expanded(
+                                child: GestureDetector(
+                                  onTap: () {
+                                    DisplayUtils.showToast(
+                                      context,
+                                      'Coming Soon',
+                                    );
+                                  },
+                                  child: HomeTabCard(
+                                    homeTabModel: HomeTabModel(
+                                      "TIME TABLE",
+                                      "assets/images/svg/ic_time_table.svg",
+                                    ),
+                                  ),
+                                ),
+                              ),
+
+                              // Expanded(
+                              //   child: GestureDetector(
+                              //     child: HomeTabCard(
+                              //       homeTabModel: HomeTabModel(
+                              //         "Teacher Observation",
+                              //         "assets/images/svg/ic_teacher_observation.svg",
+                              //       ),
+                              //     ),
+                              //     onTap: () {
+                              //       NavRouter.push(
+                              //         context,
+                              //         TeacherObservationScreen(),
+                              //       );
+                              //     },
+                              //   ),
+                              // ),
+                            ],
+                          ),
+                          Container(
+                            width: double.infinity,
+                            color: AppColors.dividerColor,
+                            height: 1,
+                          ),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: GestureDetector(
+                                  onTap: () {
+                                    NavRouter.push(context, ExamResultScreen());
+                                  },
+                                  child: HomeTabCard(
+                                    homeTabModel: HomeTabModel(
+                                      "Exam Result",
+                                      "assets/images/svg/ic_exam_result.svg",
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              Container(
+                                width: 1,
+                                color: AppColors.dividerColor,
+                                height: 200,
+                              ),
+                              Expanded(
+                                child: GestureDetector(
+                                  child: HomeTabCard(
+                                    homeTabModel: HomeTabModel(
+                                      "File Sharing",
+                                      'assets/images/svg/file_sharing.svg',
+                                    ),
+                                  ),
+                                  onTap: () {
+                                    NavRouter.push(
+                                      context,
+                                      const FileSharingScreen(),
+                                    );
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
+                          Container(
+                            width: double.infinity,
+                            color: AppColors.dividerColor,
+                            height: 1,
+                          ),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: GestureDetector(
+                                  onTap: () {
+                                    NavRouter.push(
+                                      context,
+                                      ConversationsScreen(),
+                                    );
+                                  },
+                                  child: HomeTabCard(
+                                    isSvg: false,
+                                    homeTabModel: HomeTabModel(
+                                      "Notifications\n& Alerts",
+                                      "assets/images/png/notifications1.png",
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              Container(
+                                width: 1,
+                                color: AppColors.dividerColor,
+                                height: 200,
+                              ),
+                              Expanded(
+                                child: GestureDetector(
+                                  child: HomeTabCard(
+                                    isSvg: false,
+                                    homeTabModel: HomeTabModel(
+                                      "Leaves",
+                                      'assets/images/png/leaves1.png',
+                                    ),
+                                  ),
+                                  onTap: () {
+                                    NavRouter.push(context, LeavesScreen());
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
+                  ],
                 ),
               );
             } else if (state.appConfigStatus == AppConfigStatus.failure) {
@@ -525,7 +641,7 @@ class HomeTabCard extends StatelessWidget {
                   height: 120,
                   width: double.infinity,
                 )
-              : Image.asset(homeTabModel.imagePath),
+              : Image.asset(homeTabModel.imagePath, height: 120),
           const SizedBox(height: 20),
           Container(
             width: double.infinity,

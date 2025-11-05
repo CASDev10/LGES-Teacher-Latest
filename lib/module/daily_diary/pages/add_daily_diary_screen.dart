@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
@@ -19,14 +22,18 @@ import 'package:lges_teacher_app/utils/custom_date_time_picker.dart';
 import '../../../components/loading_indicator.dart';
 import '../../../config/routes/nav_router.dart';
 import '../../../core/di/service_locator.dart';
+import '../../../utils/display/dialogs/dialog_utils.dart';
 import '../../../utils/display/display_utils.dart';
 import '../../auth/repo/auth_repository.dart';
 import '../../class_section/cubit/classes_cubit/classes_cubit.dart';
 import '../../class_section/cubit/sections_cubit/sections_cubit.dart';
 import '../../class_section/model/classes_model.dart';
 import '../../class_section/model/sections_model.dart';
+import '../models/diary_list_response.dart';
 
 class AddDailyDiaryScreen extends StatefulWidget {
+  final DiaryModel? diary;
+  const AddDailyDiaryScreen({Key? key, this.diary}) : super(key: key);
   @override
   State<AddDailyDiaryScreen> createState() => _AddDailyDiaryScreenState();
 }
@@ -35,32 +42,55 @@ class _AddDailyDiaryScreenState extends State<AddDailyDiaryScreen> {
   TextEditingController fromDateController = TextEditingController();
   TextEditingController toDateController = TextEditingController();
   TextEditingController textBoxController = TextEditingController();
+  TextEditingController fileNameController = TextEditingController(
+    text: 'No file selected',
+  );
 
   String? dropdownValueClass;
   String? dropdownValueSection;
   String? dropdownValueSubject;
-  String? classId;
 
+  String? classId;
   String? sectionId;
   String? subjectId;
+
   List<Section>? sections;
   List<SubjectModel>? subjects;
 
   AuthRepository authRepository = sl<AuthRepository>();
+  FilePickerResult? result;
+  File? file;
 
   AddDiaryInput _onSaveButtonPressed() {
-    DateTime fromDate =  DateFormat("dd/MM/yyyy").parse(fromDateController.text);
-    DateTime toDate =  DateFormat("dd/MM/yyyy").parse(toDateController.text);
+    DateTime fromDate = DateFormat("dd/MM/yyyy").parse(fromDateController.text);
+    DateTime toDate = DateFormat("dd/MM/yyyy").parse(toDateController.text);
     AddDiaryInput input = AddDiaryInput(
-        dateFrom: DateFormat("yyyy-MM-dd").format(fromDate),
-        dateTo: DateFormat("yyyy-MM-dd").format(toDate),
-        sectionIdFk: sectionId.toString() ,
-        classIdFk: classId.toString() ,
-        subjectIdFk: subjectId.toString(),
-        text: textBoxController.text,
-        ucSchoolId: authRepository.user.schoolId.toString() ,
-        ucLoginUserId: authRepository.user.userId.toString());
+      dateFrom: DateFormat("yyyy-MM-dd").format(fromDate),
+      dateTo: DateFormat("yyyy-MM-dd").format(toDate),
+      sectionIdFk: sectionId.toString(),
+      classIdFk: classId.toString(),
+      subjectIdFk: subjectId.toString(),
+      text: textBoxController.text,
+      ucSchoolId: authRepository.user.schoolId.toString(),
+      ucLoginUserId: authRepository.user.userId.toString(),
+    );
     return input;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.diary != null) {
+      fromDateController.text = widget.diary!.dateFromString;
+      toDateController.text = widget.diary!.dateToString;
+      textBoxController.text = widget.diary!.text;
+      dropdownValueClass = widget.diary!.className;
+      dropdownValueSection = widget.diary!.sectionName;
+      dropdownValueSubject = widget.diary!.subjectName;
+      classId = widget.diary!.classIdFk.toString();
+      sectionId = widget.diary!.sectionIdFk.toString();
+      subjectId = widget.diary!.subjectIdFk.toString();
+    }
   }
 
   @override
@@ -68,39 +98,35 @@ class _AddDailyDiaryScreenState extends State<AddDailyDiaryScreen> {
     return MultiBlocProvider(
       providers: [
         BlocProvider(
-          create: (context) => ClassesCubit(sl())
-            ..fetchClasses(authRepository.user.schoolId.toString()),
+          create: (context) =>
+              ClassesCubit(sl())
+                ..fetchClasses(authRepository.user.schoolId.toString()),
         ),
-        BlocProvider(
-          create: (context) => SectionsCubit(sl()),
-        ),
-        BlocProvider(
-          create: (context) => SubjectsCubit(sl()),
-        ),
-        BlocProvider(
-          create: (context) => AddDiaryCubit(sl()),
-        ),
+        BlocProvider(create: (context) => SectionsCubit(sl())),
+        BlocProvider(create: (context) => SubjectsCubit(sl())),
+        BlocProvider(create: (context) => AddDiaryCubit(sl())),
       ],
       child: BaseScaffold(
-        appBar: const CustomAppbar(
-          'Add Diary Work',
+        appBar: CustomAppbar(
+          '${widget.diary != null ? 'Update' : 'Add'} Diary Work',
           centerTitle: true,
         ),
         body: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 20) +
+          padding:
+              const EdgeInsets.symmetric(horizontal: 20) +
               const EdgeInsets.symmetric(vertical: 30),
           width: double.infinity,
           decoration: const BoxDecoration(
             color: AppColors.whiteColor,
             borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(50), topRight: Radius.circular(50)),
+              topLeft: Radius.circular(50),
+              topRight: Radius.circular(50),
+            ),
           ),
           child: BlocBuilder<ClassesCubit, ClassesState>(
             builder: (context, classState) {
               if (classState.classesStatus == ClassesStatus.loading) {
-                return Center(
-                  child: LoadingIndicator(),
-                );
+                return Center(child: LoadingIndicator());
               }
               if (classState.classesStatus == ClassesStatus.success) {
                 return SingleChildScrollView(
@@ -108,9 +134,7 @@ class _AddDailyDiaryScreenState extends State<AddDailyDiaryScreen> {
                     height: MediaQuery.of(context).size.height,
                     child: Column(
                       children: [
-                        const SizedBox(
-                          height: 12,
-                        ),
+                        const SizedBox(height: 12),
                         CustomTextField(
                           hintText: 'From Date',
                           height: 50,
@@ -125,7 +149,10 @@ class _AddDailyDiaryScreenState extends State<AddDailyDiaryScreen> {
                             color: AppColors.primaryDark,
                           ),
                           onTap: () async {
-                            fromDateController.text = await CustomDateTimePicker.selectDiaryDate(context);
+                            fromDateController.text =
+                                await CustomDateTimePicker.selectDiaryDate(
+                                  context,
+                                );
                           },
                           controller: fromDateController,
                         ),
@@ -143,7 +170,10 @@ class _AddDailyDiaryScreenState extends State<AddDailyDiaryScreen> {
                             color: AppColors.primaryDark,
                           ),
                           onTap: () async {
-                            toDateController.text = await CustomDateTimePicker.selectDiaryDate(context);
+                            toDateController.text =
+                                await CustomDateTimePicker.selectDiaryDate(
+                                  context,
+                                );
                           },
                           controller: toDateController,
                         ),
@@ -154,24 +184,24 @@ class _AddDailyDiaryScreenState extends State<AddDailyDiaryScreen> {
                           hintColor: AppColors.primaryDark,
                           iconColor: AppColors.primaryDark,
                           suffixIconPath: '',
-                          hint: 'Class',
+                          hint: dropdownValueClass ?? 'Class',
                           items: classState.classes
                               .map((selectClass) => selectClass.className)
                               .toList(),
                           onSelect: (String value) {
                             Class selectedClass = classState.classes.firstWhere(
-                                (element) => element.className == value);
+                              (element) => element.className == value,
+                            );
                             setState(() {
                               classId = selectedClass.classId.toString();
                               dropdownValueClass = value;
                               context.read<SectionsCubit>().fetchSections(
-                                  selectedClass.classId.toString());
+                                selectedClass.classId.toString(),
+                              );
                             });
                           },
                         ),
-                        const SizedBox(
-                          height: 12,
-                        ),
+                        const SizedBox(height: 12),
                         BlocConsumer<SectionsCubit, SectionsState>(
                           listener: (context, sectionStatus) {
                             if (sectionStatus.sectionsStatus ==
@@ -184,7 +214,9 @@ class _AddDailyDiaryScreenState extends State<AddDailyDiaryScreen> {
                                 SectionsStatus.failure) {
                               DisplayUtils.removeLoader();
                               DisplayUtils.showSnackBar(
-                                  context, sectionStatus.failure.message);
+                                context,
+                                sectionStatus.failure.message,
+                              );
                             }
                           },
                           builder: (context, sectionState) {
@@ -193,7 +225,9 @@ class _AddDailyDiaryScreenState extends State<AddDailyDiaryScreen> {
                               onTap: dropdownValueClass == null
                                   ? () {
                                       DisplayUtils.showSnackBar(
-                                          context, "Please select Class First");
+                                        context,
+                                        "Please select Class First",
+                                      );
                                     }
                                   : null,
                               child: CustomDropDown(
@@ -203,7 +237,7 @@ class _AddDailyDiaryScreenState extends State<AddDailyDiaryScreen> {
                                 hintColor: AppColors.primaryDark,
                                 iconColor: AppColors.primaryDark,
                                 suffixIconPath: '',
-                                hint: 'Section',
+                                hint: dropdownValueSection ?? 'Section',
                                 items: sectionState.sections
                                     .map((section) => section.sectionName)
                                     .toList(),
@@ -212,24 +246,28 @@ class _AddDailyDiaryScreenState extends State<AddDailyDiaryScreen> {
                                     dropdownValueSection = value;
                                     Section selectedSection = sectionState
                                         .sections
-                                        .firstWhere((element) =>
-                                            element.sectionName == value);
-                                    sectionId = selectedSection.sectionId.toString();
+                                        .firstWhere(
+                                          (element) =>
+                                              element.sectionName == value,
+                                        );
+                                    sectionId = selectedSection.sectionId
+                                        .toString();
                                     Class selectedClass = classState.classes
-                                        .firstWhere((element) =>
-                                            element.className ==
-                                            dropdownValueClass);
+                                        .firstWhere(
+                                          (element) =>
+                                              element.className ==
+                                              dropdownValueClass,
+                                        );
                                     context.read<SubjectsCubit>().fetchSubjects(
-                                        selectedClass.classId.toString());
+                                      selectedClass.classId.toString(),
+                                    );
                                   });
                                 },
                               ),
                             );
                           },
                         ),
-                        const SizedBox(
-                          height: 12,
-                        ),
+                        const SizedBox(height: 12),
                         BlocConsumer<SubjectsCubit, SubjectsState>(
                           listener: (context, subjectsState) {
                             if (subjectsState.subjectsStatus ==
@@ -242,7 +280,9 @@ class _AddDailyDiaryScreenState extends State<AddDailyDiaryScreen> {
                                 SectionsStatus.failure) {
                               DisplayUtils.removeLoader();
                               DisplayUtils.showSnackBar(
-                                  context, subjectsState.failure.message);
+                                context,
+                                subjectsState.failure.message,
+                              );
                             }
                           },
                           builder: (context, subjectsState) {
@@ -250,8 +290,10 @@ class _AddDailyDiaryScreenState extends State<AddDailyDiaryScreen> {
                             return GestureDetector(
                               onTap: dropdownValueSection == null
                                   ? () {
-                                      DisplayUtils.showSnackBar(context,
-                                          "Please select section First");
+                                      DisplayUtils.showSnackBar(
+                                        context,
+                                        "Please select section First",
+                                      );
                                     }
                                   : null,
                               child: CustomDropDown(
@@ -261,7 +303,7 @@ class _AddDailyDiaryScreenState extends State<AddDailyDiaryScreen> {
                                 hintColor: AppColors.primaryDark,
                                 iconColor: AppColors.primaryDark,
                                 suffixIconPath: '',
-                                hint: 'Subject',
+                                hint: dropdownValueSubject ?? 'Subject',
                                 items: subjectsState.subjects
                                     .map((section) => section.subjectName)
                                     .toList(),
@@ -269,9 +311,12 @@ class _AddDailyDiaryScreenState extends State<AddDailyDiaryScreen> {
                                   setState(() {
                                     SubjectModel selectedSubject = subjectsState
                                         .subjects
-                                        .firstWhere((element) =>
-                                    element.subjectName == value);
-                                    subjectId = selectedSubject.subjectId.toString();
+                                        .firstWhere(
+                                          (element) =>
+                                              element.subjectName == value,
+                                        );
+                                    subjectId = selectedSubject.subjectId
+                                        .toString();
                                     dropdownValueSubject = value;
                                   });
                                 },
@@ -279,9 +324,104 @@ class _AddDailyDiaryScreenState extends State<AddDailyDiaryScreen> {
                             );
                           },
                         ),
-                        const SizedBox(
-                          height: 12,
+                        const SizedBox(height: 12),
+                        Container(
+                          decoration: const BoxDecoration(
+                            color: AppColors.lightGreyColor,
+                            borderRadius: BorderRadius.all(Radius.circular(12)),
+                          ),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: CustomTextField(
+                                  hintText: '',
+                                  height: 50,
+                                  readOnly: true,
+                                  bottomMargin: 0,
+                                  fontSize: 14,
+                                  controller: fileNameController,
+                                  fontWeight: FontWeight.normal,
+                                  inputType: TextInputType.text,
+                                  fillColor: AppColors.lightGreyColor,
+                                  hintColor: AppColors.primaryDark,
+                                ),
+                              ),
+                              if (fileNameController.text.isNotEmpty &&
+                                  fileNameController.text.trim().toString() !=
+                                      'No file selected')
+                                CustomButton(
+                                  height: 50,
+                                  width: 110,
+                                  borderRadius: 15,
+                                  onPressed: () {
+                                    if (result != null) {
+                                      DialogUtils.confirmationDialog(
+                                        context: context,
+                                        title: 'Confirmation!',
+                                        content:
+                                            'Are you sure you want to remove the file?',
+                                        onPressYes: () {
+                                          fileNameController.text =
+                                              'No file selected';
+                                          result = null;
+                                          setState(() {});
+                                          NavRouter.pop(context);
+                                        },
+                                      );
+                                    }
+                                  },
+                                  title: 'Remove',
+                                  isEnabled: true,
+                                ),
+                            ],
+                          ),
                         ),
+                        const SizedBox(height: 10),
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: CustomButton(
+                            height: 50,
+                            width: 180,
+                            borderRadius: 15,
+                            onPressed: () async {
+                              result = await FilePicker.platform.pickFiles(
+                                type: FileType.custom,
+                                allowMultiple: false,
+                                allowedExtensions: [
+                                  'pdf',
+                                  'doc',
+                                  'docx',
+                                  'txt',
+                                  'jpg',
+                                  'jpeg',
+                                  'png',
+                                  'xlsx',
+                                  'xlsm',
+                                  'xlsb',
+                                  'xltx',
+                                  'ppt',
+                                  'pptx',
+                                ],
+                              );
+                              if (result == null) {
+                                DisplayUtils.showToast(
+                                  context,
+                                  "No file selected",
+                                );
+                              } else {
+                                file = File(
+                                  result!.files.single.path.toString(),
+                                );
+                                fileNameController.text =
+                                    result!.files.single.name;
+                                setState(() {});
+                              }
+                            },
+                            title: 'Upload Picture',
+                            isEnabled: true,
+                          ),
+                        ),
+                        const SizedBox(height: 16),
                         CustomTextField(
                           hintText: 'Text',
                           height: 230,
@@ -291,9 +431,7 @@ class _AddDailyDiaryScreenState extends State<AddDailyDiaryScreen> {
                           controller: textBoxController,
                           hintColor: AppColors.primaryDark,
                         ),
-                        const SizedBox(
-                          height: 20,
-                        ),
+                        const SizedBox(height: 20),
                         BlocConsumer<AddDiaryCubit, AddDiaryState>(
                           listener: (context, state) {
                             if (state.addDiaryStatus ==
@@ -303,13 +441,17 @@ class _AddDailyDiaryScreenState extends State<AddDailyDiaryScreen> {
                                 AddDiaryStatus.success) {
                               DisplayUtils.removeLoader();
                               Fluttertoast.showToast(
-                                  msg: "Diary added successfully!");
+                                msg:
+                                    "Diary ${widget.diary != null ? 'updated' : 'added'} successfully!",
+                              );
                               NavRouter.pop(context);
                             } else if (state.addDiaryStatus ==
                                 AddDiaryStatus.failure) {
                               DisplayUtils.removeLoader();
                               DisplayUtils.showSnackBar(
-                                  context, state.failure.message);
+                                context,
+                                state.failure.message,
+                              );
                             }
                           },
                           builder: (context, state) {
@@ -320,7 +462,7 @@ class _AddDailyDiaryScreenState extends State<AddDailyDiaryScreen> {
                                 AddDiaryInput input = _onSaveButtonPressed();
                                 context.read<AddDiaryCubit>().addDiary(input);
                               },
-                              title: 'Save',
+                              title: widget.diary != null ? 'Update' : 'Save',
                               isEnabled: true,
                             );
                           },
@@ -331,9 +473,7 @@ class _AddDailyDiaryScreenState extends State<AddDailyDiaryScreen> {
                 );
               }
               if (classState.classesStatus == ClassesStatus.failure) {
-                return Center(
-                  child: Text(classState.failure.message),
-                );
+                return Center(child: Text(classState.failure.message));
               }
               return SizedBox();
             },

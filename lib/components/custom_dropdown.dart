@@ -22,25 +22,25 @@ class CustomDropDown extends StatefulWidget {
   final double height;
   final double width;
 
-  const CustomDropDown(
-      {Key? key,
-      required this.hint,
-      required this.items,
-        this.height = 50,
-        this.width = double.infinity,
-      this.iconColor = AppColors.grey4,
-      this.hintColor = AppColors.grey3,
-      this.suffixIconPath,
-      this.disable = false,
-      this.borderColor = AppColors.whiteColor,
-        this.fontSize = 14,
-      this.onSelect,
-      this.isOutline = true,
-      this.allPadding = 10,
-        this.fontWeight = FontWeight.w400,
-      this.horizontalPadding = 16,
-      this.verticalPadding = 0})
-      : super(key: key);
+  const CustomDropDown({
+    Key? key,
+    required this.hint,
+    required this.items,
+    this.height = 50,
+    this.width = double.infinity,
+    this.iconColor = AppColors.grey4,
+    this.hintColor = AppColors.grey3,
+    this.suffixIconPath,
+    this.disable = false,
+    this.borderColor = AppColors.whiteColor,
+    this.fontSize = 14,
+    this.onSelect,
+    this.isOutline = true,
+    this.allPadding = 10,
+    this.fontWeight = FontWeight.w400,
+    this.horizontalPadding = 16,
+    this.verticalPadding = 0,
+  }) : super(key: key);
 
   @override
   State<CustomDropDown> createState() => _CustomDropDownState();
@@ -53,7 +53,7 @@ class _CustomDropDownState extends State<CustomDropDown> {
   Widget build(BuildContext context) {
     return Container(
       height: widget.height,
-      width:widget.width ,
+      width: widget.width,
       decoration: _boxDecoration(widget.isOutline),
       alignment: Alignment.center,
       child: IgnorePointer(
@@ -63,35 +63,42 @@ class _CustomDropDownState extends State<CustomDropDown> {
           child: DropdownButtonFormField(
             isExpanded: true,
             isDense: true,
-            icon: SvgPicture.asset(
-              'assets/images/svg/ic_drop_down.svg',
-              color: AppColors.primaryDark,
+            icon: Padding(
+              padding: EdgeInsets.only(left: 16, right: 4),
+              child: SvgPicture.asset(
+                'assets/images/svg/ic_drop_down.svg',
+                color: AppColors.primaryDark,
+              ),
             ),
-            style:  TextStyle(
+
+            style: TextStyle(
               fontSize: widget.fontSize,
               color: AppColors.primaryDark,
               fontWeight: FontWeight.w500,
             ),
             hint: TextView(
               widget.hint,
-              fontSize:widget.fontSize,
+              fontSize: widget.fontSize,
               color: widget.hintColor,
               fontWeight: widget.fontWeight,
               overflow: TextOverflow.ellipsis,
             ),
             decoration: InputDecoration(
-              hintStyle:  TextStyle(
+              hintStyle: TextStyle(
                 fontSize: widget.fontSize,
                 color: AppColors.primaryDark,
-                fontWeight: widget.fontWeight
+                fontWeight: widget.fontWeight,
               ),
               enabled: false,
               filled: true,
               fillColor: AppColors.lightGreyColor,
-              contentPadding: EdgeInsets.all(widget.allPadding) +
+              contentPadding:
+                  EdgeInsets.all(widget.allPadding) +
                   EdgeInsets.symmetric(horizontal: widget.horizontalPadding),
-              suffixIconConstraints:
-                  const BoxConstraints(maxHeight: 24, maxWidth: 24),
+              suffixIconConstraints: const BoxConstraints(
+                maxHeight: 24,
+                maxWidth: 24,
+              ),
               border: _outlineInputBorder,
               enabledBorder: _outlineInputBorder,
               disabledBorder: _outlineInputBorder,
@@ -101,11 +108,13 @@ class _CustomDropDownState extends State<CustomDropDown> {
             borderRadius: BorderRadius.all(Radius.circular(10)),
             onChanged: (String? newValue) {
               if (widget.onSelect != null) {
-                widget.onSelect!(newValue!);
+                if (newValue != null) {
+                  widget.onSelect!(newValue);
+                  setState(() {
+                    dropdownValue = newValue;
+                  });
+                }
               }
-              setState(() {
-                dropdownValue = newValue!;
-              });
             },
             menuMaxHeight: 550,
             items: widget.items.map<DropdownMenuItem<String>>((String value) {
@@ -134,14 +143,16 @@ OutlineInputBorder _outlineInputBorder = OutlineInputBorder(
 BoxDecoration _boxDecoration(bool isOutline) {
   if (isOutline) {
     return BoxDecoration(
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: AppColors.primaryDark,
-          width: 1, //                   <--- border width here
-        ));
+      borderRadius: BorderRadius.circular(12),
+      border: Border.all(
+        color: AppColors.primaryDark,
+        width: 1, //                   <--- border width here
+      ),
+    );
   } else {
     return const BoxDecoration(
-        color: AppColors.lightGreyColor,
-        borderRadius: BorderRadius.all(Radius.circular(12)));
+      color: AppColors.lightGreyColor,
+      borderRadius: BorderRadius.all(Radius.circular(12)),
+    );
   }
 }

@@ -12,6 +12,7 @@ class BaseScaffold extends StatelessWidget {
     this.appBar,
     this.backgroundColor = AppColors.whiteColor,
     this.bottomNavigationBar,
+    this.floatingActionButton,
     this.drawer,
   }) : super(key: key);
   final Widget body;
@@ -22,6 +23,7 @@ class BaseScaffold extends StatelessWidget {
   final Widget? drawer;
   final Color backgroundColor;
   final Widget? bottomNavigationBar;
+  final Widget? floatingActionButton;
 
   @override
   Widget build(BuildContext context) {
@@ -30,6 +32,7 @@ class BaseScaffold extends StatelessWidget {
       key: key,
       appBar: appBar,
       drawer: drawer,
+      floatingActionButton: floatingActionButton,
       bottomNavigationBar: bottomNavigationBar,
       body: SafeArea(
         top: safeAreaTop,

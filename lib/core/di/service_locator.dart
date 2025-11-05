@@ -12,6 +12,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../config/flavors/flavors.dart';
 import '../../module/auth/repo/auth_repository.dart';
 import '../../module/class_section/repo/classes_sections_repo.dart';
+import '../../module/leaves/repo/leaves_repo.dart';
 import '../core.dart';
 import '../notifications/cloud_messaging_service.dart';
 import '../notifications/local_notification_service.dart';
@@ -21,7 +22,8 @@ final sl = GetIt.instance;
 Future<void> initDependencies(AppEnv appEnv) async {
   sl.registerSingleton(Flavors()..initConfig(appEnv));
   sl.registerSingletonAsync<SharedPreferences>(
-      () => SharedPreferences.getInstance());
+    () => SharedPreferences.getInstance(),
+  );
 
   // modules
   sl.registerSingletonWithDependencies<StorageService>(
@@ -34,17 +36,26 @@ Future<void> initDependencies(AppEnv appEnv) async {
 
   // notifications
   sl.registerLazySingleton<CloudMessagingService>(
-      () => CloudMessagingService());
+    () => CloudMessagingService(),
+  );
   sl.registerLazySingleton<LocalNotificationsService>(
-      () => LocalNotificationsService());
+    () => LocalNotificationsService(),
+  );
 
   sl.registerLazySingleton<AuthRepository>(() => AuthRepository(sl(), sl()));
-  sl.registerLazySingleton<UserSchoolsRepository>(() => UserSchoolsRepository());
-  sl.registerLazySingleton<ClassesSectionsRepository>(() => ClassesSectionsRepository());
+  sl.registerLazySingleton<UserSchoolsRepository>(
+    () => UserSchoolsRepository(),
+  );
+  sl.registerLazySingleton<ClassesSectionsRepository>(
+    () => ClassesSectionsRepository(),
+  );
   sl.registerLazySingleton<AttendanceRepository>(() => AttendanceRepository());
   sl.registerLazySingleton<DiaryRepository>(() => DiaryRepository());
   sl.registerLazySingleton<HomeRepository>(() => HomeRepository());
   sl.registerLazySingleton<EvaluationRepository>(() => EvaluationRepository());
   sl.registerLazySingleton<ExamResultRepository>(() => ExamResultRepository());
-  sl.registerLazySingleton<ObservationRepository>(() => ObservationRepository());
+  sl.registerLazySingleton<ObservationRepository>(
+    () => ObservationRepository(),
+  );
+  sl.registerLazySingleton<LeavesRepository>(() => LeavesRepository());
 }
