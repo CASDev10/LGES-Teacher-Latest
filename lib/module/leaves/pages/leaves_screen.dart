@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:lges_teacher_app/module/leaves/cubit/leaves_state.dart';
 
 import '../../../../components/custom_appbar.dart';
 import '../../../../core/di/service_locator.dart';
@@ -8,6 +9,7 @@ import '../../../components/base_scaffold.dart';
 import '../../../components/custom_button.dart';
 import '../../../config/routes/nav_router.dart';
 import '../../../constants/app_colors.dart';
+import '../../../utils/display/display_utils.dart';
 import '../cubit/apply_leave_cubit/apply_leave_cubit.dart';
 import '../cubit/leaves_cubit.dart';
 import '../dialogs/apply_leave_dialogue.dart';
@@ -278,55 +280,91 @@ class _LeavesScreenViewState extends State<LeavesScreenView> {
             const EdgeInsets.symmetric(horizontal: 20) +
             const EdgeInsets.symmetric(vertical: 30),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              children: List.generate(dummyLeaveBalanceList.length, (index) {
-                var item = dummyLeaveBalanceList[index];
-                return Expanded(
-                  child: AttendanceCard(
-                    cardName: item.leaveTypeName,
-                    value: item.balance.toString(),
-                  ),
-                );
-              }),
-            ),
-            SizedBox(height: 6),
-            Text(
-              "Leaves",
-              style: TextStyle(
-                fontSize: 14.0,
-                fontWeight: FontWeight.bold,
-                color: Colors.black,
-              ),
-            ),
-            SizedBox(height: 6),
-            dummyLeaveList.isNotEmpty
-                ? Expanded(
-                    child: ListView.separated(
-                      controller: _scrollController,
-                      itemCount: dummyLeaveList.length,
-                      itemBuilder: (context, index) {
-                        EmployeeLeaveModel employeeLeave =
-                            dummyLeaveList[index];
-                        return LeaveTile(detail: employeeLeave);
-                      },
-                      separatorBuilder: (BuildContext context, int index) {
-                        return SizedBox(height: 12.0);
-                      },
-                    ),
-                  )
-                : Expanded(
-                    child: Center(
+            Expanded(
+              child: BlocConsumer<TeacherLeaveCubit, TeacherLeaveState>(
+                listener: (BuildContext context, TeacherLeaveState state) {
+                  if (state.studentAttendanceStatus ==
+                      TeacherLeaveStatus.failure) {
+                    DisplayUtils.showSnackBar(context, state.failure.message);
+                  } else if (state.studentAttendanceStatus ==
+                      TeacherLeaveStatus.loadMore) {
+                    _isLoading = true;
+                  } else {
+                    _isLoading = false;
+                  }
+                },
+                builder: (context, state) {
+                  if (state.studentAttendanceStatus ==
+                      TeacherLeaveStatus.failure) {
+                    return Center(
                       child: Text(
-                        "No Leaves Applied",
+                        state.failure.message,
                         style: TextStyle(
                           fontSize: 18.0,
                           fontWeight: FontWeight.w900,
                         ),
                       ),
-                    ),
-                  ),
+                    );
+                  }
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: List.generate(state.leaveBalance.length, (
+                          index,
+                        ) {
+                          var item = state.leaveBalance[index];
+                          return Expanded(
+                            child: AttendanceCard(
+                              cardName: item.leaveTypeName,
+                              value: item.balance.toString(),
+                            ),
+                          );
+                        }),
+                      ),
+                      SizedBox(height: 6),
+                      Text(
+                        "Leaves",
+                        style: TextStyle(
+                          fontSize: 14.0,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                        ),
+                      ),
+                      SizedBox(height: 6),
+                      state.employeeLeaves.isNotEmpty
+                          ? Expanded(
+                              child: ListView.separated(
+                                controller: _scrollController,
+                                itemCount: state.employeeLeaves.length,
+                                itemBuilder: (context, index) {
+                                  EmployeeLeaveModel employeeLeave =
+                                      state.employeeLeaves[index];
+                                  return LeaveTile(detail: employeeLeave);
+                                },
+                                separatorBuilder:
+                                    (BuildContext context, int index) {
+                                      return SizedBox(height: 12.0);
+                                    },
+                              ),
+                            )
+                          : Expanded(
+                              child: Center(
+                                child: Text(
+                                  "No Leaves Applied",
+                                  style: TextStyle(
+                                    fontSize: 18.0,
+                                    fontWeight: FontWeight.w900,
+                                  ),
+                                ),
+                              ),
+                            ),
+                    ],
+                  );
+                },
+              ),
+            ),
             SizedBox(height: 12.0),
             CustomButton(
               onPressed: () {

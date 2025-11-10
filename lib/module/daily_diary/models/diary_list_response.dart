@@ -4,9 +4,11 @@
 
 import 'dart:convert';
 
-DiaryListResponseModel diaryListResponseModelFromJson(dynamic json) => DiaryListResponseModel.fromJson(json);
+DiaryListResponseModel diaryListResponseModelFromJson(dynamic json) =>
+    DiaryListResponseModel.fromJson(json);
 
-String diaryListResponseModelToJson(DiaryListResponseModel data) => json.encode(data.toJson());
+String diaryListResponseModelToJson(DiaryListResponseModel data) =>
+    json.encode(data.toJson());
 
 class DiaryListResponseModel {
   String result;
@@ -19,11 +21,14 @@ class DiaryListResponseModel {
     required this.data,
   });
 
-  factory DiaryListResponseModel.fromJson(Map<String, dynamic> json) => DiaryListResponseModel(
-    result: json["result"],
-    message: json["message"],
-    data: List<DiaryModel>.from(json["data"].map((x) => DiaryModel.fromJson(x))),
-  );
+  factory DiaryListResponseModel.fromJson(Map<String, dynamic> json) =>
+      DiaryListResponseModel(
+        result: json["result"],
+        message: json["message"],
+        data: List<DiaryModel>.from(
+          json["data"].map((x) => DiaryModel.fromJson(x)),
+        ),
+      );
 
   Map<String, dynamic> toJson() => {
     "result": result,
@@ -47,6 +52,9 @@ class DiaryModel {
   String text;
   String createdBy;
   String createdDateString;
+  String mimeType;
+  String userFileName;
+  String systemFileName;
 
   DiaryModel({
     required this.diaryId,
@@ -63,6 +71,9 @@ class DiaryModel {
     required this.text,
     required this.createdBy,
     required this.createdDateString,
+    required this.mimeType,
+    required this.userFileName,
+    required this.systemFileName,
   });
 
   factory DiaryModel.fromJson(Map<String, dynamic> json) => DiaryModel(
@@ -76,10 +87,13 @@ class DiaryModel {
     classIdFk: json["ClassIdFk"],
     className: json["ClassName"],
     subjectIdFk: json["SubjectIdFk"],
-    subjectName: json["SubjectName"],
+    subjectName: json["SubjectName"] ?? '',
     text: json["Text"],
     createdBy: json["CreatedBy"],
     createdDateString: json["CreatedDateString"],
+    mimeType: json["MIMEType"] ?? '',
+    userFileName: json["UserFileName"] ?? '',
+    systemFileName: json["SystemFileName"] ?? '',
   );
 
   Map<String, dynamic> toJson() => {
@@ -97,5 +111,8 @@ class DiaryModel {
     "Text": text,
     "CreatedBy": createdBy,
     "CreatedDateString": createdDateString,
+    "MIMEType": mimeType,
+    "UserFileName": userFileName,
+    "SystemFileName": systemFileName,
   };
 }

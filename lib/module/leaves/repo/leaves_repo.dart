@@ -44,11 +44,7 @@ class LeavesRepository {
     try {
       var response = await _networkService.get(
         Endpoints.getEmployeeLeavesByEmpId,
-        data: {
-          "EmpId": _authRepository.user.userId,
-          "OffSet": offSet,
-          "Next": next,
-        },
+        data: {"EmpId": 4043, "OffSet": offSet, "Next": next},
       );
       EmployeeLeavesResponse employeeLeavesResponse =
           await EmployeeLeavesResponse.fromJson(response);

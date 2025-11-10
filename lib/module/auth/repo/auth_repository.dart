@@ -3,7 +3,6 @@ import 'dart:developer';
 
 import 'package:flutter/foundation.dart';
 import 'package:lges_teacher_app/module/auth/models/forget_password_input.dart';
-import 'package:lges_teacher_app/module/auth/models/forget_password_response.dart';
 
 import '../../../constants/api_endpoints.dart';
 import '../../../constants/keys.dart';
@@ -22,7 +21,9 @@ class AuthRepository {
   AuthRepository(this._networkService, this._storageService);
 
   Future<AuthResponse> login(
-      LoginInput loginInput, bool isKeepMeLoggedIn) async {
+    LoginInput loginInput,
+    bool isKeepMeLoggedIn,
+  ) async {
     try {
       var response = await _networkService.post(
         Endpoints.login,
@@ -51,8 +52,10 @@ class AuthRepository {
         Endpoints.forgetPassword,
         data: forgetPasswordInput.toJson(),
       );
-      BaseResponseModel baseResponseModel =
-          await compute(baseResponseModelFromJson, response);
+      BaseResponseModel baseResponseModel = await compute(
+        baseResponseModelFromJson,
+        response,
+      );
       return baseResponseModel;
     } on BaseFailure catch (_) {
       rethrow;
@@ -69,7 +72,9 @@ class AuthRepository {
 
   Future<void> setKeepMeLoggedIn(bool isKeepMeLoggedIn) async {
     await _storageService.setBool(
-        StorageKeys.isKeepMeLoggedIn, isKeepMeLoggedIn);
+      StorageKeys.isKeepMeLoggedIn,
+      isKeepMeLoggedIn,
+    );
   }
 
   String _getToken() {
@@ -111,20 +116,17 @@ class AuthRepository {
 
   Map<String, dynamic>? getHeaders() {
     //live
-    String username = 'LgesApiExtPass';
-    String password = '7A527#APIAB#@LlmX#1@LGES\$WEB';
+    // String username = 'LgesApiExtPass';
+    // String password = '7A527#APIAB#@LlmX#1@LGES\$WEB';
 
     //test
-    // String username = 'LgesApiExtPass';
-    // String password = 'lgeswebtest@cyberasol';
+    String username = 'LgesApiExtPass';
+    String password = 'lgeswebtest@cyberasol';
 
     String basicAuth =
         'Basic ' + base64.encode(utf8.encode('$username:$password'));
 
-    return {
-      'Accept': 'application/json',
-      'Authorization': basicAuth,
-    };
+    return {'Accept': 'application/json', 'Authorization': basicAuth};
   }
 
   Future<bool> isAuthenticated() async {

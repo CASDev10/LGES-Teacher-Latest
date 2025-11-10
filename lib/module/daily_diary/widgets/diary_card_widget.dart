@@ -124,7 +124,7 @@ class DiaryCard extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  diary.createdDateString,
+                  diary.dateFromString,
                   style: TextStyle(fontSize: 13, color: Colors.grey.shade600),
                 ),
               ],

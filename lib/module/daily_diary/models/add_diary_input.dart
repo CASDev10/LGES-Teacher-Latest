@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 
 class AddDiaryInput {
   String dateFrom;
@@ -8,6 +9,7 @@ class AddDiaryInput {
   String text;
   String ucSchoolId;
   String ucLoginUserId;
+  MultipartFile? file;
 
   AddDiaryInput({
     required this.dateFrom,
@@ -18,6 +20,7 @@ class AddDiaryInput {
     required this.text,
     required this.ucSchoolId,
     required this.ucLoginUserId,
+    this.file,
   });
 
   factory AddDiaryInput.fromJson(Map<String, dynamic> json) => AddDiaryInput(

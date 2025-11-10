@@ -8,30 +8,50 @@ import 'package:lges_teacher_app/components/custom_textfield.dart';
 import 'package:lges_teacher_app/config/config.dart';
 import 'package:lges_teacher_app/constants/app_colors.dart';
 import 'package:lges_teacher_app/module/auth/repo/auth_repository.dart';
+import 'package:lges_teacher_app/module/daily_diary/cubit/delete_diary/delete_diary_state.dart';
 import 'package:lges_teacher_app/module/daily_diary/cubit/diary_list_cubit/diary_list_cubit.dart';
 import 'package:lges_teacher_app/module/daily_diary/pages/add_daily_diary_screen.dart';
+import 'package:lges_teacher_app/module/daily_diary/pages/delete_diary_input.dart';
 import 'package:lges_teacher_app/utils/custom_date_time_picker.dart';
+import 'package:lges_teacher_app/utils/display/display_utils.dart';
 import 'package:lges_teacher_app/utils/extensions/extended_string.dart';
 
 import '../../../components/loading_indicator.dart';
 import '../../../constants/keys.dart';
 import '../../../core/di/service_locator.dart';
 import '../../home/repo/home_repo.dart';
+import '../cubit/delete_diary/delete_diary_cubit.dart';
 import '../cubit/diary_list_cubit/diary_list_state.dart';
 import '../widgets/diary_card_widget.dart';
 
-class DailyDiaryScreen extends StatefulWidget {
+class DailyDiaryScreen extends StatelessWidget {
+  const DailyDiaryScreen({super.key});
+
   @override
-  State<DailyDiaryScreen> createState() => _DailyDiaryScreenState();
+  Widget build(BuildContext context) {
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (context) => DiaryListCubit(sl())),
+        BlocProvider(create: (context) => DeleteDiaryCubit(sl())),
+      ],
+      child: DailyDiaryScreenView(),
+    );
+  }
 }
 
-class _DailyDiaryScreenState extends State<DailyDiaryScreen> {
+class DailyDiaryScreenView extends StatefulWidget {
+  @override
+  State<DailyDiaryScreenView> createState() => _DailyDiaryScreenViewState();
+}
+
+class _DailyDiaryScreenViewState extends State<DailyDiaryScreenView> {
   TextEditingController fromDateController = TextEditingController();
   TextEditingController toDateController = TextEditingController();
 
   AuthRepository _authRepository = sl<AuthRepository>();
   List<String> userPrivileges = [];
   HomeRepository homeRepository = sl<HomeRepository>();
+
   @override
   void initState() {
     super.initState();
@@ -40,6 +60,10 @@ class _DailyDiaryScreenState extends State<DailyDiaryScreen> {
         ',',
       );
     }
+
+    context.read<DiaryListCubit>().fetchDiaryList(
+      _authRepository.user.schoolId.toString(),
+    );
   }
 
   void _gotoAddDiary() {
@@ -230,141 +254,175 @@ class _DailyDiaryScreenState extends State<DailyDiaryScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) =>
-          DiaryListCubit(sl())
-            ..fetchDiaryList(_authRepository.user.schoolId.toString()),
-      child: BaseScaffold(
-        appBar: CustomAppbar(
-          'Diary Work',
-          centerTitle: true,
-          actions: [
-            InkWell(
-              onTap: () {
-                _showFilterDialog(context);
-              },
-              child: Container(
-                height: 30,
-                width: 30,
-                margin: EdgeInsets.only(right: 20),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  color: Colors.white,
-                ),
-                child: Icon(
-                  Icons.filter_alt_outlined,
-                  color: AppColors.primaryDark,
-                ),
+    return BaseScaffold(
+      appBar: CustomAppbar(
+        'Diary Work',
+        centerTitle: true,
+        actions: [
+          InkWell(
+            onTap: () {
+              _showFilterDialog(context);
+            },
+            child: Container(
+              height: 30,
+              width: 30,
+              margin: EdgeInsets.only(right: 20),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                color: Colors.white,
+              ),
+              child: Icon(
+                Icons.filter_alt_outlined,
+                color: AppColors.primaryDark,
               ),
             ),
-          ],
-        ),
-        body: Container(
-          padding:
-              const EdgeInsets.symmetric(horizontal: 20) +
-              const EdgeInsets.symmetric(vertical: 30),
-          width: double.infinity,
-          decoration: const BoxDecoration(
-            color: AppColors.whiteColor,
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(50),
-              topRight: Radius.circular(50),
-            ),
           ),
-          child: Container(
-            height: MediaQuery.of(context).size.height,
-            child: Column(
-              children: [
-                Expanded(
-                  child: SingleChildScrollView(
-                    child: Column(
-                      children: [
-                        const SizedBox(height: 12),
-                        BlocBuilder<DiaryListCubit, DiaryListState>(
-                          builder: (context, state) {
-                            if (state.diaryListStatus ==
-                                DiaryListStatus.loading) {
-                              return Center(child: LoadingIndicator());
-                            }
-                            if (state.diaryListStatus ==
-                                DiaryListStatus.success) {
-                              return Column(
-                                children: List.generate(
-                                  state.diaryList.length,
-                                  (index) {
-                                    return DiaryCard(
-                                      diary: state.diaryList[index],
-                                      onTap: () {
-                                        NavRouter.push(
-                                          context,
-                                          AddDailyDiaryScreen(
-                                            diary: state.diaryList[index],
-                                          ),
-                                        ).then((value) {
-                                          context
-                                              .read<DiaryListCubit>()
-                                              .fetchDiaryList(
-                                                _authRepository.user.schoolId
-                                                    .toString(),
-                                              );
-                                        });
-                                      },
-                                      onDelete: () {
-                                        showDeleteConfirmationDialog(
-                                          context,
-                                          onConfirm: () {
-                                            print("Diary deleted!");
-                                          },
-                                        );
-                                      },
-                                    ) /*ustomTextField(
-                                    hintText: state.diaryList[index].subjectName,
-                                    height: 50,
-                                    inputType: TextInputType.text,
-                                    fillColor: AppColors.lightGreyColor,
-                                    hintColor: AppColors.primaryDark,
-                                    fontWeight: FontWeight.w500,
-                                    readOnly: true,
-                                    fontSize: 16,
-                                    suffixWidget: SvgPicture.asset(
-                                      'assets/images/svg/ic_arrow_forward.svg',
-                                      color: AppColors.primaryDark,
-                                      height: 16,
-                                    ),
-                                    onTap: () {},
-                                  )*/;
-                                  },
-                                ),
-                              );
-                            }
-                            if (state.diaryListStatus ==
-                                DiaryListStatus.failure) {
-                              return Center(child: Text(state.failure.message));
-                            }
-                            return SizedBox();
-                          },
-                        ),
-                      ],
+        ],
+      ),
+      body: BlocConsumer<DeleteDiaryCubit, DeleteDiaryState>(
+        listener: (context, deleteState) {
+          if (deleteState.deleteDiaryStatus == DeleteDiaryStatus.loading) {
+            DisplayUtils.showLoader();
+          }
+          if (deleteState.deleteDiaryStatus == DeleteDiaryStatus.failure) {
+            DisplayUtils.removeLoader();
+            DisplayUtils.showSnackBar(context, deleteState.failure.message);
+          }
+          if (deleteState.deleteDiaryStatus == DeleteDiaryStatus.success) {
+            DisplayUtils.removeLoader();
+            DisplayUtils.showToast(context, 'Diary deleted successfully!');
+            context.read<DiaryListCubit>().fetchDiaryList(
+              _authRepository.user.schoolId.toString(),
+            );
+          }
+        },
+        builder: (context, deleteState) {
+          return Container(
+            padding:
+                const EdgeInsets.symmetric(horizontal: 20) +
+                const EdgeInsets.symmetric(vertical: 30),
+            width: double.infinity,
+            decoration: const BoxDecoration(
+              color: AppColors.whiteColor,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(50),
+                topRight: Radius.circular(50),
+              ),
+            ),
+            child: Container(
+              height: MediaQuery.of(context).size.height,
+              child: Column(
+                children: [
+                  Expanded(
+                    child: SingleChildScrollView(
+                      child: Column(
+                        children: [
+                          const SizedBox(height: 12),
+                          BlocBuilder<DiaryListCubit, DiaryListState>(
+                            builder: (context, state) {
+                              if (state.diaryListStatus ==
+                                  DiaryListStatus.loading) {
+                                return Center(child: LoadingIndicator());
+                              }
+                              if (state.diaryListStatus ==
+                                  DiaryListStatus.success) {
+                                return Column(
+                                  children: List.generate(
+                                    state.diaryList.length,
+                                    (index) {
+                                      return DiaryCard(
+                                        diary: state.diaryList[index],
+                                        onTap: () {
+                                          NavRouter.push(
+                                            context,
+                                            AddDailyDiaryScreen(
+                                              diary: state.diaryList[index],
+                                            ),
+                                          ).then((value) {
+                                            context
+                                                .read<DiaryListCubit>()
+                                                .fetchDiaryList(
+                                                  _authRepository.user.schoolId
+                                                      .toString(),
+                                                );
+                                          });
+                                        },
+                                        onDelete: () {
+                                          showDeleteConfirmationDialog(
+                                            context,
+                                            onConfirm: () {
+                                              DeleteDiaryInput input =
+                                                  DeleteDiaryInput(
+                                                    diaryId: state
+                                                        .diaryList[index]
+                                                        .diaryId,
+                                                    ucSchoolId: _authRepository
+                                                        .user
+                                                        .schoolId
+                                                        .toString(),
+                                                    ucLoginUserId:
+                                                        _authRepository
+                                                            .user
+                                                            .userId
+                                                            .toString(),
+                                                  );
+                                              context
+                                                  .read<DeleteDiaryCubit>()
+                                                  .deleteDiary(input);
+                                            },
+                                          );
+                                        },
+                                      ) /*ustomTextField(
+                                  hintText: state.diaryList[index].subjectName,
+                                  height: 50,
+                                  inputType: TextInputType.text,
+                                  fillColor: AppColors.lightGreyColor,
+                                  hintColor: AppColors.primaryDark,
+                                  fontWeight: FontWeight.w500,
+                                  readOnly: true,
+                                  fontSize: 16,
+                                  suffixWidget: SvgPicture.asset(
+                                    'assets/images/svg/ic_arrow_forward.svg',
+                                    color: AppColors.primaryDark,
+                                    height: 16,
+                                  ),
+                                  onTap: () {},
+                                )*/;
+                                    },
+                                  ),
+                                );
+                              }
+                              if (state.diaryListStatus ==
+                                  DiaryListStatus.failure) {
+                                return Center(
+                                  child: Text(state.failure.message),
+                                );
+                              }
+                              return SizedBox();
+                            },
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                ),
-                const SizedBox(height: 20),
-                CustomButton(
-                  height: 50,
-                  borderRadius: 15,
-                  onPressed: () {
-                    _gotoAddDiary();
-                  },
-                  title: 'Add Diary Work',
-                  isEnabled: true,
-                ),
-              ],
+                  const SizedBox(height: 20),
+                  CustomButton(
+                    height: 50,
+                    borderRadius: 15,
+                    onPressed: () {
+                      _gotoAddDiary();
+                    },
+                    title: 'Add Diary Work',
+                    isEnabled: true,
+                  ),
+                ],
+              ),
             ),
-          ),
-        ),
-        backgroundColor: AppColors.primaryDark,
-        hMargin: 0,
+          );
+        },
       ),
+      backgroundColor: AppColors.primaryDark,
+      hMargin: 0,
     );
   }
 }

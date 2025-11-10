@@ -286,10 +286,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                     _showAttendanceDialog(context);
                                   },
                                   child: HomeTabCard(
-                                    isSvg: false,
                                     homeTabModel: HomeTabModel(
                                       "Attendance",
-                                      "assets/images/png/attendance.png",
+                                      "assets/images/svg/attendance2.svg",
                                     ),
                                   ),
                                 ),
@@ -307,7 +306,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   child: HomeTabCard(
                                     homeTabModel: HomeTabModel(
                                       "Daily Diary",
-                                      "assets/images/svg/ic_daily_diary.svg",
+                                      "assets/images/svg/ic_daily_diary2.svg",
                                     ),
                                   ),
                                 ),
@@ -327,7 +326,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   child: HomeTabCard(
                                     homeTabModel: HomeTabModel(
                                       "Student Evaluation",
-                                      "assets/images/svg/ic_student_evaluation_tab.svg",
+                                      "assets/images/svg/ic_student_evaluation_tab2.svg",
                                     ),
                                   ),
                                   onTap: () {
@@ -351,28 +350,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                   child: HomeTabCard(
                                     homeTabModel: HomeTabModel(
                                       "TIME TABLE",
-                                      "assets/images/svg/ic_time_table.svg",
+                                      "assets/images/svg/ic_time_table1.svg",
                                     ),
                                   ),
                                 ),
                               ),
-
-                              // Expanded(
-                              //   child: GestureDetector(
-                              //     child: HomeTabCard(
-                              //       homeTabModel: HomeTabModel(
-                              //         "Teacher Observation",
-                              //         "assets/images/svg/ic_teacher_observation.svg",
-                              //       ),
-                              //     ),
-                              //     onTap: () {
-                              //       NavRouter.push(
-                              //         context,
-                              //         TeacherObservationScreen(),
-                              //       );
-                              //     },
-                              //   ),
-                              // ),
                             ],
                           ),
                           Container(
@@ -390,7 +372,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   child: HomeTabCard(
                                     homeTabModel: HomeTabModel(
                                       "Exam Result",
-                                      "assets/images/svg/ic_exam_result.svg",
+                                      "assets/images/svg/ic_exam_result1.svg",
                                     ),
                                   ),
                                 ),
@@ -405,7 +387,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   child: HomeTabCard(
                                     homeTabModel: HomeTabModel(
                                       "File Sharing",
-                                      'assets/images/svg/file_sharing.svg',
+                                      "assets/images/svg/file_sharing1.svg",
                                     ),
                                   ),
                                   onTap: () {
@@ -434,10 +416,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                     );
                                   },
                                   child: HomeTabCard(
-                                    isSvg: false,
                                     homeTabModel: HomeTabModel(
                                       "Notifications\n& Alerts",
-                                      "assets/images/png/notifications1.png",
+                                      "assets/images/svg/notification_and_alert1.svg",
                                     ),
                                   ),
                                 ),
@@ -450,10 +431,9 @@ class _HomeScreenState extends State<HomeScreen> {
                               Expanded(
                                 child: GestureDetector(
                                   child: HomeTabCard(
-                                    isSvg: false,
                                     homeTabModel: HomeTabModel(
                                       "Leaves",
-                                      'assets/images/png/leaves1.png',
+                                      "assets/images/svg/leaves1.svg",
                                     ),
                                   ),
                                   onTap: () {

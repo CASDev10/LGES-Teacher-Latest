@@ -14,6 +14,8 @@ class Endpoints {
   static const String getStudentEvaluationAreas = '/GetStudentEvaluationAreas';
   static const String addEvaluationLogBook = '/AddEvaluationLogBook';
   static const String addDiary = '/AddDiary';
+  static const String updateDiary = '/UpdateDiary';
+  static const String deleteDiary = '/DeleteDiary';
   static const String addSchoolAttendance = '/AddSchoolAttendance';
   static const String getMobileAppConfig = '/GetMobileAppConfig';
   static const String forgetPassword = '/UpdateForgetMobilePassword';

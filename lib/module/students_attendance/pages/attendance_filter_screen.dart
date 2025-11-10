@@ -13,7 +13,7 @@ import 'package:lges_teacher_app/module/students_attendance/models/attendance_in
 import 'package:lges_teacher_app/module/students_attendance/pages/attendance_history_screen.dart';
 
 import '../../../components/custom_button.dart';
-import '../../../components/custom_dropdown.dart';
+import '../../../components/generic_drop_down.dart';
 import '../../../components/loading_indicator.dart';
 import '../../../core/di/service_locator.dart';
 import '../../../utils/display/display_utils.dart';
@@ -88,7 +88,7 @@ class _AttendanceFilterScreenState extends State<AttendanceFilterScreen> {
                               lastDay: DateTime.now(),
                             ),
                             const SizedBox(height: 40),
-                            CustomDropDown(
+                            GenericDropDown<Class>(
                               allPadding: 0,
                               horizontalPadding: 15,
                               isOutline: false,
@@ -96,21 +96,20 @@ class _AttendanceFilterScreenState extends State<AttendanceFilterScreen> {
                               iconColor: AppColors.primaryDark,
                               suffixIconPath: '',
                               hint: 'Select Class',
-                              items: classState.classes
-                                  .map((selectClass) => selectClass.className)
-                                  .toList(),
-                              onSelect: (String value) {
-                                Class selectedClass = classState.classes
-                                    .firstWhere(
-                                      (element) => element.className == value,
-                                    );
+                              items: classState.classes,
+                              onSelect: (Class value) {
                                 setState(() {
-                                  dropdownValueClass = value;
-                                  context.read<SectionsCubit>().fetchSections(
-                                    selectedClass.classId.toString(),
-                                  );
+                                  setState(() {
+                                    dropdownValueClass = value.className;
+                                    dropdownValueSection = null;
+                                    sections = [];
+                                  });
                                 });
+                                context.read<SectionsCubit>().fetchSections(
+                                  value.classId.toString(),
+                                );
                               },
+                              getLabel: (classModel) => classModel.className,
                             ),
                             const SizedBox(height: 25),
                             BlocConsumer<SectionsCubit, SectionsState>(
@@ -141,7 +140,7 @@ class _AttendanceFilterScreenState extends State<AttendanceFilterScreen> {
                                           );
                                         }
                                       : null,
-                                  child: CustomDropDown(
+                                  child: GenericDropDown<Section>(
                                     allPadding: 0,
                                     horizontalPadding: 15,
                                     isOutline: false,
@@ -149,14 +148,14 @@ class _AttendanceFilterScreenState extends State<AttendanceFilterScreen> {
                                     iconColor: AppColors.primaryDark,
                                     suffixIconPath: '',
                                     hint: 'Select Section',
-                                    items: sectionStatus.sections
-                                        .map((section) => section.sectionName)
-                                        .toList(),
-                                    onSelect: (String value) {
+                                    items: sectionStatus.sections,
+                                    onSelect: (Section value) {
                                       setState(() {
-                                        dropdownValueSection = value;
+                                        dropdownValueSection =
+                                            value.sectionName;
                                       });
                                     },
+                                    getLabel: (section) => section.sectionName,
                                   ),
                                 );
                               },
