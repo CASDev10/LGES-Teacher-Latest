@@ -5,13 +5,13 @@ import '../model/leave_balance_response.dart';
 enum TeacherLeaveStatus { none, loading, loadMore, success, failure }
 
 class TeacherLeaveState {
-  final TeacherLeaveStatus studentAttendanceStatus;
+  final TeacherLeaveStatus leaveStatus;
   final BaseFailure failure;
   final List<LeaveModel> leaveBalance;
   final List<EmployeeLeaveModel> employeeLeaves;
 
   TeacherLeaveState({
-    required this.studentAttendanceStatus,
+    required this.leaveStatus,
     required this.failure,
     required this.leaveBalance,
     required this.employeeLeaves,
@@ -19,7 +19,7 @@ class TeacherLeaveState {
 
   factory TeacherLeaveState.initial() {
     return TeacherLeaveState(
-      studentAttendanceStatus: TeacherLeaveStatus.none,
+      leaveStatus: TeacherLeaveStatus.none,
       failure: const BaseFailure(),
       leaveBalance: [],
       employeeLeaves: [],
@@ -27,14 +27,13 @@ class TeacherLeaveState {
   }
 
   TeacherLeaveState copyWith({
-    TeacherLeaveStatus? studentAttendanceStatus,
+    TeacherLeaveStatus? leaveStatus,
     BaseFailure? failure,
     List<LeaveModel>? leaveBalance,
     List<EmployeeLeaveModel>? employeeLeaves,
   }) {
     return TeacherLeaveState(
-      studentAttendanceStatus:
-          studentAttendanceStatus ?? this.studentAttendanceStatus,
+      leaveStatus: leaveStatus ?? this.leaveStatus,
       failure: failure ?? this.failure,
       leaveBalance: leaveBalance ?? this.leaveBalance,
       employeeLeaves: employeeLeaves ?? this.employeeLeaves,

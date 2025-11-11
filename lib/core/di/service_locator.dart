@@ -3,6 +3,7 @@ import 'package:get_it/get_it.dart';
 import 'package:lges_teacher_app/module/auth/repo/user_schools_repo.dart';
 import 'package:lges_teacher_app/module/daily_diary/repo/diary_repo.dart';
 import 'package:lges_teacher_app/module/evaluation/repo/evaluation_repo.dart';
+import 'package:lges_teacher_app/module/events/repo/events_repository.dart';
 import 'package:lges_teacher_app/module/exam_result/repo/exam_result_repo.dart';
 import 'package:lges_teacher_app/module/home/repo/home_repo.dart';
 import 'package:lges_teacher_app/module/students_attendance/repo/attendance_repo.dart';
@@ -58,4 +59,5 @@ Future<void> initDependencies(AppEnv appEnv) async {
     () => ObservationRepository(),
   );
   sl.registerLazySingleton<LeavesRepository>(() => LeavesRepository());
+  sl.registerLazySingleton<EventsRepository>(() => EventsRepository());
 }

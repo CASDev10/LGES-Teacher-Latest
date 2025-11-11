@@ -22,19 +22,12 @@ class StudentAttendanceCubit extends Cubit<StudentAttendanceState> {
       AttendanceResponseModel attendanceResponseModel = await _repository
           .getGetSectionStudentList(input);
       if (attendanceResponseModel.result == ApiResult.success) {
-        // ✅ Force all students to have default attendanceStatusIdFk = 1
-        final updatedList = attendanceResponseModel.data.map((student) {
-          student.attendanceStatusIdFk = 1;
-          return student;
-        }).toList();
-
-        filterStudentAttendanceList = updatedList;
-        studentAttendanceList = updatedList;
-
+        filterStudentAttendanceList = attendanceResponseModel.data;
+        studentAttendanceList = attendanceResponseModel.data;
         emit(
           state.copyWith(
             studentAttendanceStatus: StudentAttendanceStatus.success,
-            attendanceList: updatedList,
+            attendanceList: attendanceResponseModel.data,
           ),
         );
       } else {

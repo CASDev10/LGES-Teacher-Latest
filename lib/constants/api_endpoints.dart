@@ -40,6 +40,8 @@ class Endpoints {
   static const String uploadTeacherFile = '/UploadTeacherFile';
   static const String getEmployeeLeaveBalance = '/GetEmployeeLeaveBalance';
   static const String getEmployeeLeavesByEmpId = '/GetEmployeeLeavesByEmpId';
-  static const String uploadLeave = '/UploadLeave';
+  static const String uploadLeave = '/AddEmployeeLeave';
   static const String deleteLeave = '/Delete';
+  static const String addEvent = '/AddCalendar';
+  static const String calendarEvents = '/GetCalendar';
 }

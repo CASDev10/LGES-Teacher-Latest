@@ -1,9 +1,9 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../../../core/failures/base_failures/base_failure.dart';
-import '../../../../../core/failures/high_priority_failure.dart';
-import '../models/get_events_input.dart';
-import '../repo/events_repository.dart';
+import '../../../../../../core/failures/base_failures/base_failure.dart';
+import '../../../../../../core/failures/high_priority_failure.dart';
+import '../../models/get_events_input.dart';
+import '../../repo/events_repository.dart';
 import 'get_events_state.dart';
 
 class GetEventsCubit extends Cubit<GetEventsState> {

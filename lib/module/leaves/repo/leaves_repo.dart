@@ -10,7 +10,7 @@ import '../../../../core/failures/base_failures/base_failure.dart';
 import '../../../../core/network_service/network_service.dart';
 import '../../auth/repo/auth_repository.dart';
 import '../../base_resposne_model.dart';
-import '../model/add_update_leave_input.dart';
+import '../model/add_employee_leave_input.dart';
 import '../model/employee_leaves_response.dart';
 import '../model/leave_balance_response.dart';
 
@@ -22,7 +22,7 @@ class LeavesRepository {
     try {
       var response = await _networkService.get(
         Endpoints.getEmployeeLeaveBalance,
-        data: {"EmpId": _authRepository.user.userId, "Option": 0},
+        data: {"EmpId": _authRepository.user.empId},
       );
       LeaveBalanceResponse leaveBalanceResponse = await compute(
         leaveBalanceResponseFromJson,
@@ -44,7 +44,11 @@ class LeavesRepository {
     try {
       var response = await _networkService.get(
         Endpoints.getEmployeeLeavesByEmpId,
-        data: {"EmpId": 4043, "OffSet": offSet, "Next": next},
+        data: {
+          "EmpId": _authRepository.user.empId,
+          "OffSet": offSet,
+          "Next": next,
+        },
       );
       EmployeeLeavesResponse employeeLeavesResponse =
           await EmployeeLeavesResponse.fromJson(response);
@@ -58,16 +62,16 @@ class LeavesRepository {
   }
 
   Future<BaseResponseModel?> addUpdateEmployeeLeave(
-    AddUpdateLeaveInput input,
+    AddEmployeeLeaveInput input,
   ) async {
     try {
       FormData toFormData() => FormData.fromMap({
         "LeaveData": jsonEncode(input).toString(),
-        "EmployeeFile": input.file,
+        // "EmployeeFile": input.file,
       });
       var response = await _networkService.post(
         Endpoints.uploadLeave,
-        data: toFormData(),
+        data: input.toJson(),
       );
       print('############ Api Hit Response is --> ${jsonEncode(input)}');
       if (response["result"] == "error") {

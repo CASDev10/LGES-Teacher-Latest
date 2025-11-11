@@ -3,7 +3,6 @@ import 'package:lges_teacher_app/constants/app_colors.dart';
 
 import '../../../../config/routes/nav_router.dart';
 import '../../../../core/di/service_locator.dart';
-import '../../../../widgets/helper_function.dart';
 import '../../auth/repo/auth_repository.dart';
 import '../model/employee_leaves_response.dart';
 
@@ -12,16 +11,6 @@ class LeaveDetailDialogue extends StatelessWidget {
 
   final EmployeeLeaveModel model;
   final AuthRepository _authRepository = sl<AuthRepository>();
-
-  Color getStatusColor() {
-    if (model.waitingForApproval == 1 && model.approved == true) {
-      return Colors.green;
-    } else if (model.waitingForApproval == 1 && model.approved == false) {
-      return Colors.redAccent;
-    } else {
-      return Colors.orangeAccent;
-    }
-  }
 
   String getStatusText() {
     if (model.waitingForApproval == 1 && model.approved == true) {
@@ -138,38 +127,6 @@ class LeaveDetailDialogue extends StatelessWidget {
                     _spacer(),
                     _detailRow("Reason", model.reason),
                     _spacer(),
-                    Row(
-                      children: [
-                        Expanded(
-                          flex: 3,
-                          child: Text(
-                            'Attachment',
-                            style: const TextStyle(
-                              fontWeight: FontWeight.w600,
-                              color: AppColors.primaryLight,
-                              fontSize: 13,
-                            ),
-                          ),
-                        ),
-                        Expanded(
-                          flex: 5,
-                          child: InkWell(
-                            onTap: () =>
-                                openUrlInBrowser(model.fileDownloadLink),
-                            child: const Text(
-                              "Download Attachment",
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                color: Colors.blue,
-                                fontSize: 13,
-                                fontWeight: FontWeight.w600,
-                                decoration: TextDecoration.underline,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
                   ],
                 ),
               ),
@@ -179,7 +136,7 @@ class LeaveDetailDialogue extends StatelessWidget {
               Align(
                 alignment: Alignment.centerRight,
                 child: Text(
-                  "Created by: ${model.createdBy} | ${model.createdDateString}",
+                  "Created by: ${model.createdBy} | ${model.fromDateString}",
                   style: TextStyle(
                     fontSize: 11,
                     color: Colors.grey.shade600,
@@ -196,6 +153,7 @@ class LeaveDetailDialogue extends StatelessWidget {
 
   Widget _detailRow(String title, String value) {
     return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Expanded(
           flex: 3,

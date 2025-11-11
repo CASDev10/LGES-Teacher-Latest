@@ -4,7 +4,7 @@ import '../../../../../core/failures/base_failures/base_failure.dart';
 import '../../../../../core/failures/high_priority_failure.dart';
 import '../../../../../utils/display/display_utils.dart';
 import '../../../base_resposne_model.dart';
-import '../../model/add_update_leave_input.dart';
+import '../../model/add_employee_leave_input.dart';
 import '../../model/employee_leaves_response.dart';
 import '../../repo/leaves_repo.dart';
 import 'apply_leave_state.dart';
@@ -14,7 +14,7 @@ class ApplyLeaveCubit extends Cubit<ApplyLeaveState> {
   LeavesRepository _repository;
   List<EmployeeLeaveModel> employeeLeaves = [];
 
-  Future addUpdateEmployeeLeave({required AddUpdateLeaveInput input}) async {
+  Future addUpdateEmployeeLeave({required AddEmployeeLeaveInput input}) async {
     DisplayUtils.showLoader();
     emit(state.copyWith(studentAttendanceStatus: ApplyLeaveStatus.loading));
     try {

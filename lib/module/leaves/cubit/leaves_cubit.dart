@@ -22,7 +22,7 @@ class TeacherLeaveCubit extends Cubit<TeacherLeaveState> {
     DisplayUtils.showLoader();
     emit(
       state.copyWith(
-        studentAttendanceStatus: loadMore
+        leaveStatus: loadMore
             ? TeacherLeaveStatus.loadMore
             : TeacherLeaveStatus.loadMore,
       ),
@@ -41,7 +41,7 @@ class TeacherLeaveCubit extends Cubit<TeacherLeaveState> {
       employeeLeaves.addAll(response.data);
       emit(
         state.copyWith(
-          studentAttendanceStatus: TeacherLeaveStatus.success,
+          leaveStatus: TeacherLeaveStatus.success,
           employeeLeaves: employeeLeaves,
         ),
       );
@@ -50,7 +50,7 @@ class TeacherLeaveCubit extends Cubit<TeacherLeaveState> {
       DisplayUtils.removeLoader();
       emit(
         state.copyWith(
-          studentAttendanceStatus: TeacherLeaveStatus.failure,
+          leaveStatus: TeacherLeaveStatus.failure,
           failure: HighPriorityException(e.message),
         ),
       );
@@ -61,13 +61,13 @@ class TeacherLeaveCubit extends Cubit<TeacherLeaveState> {
 
   Future fetchLeaveBalance() async {
     DisplayUtils.showLoader();
-    emit(state.copyWith(studentAttendanceStatus: TeacherLeaveStatus.loading));
+    emit(state.copyWith(leaveStatus: TeacherLeaveStatus.loading));
     try {
       LeaveBalanceResponse response = await _repository
           .getEmployeeLeaveBalance();
       emit(
         state.copyWith(
-          studentAttendanceStatus: TeacherLeaveStatus.success,
+          leaveStatus: TeacherLeaveStatus.success,
           leaveBalance: response.data,
         ),
       );
@@ -76,7 +76,7 @@ class TeacherLeaveCubit extends Cubit<TeacherLeaveState> {
       DisplayUtils.removeLoader();
       emit(
         state.copyWith(
-          studentAttendanceStatus: TeacherLeaveStatus.failure,
+          leaveStatus: TeacherLeaveStatus.failure,
           failure: HighPriorityException(e.message),
         ),
       );
@@ -110,16 +110,16 @@ class TeacherLeaveCubit extends Cubit<TeacherLeaveState> {
 
   Future deleteLeave({required int id}) async {
     DisplayUtils.showLoader();
-    emit(state.copyWith(studentAttendanceStatus: TeacherLeaveStatus.loading));
+    emit(state.copyWith(leaveStatus: TeacherLeaveStatus.loading));
     try {
       BaseResponseModel response = await _repository.deleteLeave(id: id);
-      emit(state.copyWith(studentAttendanceStatus: TeacherLeaveStatus.success));
+      emit(state.copyWith(leaveStatus: TeacherLeaveStatus.success));
       DisplayUtils.removeLoader();
     } on BaseFailure catch (e) {
       DisplayUtils.removeLoader();
       emit(
         state.copyWith(
-          studentAttendanceStatus: TeacherLeaveStatus.failure,
+          leaveStatus: TeacherLeaveStatus.failure,
           failure: HighPriorityException(e.message),
         ),
       );

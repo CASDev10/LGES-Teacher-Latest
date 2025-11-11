@@ -3,20 +3,18 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:intl/intl.dart';
+import 'package:lges_teacher_app/module/auth/repo/auth_repository.dart';
 
 import '../../../../components/custom_button.dart';
 import '../../../../constants/app_colors.dart';
-import '../../../../utils/display/dialogs/dialog_utils.dart';
 import '../../../components/custom_textfield.dart';
 import '../../../config/routes/nav_router.dart';
+import '../../../core/di/service_locator.dart';
 import '../../../utils/custom_countdown.dart';
 import '../../../utils/display/display_utils.dart';
-import '../../../widgets/helper_function.dart';
 import '../../leaves/model/employee_leaves_response.dart';
 import '../../leaves/model/leave_balance_response.dart';
-import '../model/add_update_leave_input.dart';
+import '../model/add_employee_leave_input.dart';
 import '../widgets/student_result_date_picker.dart';
 
 class ApplyLeaveDialogue extends StatefulWidget {
@@ -28,7 +26,7 @@ class ApplyLeaveDialogue extends StatefulWidget {
   });
 
   final List<LeaveModel> leaveBalance;
-  final Function(AddUpdateLeaveInput)? onSave;
+  final Function(AddEmployeeLeaveInput)? onSave;
   final EmployeeLeaveModel? model;
 
   @override
@@ -43,6 +41,7 @@ class _ApplyLeaveDialogueState extends State<ApplyLeaveDialogue> {
   final TextEditingController fileNameController = TextEditingController();
   FilePickerResult? result;
   File? file;
+  AuthRepository authRepository = sl<AuthRepository>();
 
   Future<MultipartFile> changeMulti(File file) async {
     MultipartFile multipartFile = await MultipartFile.fromFile(
@@ -157,7 +156,7 @@ class _ApplyLeaveDialogueState extends State<ApplyLeaveDialogue> {
                   controller: _reasonController,
                 ),
               ),
-              SizedBox(height: 12.0),
+              /*SizedBox(height: 12.0),
               Container(
                 decoration: BoxDecoration(
                   color: AppColors.lightGreyColor,
@@ -297,7 +296,7 @@ class _ApplyLeaveDialogueState extends State<ApplyLeaveDialogue> {
                     ),
                   ],
                 ),
-              ),
+              ),*/
               const SizedBox(height: 16),
               Row(
                 children: [
@@ -336,27 +335,30 @@ class _ApplyLeaveDialogueState extends State<ApplyLeaveDialogue> {
                           return;
                         }
 
-                        if (file == null) {
-                          DisplayUtils.showSnackBar(
-                            context,
-                            "Please upload an attachment",
-                          );
-                          return;
-                        }
+                        // if (file == null) {
+                        //   DisplayUtils.showSnackBar(
+                        //     context,
+                        //     "Please upload an attachment",
+                        //   );
+                        //   return;
+                        // }
 
                         // ✅ all fields valid, continue
                         int days = calculateDaysBetweenDates();
-                        AddUpdateLeaveInput input = AddUpdateLeaveInput(
+                        AddEmployeeLeaveInput input = AddEmployeeLeaveInput(
                           id: id,
+                          ucEntityId: authRepository.user.entityId,
+                          empId: authRepository.user.empId,
                           entityLeaveTypeId:
                               selectedLeaveType?.leaveTypeId ?? 0,
                           fromDate: fromDate!,
                           toDate: toDate!,
-                          reason: _reasonController.text.trim(),
                           days: days,
+                          reason: _reasonController.text.trim(),
+                          ucLoginUserId: authRepository.user.userId,
+                          leaveSponsorship: '',
                         );
-
-                        input.file = await changeMulti(file!);
+                        print("AddUpdateLeaveInput ${input.toJson()}");
                         widget.onSave!(input);
                       },
                       title: "Save",

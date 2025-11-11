@@ -10,23 +10,8 @@ class LeaveTile extends StatelessWidget {
   const LeaveTile({super.key, required this.detail});
 
   final EmployeeLeaveModel detail;
-
-  Color _statusColor(String status) {
-    switch (status.toLowerCase()) {
-      case 'approved':
-        return Colors.green;
-      case 'rejected':
-        return Colors.redAccent;
-      default:
-        return Colors.orangeAccent;
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
-    final status = detail.leaveStatusString.toString();
-    final statusColor = _statusColor(status);
-
     return InkWell(
       borderRadius: BorderRadius.circular(16.0),
       onTap: () {
@@ -76,25 +61,6 @@ class LeaveTile extends StatelessWidget {
                       color: Colors.black87,
                     ),
                   ),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 4,
-                      horizontal: 10,
-                    ),
-                    decoration: BoxDecoration(
-                      color: statusColor.withOpacity(0.1),
-                      border: Border.all(color: statusColor, width: 1),
-                      borderRadius: BorderRadius.circular(6.0),
-                    ),
-                    child: Text(
-                      status,
-                      style: TextStyle(
-                        color: statusColor,
-                        fontSize: 11.0,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
                 ],
               ),
 
@@ -107,7 +73,11 @@ class LeaveTile extends StatelessWidget {
                 children: [
                   _infoItem("Leave Type", detail.entityLeaveType),
                   _infoItem("Days", "${detail.days}"),
-                  _infoItem("Status", '${detail.approved}', color: statusColor),
+                  _infoItem(
+                    "Status",
+                    detail.approved ? 'Approved' : 'Pending',
+                    color: detail.approved ? Colors.green : Colors.redAccent,
+                  ),
                 ],
               ),
 

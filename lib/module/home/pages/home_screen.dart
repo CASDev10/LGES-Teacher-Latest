@@ -31,6 +31,7 @@ import '../../chat/pages/conversation_screen.dart';
 import '../../class_section/pages/class_section_screen.dart';
 import '../../evaluation/cubit/evaluation_areas_cubit/evaluation_areas_cubit.dart';
 import '../../evaluation/cubit/evaluation_areas_cubit/evaluation_areas_state.dart';
+import '../../events/pages/events_screen.dart';
 import '../../file_sharing/pages/file_sharing_screen.dart';
 import '../../students_attendance/pages/attendance_filter_screen.dart';
 import '../repo/home_repo.dart';
@@ -342,15 +343,12 @@ class _HomeScreenState extends State<HomeScreen> {
                               Expanded(
                                 child: GestureDetector(
                                   onTap: () {
-                                    DisplayUtils.showToast(
-                                      context,
-                                      'Coming Soon',
-                                    );
+                                    NavRouter.push(context, EventsScreen());
                                   },
                                   child: HomeTabCard(
                                     homeTabModel: HomeTabModel(
-                                      "TIME TABLE",
-                                      "assets/images/svg/ic_time_table1.svg",
+                                      "EVENTS",
+                                      "assets/images/svg/leaves1.svg",
                                     ),
                                   ),
                                 ),

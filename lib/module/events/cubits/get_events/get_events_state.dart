@@ -1,5 +1,5 @@
 import '../../../../../core/failures/high_priority_failure.dart';
-import '../models/get_events_response.dart';
+import '../../models/get_events_response.dart';
 
 enum GetEventsStatus { initial, loading, success, failure }
 
