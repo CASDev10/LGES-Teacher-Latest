@@ -4,13 +4,14 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_pdfview/flutter_pdfview.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:lges_teacher_app/components/base_scaffold.dart';
 import 'package:lges_teacher_app/components/custom_appbar.dart';
 import 'package:lges_teacher_app/components/custom_button.dart';
-import 'package:lges_teacher_app/components/custom_dropdown.dart';
 import 'package:lges_teacher_app/components/custom_textfield.dart';
 import 'package:lges_teacher_app/constants/app_colors.dart';
 import 'package:lges_teacher_app/module/daily_diary/cubit/add_diary_cubit/add_diary_cubit.dart';
@@ -20,7 +21,9 @@ import 'package:lges_teacher_app/module/daily_diary/models/add_diary_input.dart'
 import 'package:lges_teacher_app/module/daily_diary/models/subjects_response.dart';
 import 'package:lges_teacher_app/module/daily_diary/models/update_diary_input.dart';
 import 'package:lges_teacher_app/utils/custom_date_time_picker.dart';
+import 'package:path_provider/path_provider.dart';
 
+import '../../../components/generic_drop_down.dart';
 import '../../../components/loading_indicator.dart';
 import '../../../config/routes/nav_router.dart';
 import '../../../core/di/service_locator.dart';
@@ -81,18 +84,20 @@ class _AddDailyDiaryScreenState extends State<AddDailyDiaryScreen> {
   }
 
   Widget buildFilePreview() {
-    // Case 1: File URL exists (from API)
-
     if (file != null) {
+      final path = file!.path.toLowerCase();
       final isImage =
-          file!.path.toLowerCase().endsWith(".jpg") ||
-          file!.path.toLowerCase().endsWith(".jpeg") ||
-          file!.path.toLowerCase().endsWith(".png");
+          path.endsWith(".jpg") ||
+          path.endsWith(".jpeg") ||
+          path.endsWith(".png") ||
+          path.endsWith(".gif");
+      final isPDF = path.endsWith(".pdf");
 
       return Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Header
           Container(
             padding: const EdgeInsets.all(12),
             decoration: const BoxDecoration(
@@ -101,7 +106,10 @@ class _AddDailyDiaryScreenState extends State<AddDailyDiaryScreen> {
             ),
             child: Row(
               children: [
-                const Icon(CupertinoIcons.doc, color: AppColors.primaryDark),
+                Icon(
+                  isPDF ? CupertinoIcons.doc_text_fill : CupertinoIcons.photo,
+                  color: AppColors.primaryDark,
+                ),
                 const SizedBox(width: 10),
                 Expanded(
                   child: Text(
@@ -138,6 +146,7 @@ class _AddDailyDiaryScreenState extends State<AddDailyDiaryScreen> {
             ),
           ),
           const SizedBox(height: 8),
+
           if (isImage)
             ClipRRect(
               borderRadius: BorderRadius.circular(12),
@@ -148,6 +157,26 @@ class _AddDailyDiaryScreenState extends State<AddDailyDiaryScreen> {
                 fit: BoxFit.cover,
               ),
             )
+          else if (isPDF)
+            Container(
+              height: 300,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(12),
+                color: AppColors.lightGreyColor,
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: PDFView(
+                  filePath: file!.path,
+                  enableSwipe: true,
+                  swipeHorizontal: true,
+                  autoSpacing: false,
+                  pageFling: true,
+                  backgroundColor: Colors.white,
+                  onError: (error) => debugPrint('PDF error: $error'),
+                ),
+              ),
+            )
           else
             const Text(
               'Preview not available for this file type',
@@ -155,55 +184,31 @@ class _AddDailyDiaryScreenState extends State<AddDailyDiaryScreen> {
             ),
         ],
       );
-    } else if (fileUrl.isNotEmpty) {
+    }
+    // -------- File URL preview (including PDF) --------
+    else if (fileUrl.isNotEmpty) {
+      final lowerUrl = fileUrl.toLowerCase();
       final isImage =
-          fileUrl.toLowerCase().endsWith(".jpg") ||
-          fileUrl.toLowerCase().endsWith(".jpeg") ||
-          fileUrl.toLowerCase().endsWith(".png") ||
-          fileUrl.toLowerCase().endsWith(".gif");
+          lowerUrl.endsWith(".jpg") ||
+          lowerUrl.endsWith(".jpeg") ||
+          lowerUrl.endsWith(".png") ||
+          lowerUrl.endsWith(".gif");
+      final isPDF = lowerUrl.endsWith(".pdf");
 
-      return Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          GestureDetector(
-            onTap: () async {},
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 12),
-              decoration: BoxDecoration(
-                color: AppColors.lightGreyColor,
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Row(
-                children: [
-                  const Icon(
-                    CupertinoIcons.doc_text,
-                    color: AppColors.primaryDark,
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: Text(
-                      fileUrl.split('/').last,
-                      style: const TextStyle(
-                        color: AppColors.primaryDark,
-                        fontSize: 14,
-                        decoration: TextDecoration.underline,
-                      ),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                  const Icon(
-                    CupertinoIcons.arrow_up_right,
-                    size: 18,
-                    color: AppColors.primaryDark,
-                  ),
-                ],
-              ),
-            ),
-          ),
-          const SizedBox(height: 8),
-          if (isImage)
-            ClipRRect(
+      return FutureBuilder<File?>(
+        future: isPDF ? _downloadPdfFromUrl(fileUrl) : Future.value(null),
+        builder: (context, snapshot) {
+          Widget previewWidget;
+
+          if (snapshot.connectionState == ConnectionState.waiting && isPDF) {
+            previewWidget = const Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            previewWidget = const Text(
+              'Error loading preview',
+              style: TextStyle(color: Colors.red),
+            );
+          } else if (isImage) {
+            previewWidget = ClipRRect(
               borderRadius: BorderRadius.circular(12),
               child: Image.network(
                 fileUrl,
@@ -215,15 +220,84 @@ class _AddDailyDiaryScreenState extends State<AddDailyDiaryScreen> {
                   style: TextStyle(color: Colors.red),
                 ),
               ),
-            )
-          else
-            const Text(
+            );
+          } else if (isPDF && snapshot.hasData && snapshot.data != null) {
+            previewWidget = Container(
+              height: 300,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(12),
+                color: AppColors.lightGreyColor,
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: PDFView(
+                  filePath: snapshot.data!.path,
+                  enableSwipe: true,
+                  swipeHorizontal: true,
+                  autoSpacing: false,
+                  pageFling: true,
+                  backgroundColor: Colors.white,
+                  onError: (error) => debugPrint('PDF error: $error'),
+                ),
+              ),
+            );
+          } else {
+            previewWidget = const Text(
               'Preview not available for this file type',
               style: TextStyle(color: AppColors.primaryDark, fontSize: 13),
-            ),
-        ],
+            );
+          }
+
+          return Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 15,
+                  vertical: 12,
+                ),
+                decoration: BoxDecoration(
+                  color: AppColors.lightGreyColor,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Row(
+                  children: [
+                    Icon(
+                      isPDF
+                          ? CupertinoIcons.doc_text_fill
+                          : CupertinoIcons.photo,
+                      color: AppColors.primaryDark,
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Text(
+                        fileUrl.split('/').last,
+                        style: const TextStyle(
+                          color: AppColors.primaryDark,
+                          fontSize: 14,
+                          decoration: TextDecoration.underline,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    const Icon(
+                      CupertinoIcons.arrow_up_right,
+                      size: 18,
+                      color: AppColors.primaryDark,
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 8),
+              previewWidget,
+            ],
+          );
+        },
       );
-    } else {
+    }
+    // --- No file selected ---
+    else {
       return Container(
         decoration: const BoxDecoration(
           color: AppColors.lightGreyColor,
@@ -249,6 +323,23 @@ class _AddDailyDiaryScreenState extends State<AddDailyDiaryScreen> {
         ),
       );
     }
+  }
+
+  // --- Helper to download PDF from URL ---
+  Future<File?> _downloadPdfFromUrl(String url) async {
+    try {
+      final response = await http.get(Uri.parse(url));
+      if (response.statusCode == 200) {
+        final bytes = response.bodyBytes;
+        final dir = await getTemporaryDirectory();
+        final file = File('${dir.path}/temp.pdf');
+        await file.writeAsBytes(bytes, flush: true);
+        return file;
+      }
+    } catch (e) {
+      debugPrint('PDF download error: $e');
+    }
+    return null;
   }
 
   @override
@@ -365,32 +456,30 @@ class _AddDailyDiaryScreenState extends State<AddDailyDiaryScreen> {
                               }
                             : null,
                         child: AbsorbPointer(
-                          absorbing:
-                              widget.diary != null, // 🔒 prevent interaction
-                          child: CustomDropDown(
+                          absorbing: widget.diary != null,
+                          child: GenericDropDown<Class>(
                             allPadding: 0,
                             horizontalPadding: 15,
                             isOutline: false,
                             hintColor: AppColors.primaryDark,
                             iconColor: AppColors.primaryDark,
                             suffixIconPath: '',
-                            hint: dropdownValueClass ?? 'Class',
-                            items: classState.classes
-                                .map((selectClass) => selectClass.className)
-                                .toList(),
-                            onSelect: (String value) {
-                              Class selectedClass = classState.classes
-                                  .firstWhere(
-                                    (element) => element.className == value,
-                                  );
+                            hint: 'Select Class',
+                            items: classState.classes,
+                            onSelect: (Class value) {
                               setState(() {
-                                classId = selectedClass.classId.toString();
-                                dropdownValueClass = value;
-                                context.read<SectionsCubit>().fetchSections(
-                                  selectedClass.classId.toString(),
-                                );
+                                dropdownValueClass = value.className;
+                                dropdownValueSection = null;
+                                dropdownValueSubject = null;
+                                sections = [];
+                                subjects = [];
+                                classId = value.classId.toString();
                               });
+                              context.read<SectionsCubit>().fetchSections(
+                                classId.toString(),
+                              );
                             },
+                            getLabel: (classModel) => classModel.className,
                           ),
                         ),
                       ),
@@ -412,8 +501,8 @@ class _AddDailyDiaryScreenState extends State<AddDailyDiaryScreen> {
                             );
                           }
                         },
-                        builder: (context, sectionState) {
-                          sections = sectionState.sections;
+                        builder: (context, sectionStatus) {
+                          sections = sectionStatus.sections;
                           return GestureDetector(
                             onTap: dropdownValueClass == null
                                 ? () {
@@ -425,39 +514,27 @@ class _AddDailyDiaryScreenState extends State<AddDailyDiaryScreen> {
                                 : null,
                             child: AbsorbPointer(
                               absorbing: widget.diary != null,
-                              child: CustomDropDown(
+                              child: GenericDropDown<Section>(
                                 allPadding: 0,
                                 horizontalPadding: 15,
                                 isOutline: false,
                                 hintColor: AppColors.primaryDark,
                                 iconColor: AppColors.primaryDark,
                                 suffixIconPath: '',
-                                hint: dropdownValueSection ?? 'Section',
-                                items: sectionState.sections
-                                    .map((section) => section.sectionName)
-                                    .toList(),
-                                onSelect: (String value) {
+                                hint: 'Select Section',
+                                items: sectionStatus.sections,
+                                onSelect: (Section value) {
                                   setState(() {
-                                    dropdownValueSection = value;
-                                    Section selectedSection = sectionState
-                                        .sections
-                                        .firstWhere(
-                                          (element) =>
-                                              element.sectionName == value,
-                                        );
-                                    sectionId = selectedSection.sectionId
-                                        .toString();
-                                    Class selectedClass = classState.classes
-                                        .firstWhere(
-                                          (element) =>
-                                              element.className ==
-                                              dropdownValueClass,
-                                        );
-                                    context.read<SubjectsCubit>().fetchSubjects(
-                                      selectedClass.classId.toString(),
-                                    );
+                                    dropdownValueSection = value.sectionName;
+                                    dropdownValueSubject = null;
+                                    subjects = [];
+                                    sectionId = value.sectionId.toString();
                                   });
+                                  context.read<SubjectsCubit>().fetchSubjects(
+                                    classId!,
+                                  );
                                 },
+                                getLabel: (section) => section.sectionName,
                               ),
                             ),
                           );
@@ -494,30 +571,22 @@ class _AddDailyDiaryScreenState extends State<AddDailyDiaryScreen> {
                                 : null,
                             child: AbsorbPointer(
                               absorbing: widget.diary != null,
-                              child: CustomDropDown(
+                              child: GenericDropDown<SubjectModel>(
                                 allPadding: 0,
                                 horizontalPadding: 15,
                                 isOutline: false,
                                 hintColor: AppColors.primaryDark,
                                 iconColor: AppColors.primaryDark,
                                 suffixIconPath: '',
-                                hint: dropdownValueSubject ?? 'Subject',
-                                items: subjectsState.subjects
-                                    .map((s) => s.subjectName)
-                                    .toList(),
-                                onSelect: (String value) {
+                                hint: 'Select Subjects',
+                                items: subjectsState.subjects,
+                                onSelect: (SubjectModel value) {
                                   setState(() {
-                                    SubjectModel selectedSubject = subjectsState
-                                        .subjects
-                                        .firstWhere(
-                                          (element) =>
-                                              element.subjectName == value,
-                                        );
-                                    subjectId = selectedSubject.subjectId
-                                        .toString();
-                                    dropdownValueSubject = value;
+                                    dropdownValueSubject = value.subjectName;
+                                    subjectId = value.subjectId.toString();
                                   });
                                 },
+                                getLabel: (section) => section.subjectName,
                               ),
                             ),
                           );
@@ -536,21 +605,7 @@ class _AddDailyDiaryScreenState extends State<AddDailyDiaryScreen> {
                             result = await FilePicker.platform.pickFiles(
                               type: FileType.custom,
                               allowMultiple: false,
-                              allowedExtensions: [
-                                'pdf',
-                                'doc',
-                                'docx',
-                                'txt',
-                                'jpg',
-                                'jpeg',
-                                'png',
-                                'xlsx',
-                                'xlsm',
-                                'xlsb',
-                                'xltx',
-                                'ppt',
-                                'pptx',
-                              ],
+                              allowedExtensions: ['pdf', 'jpg', 'jpeg', 'png'],
                             );
                             if (result == null) {
                               DisplayUtils.showToast(

@@ -44,4 +44,6 @@ class Endpoints {
   static const String deleteLeave = '/Delete';
   static const String addEvent = '/AddCalendar';
   static const String calendarEvents = '/GetCalendar';
+  static const String getNotificationTypeList = '/GetNotificationTypeList';
+  static const String getStudents = '/GetStudentListForNotification';
 }

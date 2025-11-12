@@ -3,22 +3,22 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:lges_teacher_app/components/base_scaffold.dart';
 import 'package:lges_teacher_app/components/custom_appbar.dart';
-import 'package:lges_teacher_app/config/routes/nav_router.dart';
 import 'package:lges_teacher_app/constants/app_colors.dart';
 import 'package:lges_teacher_app/module/auth/repo/auth_repository.dart';
 import 'package:lges_teacher_app/module/class_section/cubit/classes_cubit/classes_cubit.dart';
 import 'package:lges_teacher_app/module/class_section/cubit/sections_cubit/sections_cubit.dart';
 import 'package:lges_teacher_app/module/class_section/model/sections_model.dart';
 import 'package:lges_teacher_app/module/students_attendance/models/attendance_input.dart';
-import 'package:lges_teacher_app/module/students_attendance/pages/attendance_history_screen.dart';
 
 import '../../../components/custom_button.dart';
 import '../../../components/generic_drop_down.dart';
 import '../../../components/loading_indicator.dart';
+import '../../../config/routes/nav_router.dart';
 import '../../../core/di/service_locator.dart';
 import '../../../utils/display/display_utils.dart';
 import '../../class_section/model/classes_model.dart';
 import '../../leave_request/widgets/custom_calander_widget.dart';
+import 'attendance_history_screen.dart';
 
 class AttendanceFilterScreen extends StatefulWidget {
   @override
@@ -32,17 +32,17 @@ class _AttendanceFilterScreenState extends State<AttendanceFilterScreen> {
   TextEditingController fromDateController = TextEditingController();
   String formattedDate = '';
   AuthRepository authRepository = sl<AuthRepository>();
-
+  String? classId;
+  String? sectionId;
   @override
   void initState() {
     super.initState();
     DateTime now = DateTime.now();
-    formattedDate = DateFormat('d, MMMM yyyy').format(now);
+    formattedDate = DateFormat('yyyy-MM-dd').format(now);
   }
 
   @override
   Widget build(BuildContext context) {
-    DateTime now = DateTime.now();
     return MultiBlocProvider(
       providers: [
         BlocProvider(
@@ -81,8 +81,9 @@ class _AttendanceFilterScreenState extends State<AttendanceFilterScreen> {
                             CustomCalendarWidget(
                               onDaySelected: (selectedDate) {
                                 fromDateController.text = DateFormat(
-                                  'dd/MM/yyyy',
+                                  'yyyy-MM-dd',
                                 ).format(selectedDate);
+                                formattedDate = fromDateController.text;
                               },
                               firstDay: DateTime(2000, 1, 1),
                               lastDay: DateTime.now(),
@@ -99,19 +100,18 @@ class _AttendanceFilterScreenState extends State<AttendanceFilterScreen> {
                               items: classState.classes,
                               onSelect: (Class value) {
                                 setState(() {
-                                  setState(() {
-                                    dropdownValueClass = value.className;
-                                    dropdownValueSection = null;
-                                    sections = [];
-                                  });
+                                  dropdownValueClass = value.className;
+                                  dropdownValueSection = null;
+                                  sections = [];
+                                  classId = value.classId.toString();
                                 });
                                 context.read<SectionsCubit>().fetchSections(
-                                  value.classId.toString(),
+                                  classId.toString(),
                                 );
                               },
                               getLabel: (classModel) => classModel.className,
                             ),
-                            const SizedBox(height: 25),
+                            const SizedBox(height: 12),
                             BlocConsumer<SectionsCubit, SectionsState>(
                               listener: (context, sectionStatus) {
                                 if (sectionStatus.sectionsStatus ==
@@ -153,6 +153,7 @@ class _AttendanceFilterScreenState extends State<AttendanceFilterScreen> {
                                       setState(() {
                                         dropdownValueSection =
                                             value.sectionName;
+                                        sectionId = value.sectionId.toString();
                                       });
                                     },
                                     getLabel: (section) => section.sectionName,
@@ -187,22 +188,10 @@ class _AttendanceFilterScreenState extends State<AttendanceFilterScreen> {
                           } else {
                             print("Class --- $dropdownValueClass");
                             print("Section --- $dropdownValueSection");
-
-                            Class selectedClass = classState.classes.firstWhere(
-                              (element) =>
-                                  element.className == dropdownValueClass,
-                            );
-                            Section? selectedSection = sections?.firstWhere(
-                              (element) =>
-                                  element.sectionName == dropdownValueSection,
-                            );
                             AttendanceInput attendanceInput = AttendanceInput(
-                              sectionIdFk: selectedSection?.sectionId
-                                  .toString(),
-                              classIdFk: selectedClass.classId.toString(),
-                              attendanceDate: DateFormat(
-                                'yyyy-MM-dd',
-                              ).format(now),
+                              sectionIdFk: sectionId.toString(),
+                              classIdFk: classId.toString(),
+                              attendanceDate: formattedDate,
                               isOnRollStudents: true,
                               uCSchoolId: authRepository.user.schoolId
                                   .toString(),

@@ -41,7 +41,6 @@ class _CustomCalendarWidgetState extends State<CustomCalendarWidget> {
       lastDay: lastDay,
       focusedDay: focusedDay,
       selectedDayPredicate: (day) => isSameDay(day, selectedDay),
-
       onDaySelected: (selected, focused) {
         if (!selected.isBefore(firstDay) && !selected.isAfter(lastDay)) {
           setState(() {
@@ -51,12 +50,10 @@ class _CustomCalendarWidgetState extends State<CustomCalendarWidget> {
           widget.onDaySelected(selectedDay);
         }
       },
-
       enabledDayPredicate: (day) {
         // Enable only days between firstDay and lastDay (inclusive)
         return !day.isBefore(firstDay) && !day.isAfter(lastDay);
       },
-
       headerStyle: const HeaderStyle(
         formatButtonVisible: false,
         titleCentered: false,
@@ -74,20 +71,23 @@ class _CustomCalendarWidgetState extends State<CustomCalendarWidget> {
         ),
         titleTextStyle: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
       ),
-
       calendarStyle: CalendarStyle(
         todayDecoration: BoxDecoration(
-          color: Colors.grey.shade200,
-          shape: BoxShape.circle,
-        ),
-        selectedDecoration: BoxDecoration(
-          border: Border.all(color: AppColors.primaryLight),
+          border: Border.all(color: AppColors.primaryDark),
           color: Colors.white,
           shape: BoxShape.circle,
         ),
+        selectedDecoration: BoxDecoration(
+          color: AppColors.primaryLight,
+          shape: BoxShape.circle,
+        ),
+        todayTextStyle: TextStyle(
+          color: Colors.black,
+          fontWeight: FontWeight.w500,
+        ),
         disabledTextStyle: TextStyle(color: Colors.grey.shade400),
         selectedTextStyle: const TextStyle(
-          color: Colors.black,
+          color: Colors.white,
           fontWeight: FontWeight.w500,
         ),
         defaultTextStyle: const TextStyle(fontSize: 16),

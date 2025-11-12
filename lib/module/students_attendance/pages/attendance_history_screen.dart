@@ -33,10 +33,19 @@ class _AttendanceHistoryScreenState extends State<AttendanceHistoryScreen> {
   HomeRepository homeRepository = sl<HomeRepository>();
   List<AttendanceModel> filterStudentAttendanceList = [];
   List<AttendanceModel> studentAttendanceList = [];
+  String formattedDate = '';
+
+  @override
+  void initState() {
+    super.initState();
+    print('Attendance input ${widget.attendanceInput.toJson()}');
+  }
 
   @override
   Widget build(BuildContext context) {
-    DateTime now = DateTime.now();
+    DateTime now = DateFormat(
+      "yyyy-MM-dd",
+    ).parse(widget.attendanceInput.attendanceDate!);
     String formattedDate = DateFormat('d, MMMM yyyy').format(now);
     return MultiBlocProvider(
       providers: [

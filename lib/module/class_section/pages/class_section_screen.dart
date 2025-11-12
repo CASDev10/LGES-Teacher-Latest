@@ -30,8 +30,8 @@ class ClassSectionScreen extends StatefulWidget {
 class _ClassSectionScreenState extends State<ClassSectionScreen> {
   String? dropdownValueClass;
   String? dropdownValueSection;
-  List<Section>? sections;
-
+  String? classId;
+  String? sectionId;
   bool loadFromManual = true;
 
   AuthRepository authRepository = sl<AuthRepository>();
@@ -129,19 +129,17 @@ class _ClassSectionScreenState extends State<ClassSectionScreen> {
                             items: classState.classes,
                             onSelect: (Class value) {
                               setState(() {
-                                setState(() {
-                                  dropdownValueClass = value.className;
-                                  dropdownValueSection = null;
-                                  sections = [];
-                                });
+                                dropdownValueClass = value.className;
+                                dropdownValueSection = null;
+                                classId = value.classId.toString();
                               });
                               context.read<SectionsCubit>().fetchSections(
-                                value.classId.toString(),
+                                classId.toString(),
                               );
                             },
                             getLabel: (classModel) => classModel.className,
                           ),
-                          const SizedBox(height: 25),
+                          const SizedBox(height: 12),
                           BlocConsumer<SectionsCubit, SectionsState>(
                             listener: (context, sectionStatus) {
                               if (sectionStatus.sectionsStatus ==
@@ -160,7 +158,6 @@ class _ClassSectionScreenState extends State<ClassSectionScreen> {
                               }
                             },
                             builder: (context, sectionStatus) {
-                              sections = sectionStatus.sections;
                               return GestureDetector(
                                 onTap: dropdownValueClass == null
                                     ? () {
@@ -182,6 +179,7 @@ class _ClassSectionScreenState extends State<ClassSectionScreen> {
                                   onSelect: (Section value) {
                                     setState(() {
                                       dropdownValueSection = value.sectionName;
+                                      sectionId = value.sectionId.toString();
                                     });
                                   },
                                   getLabel: (section) => section.sectionName,
@@ -222,7 +220,7 @@ class _ClassSectionScreenState extends State<ClassSectionScreen> {
                                 ),
                                 const SizedBox(width: 12),
                                 const TextView(
-                                  'Load from Manual',
+                                  "Update Attendance",
                                   fontSize: 14,
                                   color: AppColors.grey,
                                   fontWeight: FontWeight.w400,
@@ -259,20 +257,9 @@ class _ClassSectionScreenState extends State<ClassSectionScreen> {
                             } else {
                               print("Class --- $dropdownValueClass");
                               print("Section --- $dropdownValueSection");
-
-                              Class selectedClass = classState.classes
-                                  .firstWhere(
-                                    (element) =>
-                                        element.className == dropdownValueClass,
-                                  );
-                              Section? selectedSection = sections?.firstWhere(
-                                (element) =>
-                                    element.sectionName == dropdownValueSection,
-                              );
                               AttendanceInput attendanceInput = AttendanceInput(
-                                sectionIdFk: selectedSection?.sectionId
-                                    .toString(),
-                                classIdFk: selectedClass.classId.toString(),
+                                sectionIdFk: sectionId.toString(),
+                                classIdFk: classId.toString(),
                                 attendanceDate: DateFormat(
                                   'yyyy-MM-dd',
                                 ).format(now),

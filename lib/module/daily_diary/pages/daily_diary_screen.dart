@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:intl/intl.dart';
 import 'package:lges_teacher_app/components/base_scaffold.dart';
 import 'package:lges_teacher_app/components/custom_appbar.dart';
 import 'package:lges_teacher_app/components/custom_button.dart';
@@ -60,10 +61,7 @@ class _DailyDiaryScreenViewState extends State<DailyDiaryScreenView> {
         ',',
       );
     }
-
-    context.read<DiaryListCubit>().fetchDiaryList(
-      _authRepository.user.schoolId.toString(),
-    );
+    _fetchAllDiaries();
   }
 
   void _gotoAddDiary() {
@@ -79,9 +77,7 @@ class _DailyDiaryScreenViewState extends State<DailyDiaryScreenView> {
       }
       if (exists) {
         NavRouter.push(context, AddDailyDiaryScreen()).then((value) {
-          context.read<DiaryListCubit>().fetchDiaryList(
-            _authRepository.user.schoolId.toString(),
-          );
+          _fetchAllDiaries();
         });
       } else {
         Fluttertoast.showToast(msg: "You are not allowed to add diary!");
@@ -156,7 +152,6 @@ class _DailyDiaryScreenViewState extends State<DailyDiaryScreenView> {
                           context,
                           initialDate: DateTime.now(),
                           firstDate: DateTime(2000, 01, 01),
-                          lastDate: DateTime.now(),
                         );
                   },
                   controller: fromDateController,
@@ -184,7 +179,6 @@ class _DailyDiaryScreenViewState extends State<DailyDiaryScreenView> {
                           context,
                           initialDate: DateTime.now(),
                           firstDate: DateTime(2000, 01, 01),
-                          lastDate: DateTime.now(),
                         );
                   },
                   controller: toDateController,
@@ -200,6 +194,8 @@ class _DailyDiaryScreenViewState extends State<DailyDiaryScreenView> {
                         onPressed: () {
                           fromDateController.clear();
                           toDateController.clear();
+                          NavRouter.pop(context);
+                          _fetchAllDiaries();
                         },
                         style: OutlinedButton.styleFrom(
                           side: const BorderSide(color: Colors.grey),
@@ -223,7 +219,7 @@ class _DailyDiaryScreenViewState extends State<DailyDiaryScreenView> {
                       child: ElevatedButton(
                         onPressed: () {
                           Navigator.pop(context);
-                          // 🔍 Apply filter logic here
+                          _applyFilter();
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.primaryDark,
@@ -249,6 +245,33 @@ class _DailyDiaryScreenViewState extends State<DailyDiaryScreenView> {
           ),
         );
       },
+    );
+  }
+
+  void _applyFilter() {
+    final fromDateString = fromDateController.text.trim();
+    final toDateString = toDateController.text.trim();
+
+    if (fromDateString.isEmpty || toDateString.isEmpty) {
+      Fluttertoast.showToast(msg: "Please select both dates!");
+      return;
+    }
+    DateTime fromDate = DateFormat("dd/MM/yyyy").parse(fromDateController.text);
+    DateTime toDate = DateFormat("dd/MM/yyyy").parse(toDateController.text);
+    context.read<DiaryListCubit>().fetchDiaryList(
+      DateFormat("yyyy-MM-dd").format(fromDate),
+      DateFormat("yyyy-MM-dd").format(toDate),
+    );
+  }
+
+  void _fetchAllDiaries() {
+    final now = DateTime.now();
+    final fromDate = DateTime(now.year, 1, 1);
+    final toDate = DateTime(now.year, 12, 31);
+
+    context.read<DiaryListCubit>().fetchDiaryList(
+      DateFormat("yyyy-MM-dd").format(fromDate),
+      DateFormat("yyyy-MM-dd").format(toDate),
     );
   }
 
@@ -291,9 +314,7 @@ class _DailyDiaryScreenViewState extends State<DailyDiaryScreenView> {
           if (deleteState.deleteDiaryStatus == DeleteDiaryStatus.success) {
             DisplayUtils.removeLoader();
             DisplayUtils.showToast(context, 'Diary deleted successfully!');
-            context.read<DiaryListCubit>().fetchDiaryList(
-              _authRepository.user.schoolId.toString(),
-            );
+            _fetchAllDiaries();
           }
         },
         builder: (context, deleteState) {
@@ -314,95 +335,57 @@ class _DailyDiaryScreenViewState extends State<DailyDiaryScreenView> {
               child: Column(
                 children: [
                   Expanded(
-                    child: SingleChildScrollView(
-                      child: Column(
-                        children: [
-                          const SizedBox(height: 12),
-                          BlocBuilder<DiaryListCubit, DiaryListState>(
-                            builder: (context, state) {
-                              if (state.diaryListStatus ==
-                                  DiaryListStatus.loading) {
-                                return Center(child: LoadingIndicator());
-                              }
-                              if (state.diaryListStatus ==
-                                  DiaryListStatus.success) {
-                                return Column(
-                                  children: List.generate(
-                                    state.diaryList.length,
-                                    (index) {
-                                      return DiaryCard(
-                                        diary: state.diaryList[index],
-                                        onTap: () {
-                                          NavRouter.push(
-                                            context,
-                                            AddDailyDiaryScreen(
-                                              diary: state.diaryList[index],
-                                            ),
-                                          ).then((value) {
-                                            context
-                                                .read<DiaryListCubit>()
-                                                .fetchDiaryList(
-                                                  _authRepository.user.schoolId
-                                                      .toString(),
-                                                );
-                                          });
-                                        },
-                                        onDelete: () {
-                                          showDeleteConfirmationDialog(
-                                            context,
-                                            onConfirm: () {
-                                              DeleteDiaryInput input =
-                                                  DeleteDiaryInput(
-                                                    diaryId: state
-                                                        .diaryList[index]
-                                                        .diaryId,
-                                                    ucSchoolId: _authRepository
-                                                        .user
-                                                        .schoolId
-                                                        .toString(),
-                                                    ucLoginUserId:
-                                                        _authRepository
-                                                            .user
-                                                            .userId
-                                                            .toString(),
-                                                  );
-                                              context
-                                                  .read<DeleteDiaryCubit>()
-                                                  .deleteDiary(input);
-                                            },
-                                          );
-                                        },
-                                      ) /*ustomTextField(
-                                  hintText: state.diaryList[index].subjectName,
-                                  height: 50,
-                                  inputType: TextInputType.text,
-                                  fillColor: AppColors.lightGreyColor,
-                                  hintColor: AppColors.primaryDark,
-                                  fontWeight: FontWeight.w500,
-                                  readOnly: true,
-                                  fontSize: 16,
-                                  suffixWidget: SvgPicture.asset(
-                                    'assets/images/svg/ic_arrow_forward.svg',
-                                    color: AppColors.primaryDark,
-                                    height: 16,
-                                  ),
-                                  onTap: () {},
-                                )*/;
+                    child: BlocBuilder<DiaryListCubit, DiaryListState>(
+                      builder: (context, state) {
+                        if (state.diaryListStatus == DiaryListStatus.loading) {
+                          return Center(child: LoadingIndicator());
+                        }
+                        if (state.diaryListStatus == DiaryListStatus.success) {
+                          return ListView.builder(
+                            itemCount: state.diaryList.length,
+                            itemBuilder: (context, index) {
+                              return DiaryCard(
+                                diary: state.diaryList[index],
+                                onTap: () {
+                                  NavRouter.push(
+                                    context,
+                                    AddDailyDiaryScreen(
+                                      diary: state.diaryList[index],
+                                    ),
+                                  ).then((value) {
+                                    _fetchAllDiaries();
+                                  });
+                                },
+                                onDelete: () {
+                                  showDeleteConfirmationDialog(
+                                    context,
+                                    onConfirm: () {
+                                      DeleteDiaryInput input = DeleteDiaryInput(
+                                        diaryId: state.diaryList[index].diaryId,
+                                        ucSchoolId: _authRepository
+                                            .user
+                                            .schoolId
+                                            .toString(),
+                                        ucLoginUserId: _authRepository
+                                            .user
+                                            .userId
+                                            .toString(),
+                                      );
+                                      context
+                                          .read<DeleteDiaryCubit>()
+                                          .deleteDiary(input);
                                     },
-                                  ),
-                                );
-                              }
-                              if (state.diaryListStatus ==
-                                  DiaryListStatus.failure) {
-                                return Center(
-                                  child: Text(state.failure.message),
-                                );
-                              }
-                              return SizedBox();
+                                  );
+                                },
+                              );
                             },
-                          ),
-                        ],
-                      ),
+                          );
+                        }
+                        if (state.diaryListStatus == DiaryListStatus.failure) {
+                          return Center(child: Text(state.failure.message));
+                        }
+                        return SizedBox();
+                      },
                     ),
                   ),
                   const SizedBox(height: 20),

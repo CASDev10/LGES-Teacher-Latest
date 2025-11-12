@@ -60,6 +60,8 @@ dependencies:
   open_file: ^3.5.10
   image_picker: ^1.1.2
   logger: ^2.4.0
+  flutter_pdfview: ^1.4.3
+  http: ^1.6.0
 
 dev_dependencies:
   flutter_launcher_icons:

@@ -3,6 +3,7 @@ import 'dart:developer';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
+import 'package:lges_teacher_app/module/file_sharing/models/get_students_response.dart';
 import 'package:lges_teacher_app/module/home/models/app_config_reponse.dart';
 
 import '../../../constants/api_endpoints.dart';
@@ -14,6 +15,7 @@ import '../../../core/storage_service/storage_service.dart';
 import '../../auth/repo/auth_repository.dart';
 import '../../base_resposne_model.dart';
 import '../../file_sharing/models/file_sharing_input.dart';
+import '../../file_sharing/models/notification_types_response.dart';
 
 class HomeRepository {
   final NetworkService _networkService = sl<NetworkService>();
@@ -88,6 +90,42 @@ class HomeRepository {
         response,
       );
       return baseResponseModel;
+    } on BaseFailure catch (_) {
+      rethrow;
+    } on TypeError catch (e) {
+      log('TYPE error stackTrace :: ${e.stackTrace}');
+      rethrow;
+    }
+  }
+
+  Future<NotificationTypesResponse> getNotificationTypeList() async {
+    try {
+      var response = await _networkService.get(
+        Endpoints.getNotificationTypeList,
+      );
+
+      NotificationTypesResponse notificationTypesResponse = await compute(
+        notificationTypesResponseFromJson,
+        response,
+      );
+      return notificationTypesResponse;
+    } on BaseFailure catch (_) {
+      rethrow;
+    } on TypeError catch (e) {
+      log('TYPE error stackTrace :: ${e.stackTrace}');
+      rethrow;
+    }
+  }
+
+  Future<GetStudentsResponse> getStudents() async {
+    try {
+      var response = await _networkService.get(Endpoints.getStudents);
+
+      GetStudentsResponse getStudentsResponse = await compute(
+        getStudentsResponseFromJson,
+        response,
+      );
+      return getStudentsResponse;
     } on BaseFailure catch (_) {
       rethrow;
     } on TypeError catch (e) {

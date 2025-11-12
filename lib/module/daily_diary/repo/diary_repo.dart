@@ -20,9 +20,17 @@ class DiaryRepository {
   final NetworkService _networkService = sl<NetworkService>();
   AuthRepository _authRepository = sl<AuthRepository>();
 
-  Future<DiaryListResponseModel> getDiaryList(String school_id) async {
+  Future<DiaryListResponseModel> getDiaryList(
+    String fromDate,
+    String toDate,
+  ) async {
     try {
-      Map<String, dynamic> input = {"UC_SchoolId": school_id};
+      Map<String, dynamic> input = {
+        "UC_SchoolId": _authRepository.user.schoolId,
+        "UC_LoginUserId": _authRepository.user.userId,
+        "DateFrom": fromDate,
+        "DateTo": toDate,
+      };
 
       var response = await _networkService.get(
         Endpoints.getDiaryList,
