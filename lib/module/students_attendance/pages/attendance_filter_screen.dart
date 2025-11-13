@@ -12,7 +12,6 @@ import 'package:lges_teacher_app/module/students_attendance/models/attendance_in
 
 import '../../../components/custom_button.dart';
 import '../../../components/generic_drop_down.dart';
-import '../../../components/loading_indicator.dart';
 import '../../../config/routes/nav_router.dart';
 import '../../../core/di/service_locator.dart';
 import '../../../utils/display/display_utils.dart';
@@ -63,165 +62,163 @@ class _AttendanceFilterScreenState extends State<AttendanceFilterScreen> {
               topRight: Radius.circular(50),
             ),
           ),
-          child: BlocBuilder<ClassesCubit, ClassesState>(
-            builder: (context, classState) {
-              if (classState.classesStatus == ClassesStatus.loading) {
-                return Center(child: LoadingIndicator());
-              }
-              if (classState.classesStatus == ClassesStatus.success) {
-                return Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 20) +
-                      const EdgeInsets.symmetric(vertical: 30),
+          child: Padding(
+            padding:
+                const EdgeInsets.symmetric(horizontal: 20) +
+                const EdgeInsets.symmetric(vertical: 30),
+            child: Column(
+              children: [
+                Expanded(
                   child: Column(
                     children: [
-                      Expanded(
-                        child: Column(
-                          children: [
-                            CustomCalendarWidget(
-                              onDaySelected: (selectedDate) {
-                                fromDateController.text = DateFormat(
-                                  'yyyy-MM-dd',
-                                ).format(selectedDate);
-                                formattedDate = fromDateController.text;
-                              },
-                              firstDay: DateTime(2000, 1, 1),
-                              lastDay: DateTime.now(),
-                            ),
-                            const SizedBox(height: 40),
-                            GenericDropDown<Class>(
+                      CustomCalendarWidget(
+                        onDaySelected: (selectedDate) {
+                          fromDateController.text = DateFormat(
+                            'yyyy-MM-dd',
+                          ).format(selectedDate);
+                          formattedDate = fromDateController.text;
+                        },
+                        firstDay: DateTime(2000, 1, 1),
+                        lastDay: DateTime.now(),
+                      ),
+                      const SizedBox(height: 40),
+                      BlocConsumer<ClassesCubit, ClassesState>(
+                        listener: (context, classState) {
+                          if (classState.classesStatus ==
+                              ClassesStatus.loading) {
+                            DisplayUtils.showLoader();
+                          } else if (classState.classesStatus ==
+                              ClassesStatus.success) {
+                            DisplayUtils.removeLoader();
+                          } else if (classState.classesStatus ==
+                              ClassesStatus.failure) {
+                            DisplayUtils.removeLoader();
+                            DisplayUtils.showSnackBar(
+                              context,
+                              classState.failure.message,
+                            );
+                          }
+                        },
+                        builder: (context, classState) {
+                          return GenericDropDown<Class>(
+                            allPadding: 0,
+                            horizontalPadding: 15,
+                            isOutline: false,
+                            hintColor: AppColors.primaryDark,
+                            iconColor: AppColors.primaryDark,
+                            suffixIconPath: '',
+                            hint: dropdownValueClass ?? 'Select Class',
+                            items: classState.classes,
+                            onSelect: (Class value) {
+                              setState(() {
+                                dropdownValueClass = value.className;
+                                dropdownValueSection = null;
+                                classId = value.classId.toString();
+                              });
+                              context.read<SectionsCubit>().fetchSections(
+                                classId.toString(),
+                              );
+                            },
+                            getLabel: (classModel) => classModel.className,
+                          );
+                        },
+                      ),
+                      const SizedBox(height: 12),
+                      BlocConsumer<SectionsCubit, SectionsState>(
+                        listener: (context, sectionStatus) {
+                          if (sectionStatus.sectionsStatus ==
+                              SectionsStatus.loading) {
+                            DisplayUtils.showLoader();
+                          } else if (sectionStatus.sectionsStatus ==
+                              SectionsStatus.success) {
+                            DisplayUtils.removeLoader();
+                          } else if (sectionStatus.sectionsStatus ==
+                              SectionsStatus.failure) {
+                            DisplayUtils.removeLoader();
+                            DisplayUtils.showSnackBar(
+                              context,
+                              sectionStatus.failure.message,
+                            );
+                          }
+                        },
+                        builder: (context, sectionStatus) {
+                          sections = sectionStatus.sections;
+                          return GestureDetector(
+                            onTap: dropdownValueClass == null
+                                ? () {
+                                    DisplayUtils.showSnackBar(
+                                      context,
+                                      "Please select Class First",
+                                    );
+                                  }
+                                : null,
+                            child: GenericDropDown<Section>(
                               allPadding: 0,
                               horizontalPadding: 15,
                               isOutline: false,
                               hintColor: AppColors.primaryDark,
                               iconColor: AppColors.primaryDark,
                               suffixIconPath: '',
-                              hint: 'Select Class',
-                              items: classState.classes,
-                              onSelect: (Class value) {
+                              hint: 'Select Section',
+                              items: sectionStatus.sections,
+                              onSelect: (Section value) {
                                 setState(() {
-                                  dropdownValueClass = value.className;
-                                  dropdownValueSection = null;
-                                  sections = [];
-                                  classId = value.classId.toString();
+                                  dropdownValueSection = value.sectionName;
+                                  sectionId = value.sectionId.toString();
                                 });
-                                context.read<SectionsCubit>().fetchSections(
-                                  classId.toString(),
-                                );
                               },
-                              getLabel: (classModel) => classModel.className,
+                              getLabel: (section) => section.sectionName,
                             ),
-                            const SizedBox(height: 12),
-                            BlocConsumer<SectionsCubit, SectionsState>(
-                              listener: (context, sectionStatus) {
-                                if (sectionStatus.sectionsStatus ==
-                                    SectionsStatus.loading) {
-                                  DisplayUtils.showLoader();
-                                } else if (sectionStatus.sectionsStatus ==
-                                    SectionsStatus.success) {
-                                  DisplayUtils.removeLoader();
-                                } else if (sectionStatus.sectionsStatus ==
-                                    SectionsStatus.failure) {
-                                  DisplayUtils.removeLoader();
-                                  DisplayUtils.showSnackBar(
-                                    context,
-                                    sectionStatus.failure.message,
-                                  );
-                                }
-                              },
-                              builder: (context, sectionStatus) {
-                                sections = sectionStatus.sections;
-                                return GestureDetector(
-                                  onTap: dropdownValueClass == null
-                                      ? () {
-                                          DisplayUtils.showSnackBar(
-                                            context,
-                                            "Please select Class First",
-                                          );
-                                        }
-                                      : null,
-                                  child: GenericDropDown<Section>(
-                                    allPadding: 0,
-                                    horizontalPadding: 15,
-                                    isOutline: false,
-                                    hintColor: AppColors.primaryDark,
-                                    iconColor: AppColors.primaryDark,
-                                    suffixIconPath: '',
-                                    hint: 'Select Section',
-                                    items: sectionStatus.sections,
-                                    onSelect: (Section value) {
-                                      setState(() {
-                                        dropdownValueSection =
-                                            value.sectionName;
-                                        sectionId = value.sectionId.toString();
-                                      });
-                                    },
-                                    getLabel: (section) => section.sectionName,
-                                  ),
-                                );
-                              },
-                            ),
-                            SizedBox(height: 22),
-                          ],
-                        ),
-                      ),
-                      CustomButton(
-                        height: 50,
-                        borderRadius: 15,
-                        onPressed: () {
-                          if (dropdownValueSection == null &&
-                              dropdownValueClass == null) {
-                            DisplayUtils.showSnackBar(
-                              context,
-                              "Please select Class & Section",
-                            );
-                          } else if (dropdownValueClass == null) {
-                            DisplayUtils.showSnackBar(
-                              context,
-                              "Please select Class",
-                            );
-                          } else if (dropdownValueSection == null) {
-                            DisplayUtils.showSnackBar(
-                              context,
-                              "Please select Section",
-                            );
-                          } else {
-                            print("Class --- $dropdownValueClass");
-                            print("Section --- $dropdownValueSection");
-                            AttendanceInput attendanceInput = AttendanceInput(
-                              sectionIdFk: sectionId.toString(),
-                              classIdFk: classId.toString(),
-                              attendanceDate: formattedDate,
-                              isOnRollStudents: true,
-                              uCSchoolId: authRepository.user.schoolId
-                                  .toString(),
-                              uCEntityId: authRepository.user.entityId
-                                  .toString(),
-                            );
-
-                            print(
-                              'Student attendance ${attendanceInput.toJson()}',
-                            );
-                            NavRouter.push(
-                              context,
-                              AttendanceHistoryScreen(
-                                attendanceInput: attendanceInput,
-                              ),
-                            );
-                          }
+                          );
                         },
-                        title: 'Show',
-                        isEnabled: true,
                       ),
+                      SizedBox(height: 22),
                     ],
                   ),
-                );
-              }
-              if (classState.classesStatus == ClassesStatus.failure) {
-                return Center(child: Text(classState.failure.message));
-              }
-              return SizedBox();
-            },
+                ),
+                CustomButton(
+                  height: 50,
+                  borderRadius: 15,
+                  onPressed: () {
+                    if (dropdownValueSection == null &&
+                        dropdownValueClass == null) {
+                      DisplayUtils.showSnackBar(
+                        context,
+                        "Please select Class & Section",
+                      );
+                    } else if (dropdownValueClass == null) {
+                      DisplayUtils.showSnackBar(context, "Please select Class");
+                    } else if (dropdownValueSection == null) {
+                      DisplayUtils.showSnackBar(
+                        context,
+                        "Please select Section",
+                      );
+                    } else {
+                      print("Class --- $dropdownValueClass");
+                      print("Section --- $dropdownValueSection");
+                      AttendanceInput attendanceInput = AttendanceInput(
+                        sectionIdFk: sectionId.toString(),
+                        classIdFk: classId.toString(),
+                        attendanceDate: formattedDate,
+                        isOnRollStudents: true,
+                        uCSchoolId: authRepository.user.schoolId.toString(),
+                        uCEntityId: authRepository.user.entityId.toString(),
+                      );
+
+                      print('Student attendance ${attendanceInput.toJson()}');
+                      NavRouter.push(
+                        context,
+                        AttendanceHistoryScreen(
+                          attendanceInput: attendanceInput,
+                        ),
+                      );
+                    }
+                  },
+                  title: 'Show',
+                  isEnabled: true,
+                ),
+              ],
+            ),
           ),
         ),
         hMargin: 0,

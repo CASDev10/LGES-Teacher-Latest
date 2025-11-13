@@ -1,5 +1,4 @@
 import 'package:bloc/bloc.dart';
-import 'package:lges_teacher_app/module/daily_diary/models/subjects_input.dart';
 import 'package:lges_teacher_app/module/daily_diary/models/subjects_response.dart';
 
 import '../../../../core/api_result.dart';
@@ -13,27 +12,37 @@ class SubjectsCubit extends Cubit<SubjectsState> {
   SubjectsCubit(this._repository) : super(SubjectsState.initial());
   DiaryRepository _repository;
 
-  Future fetchSubjects(String classId) async {
+  Future fetchSubjects(String classId, String sectionId) async {
     emit(state.copyWith(subjectsStatus: SubjectsStatus.loading));
 
     try {
-      SubjectsResponseModel responseModel =
-          await _repository.getClassSubjects(classId);
+      SubjectsResponseModel responseModel = await _repository.getClassSubjects(
+        classId,
+        sectionId,
+      );
 
       if (responseModel.result == ApiResult.success) {
-        emit(state.copyWith(
-          subjectsStatus: SubjectsStatus.success,
-          subjects: responseModel.data,
-        ));
+        emit(
+          state.copyWith(
+            subjectsStatus: SubjectsStatus.success,
+            subjects: responseModel.data,
+          ),
+        );
       } else {
-        emit(state.copyWith(
+        emit(
+          state.copyWith(
             subjectsStatus: SubjectsStatus.failure,
-            failure: HighPriorityException(responseModel.message)));
+            failure: HighPriorityException(responseModel.message),
+          ),
+        );
       }
     } on BaseFailure catch (e) {
-      emit(state.copyWith(
+      emit(
+        state.copyWith(
           subjectsStatus: SubjectsStatus.failure,
-          failure: HighPriorityException(e.message)));
+          failure: HighPriorityException(e.message),
+        ),
+      );
     } catch (_) {}
   }
 }

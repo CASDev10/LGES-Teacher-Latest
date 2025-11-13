@@ -68,7 +68,7 @@ class NotificationStudentModel {
         admissionNumber: json["AdmissionNumber"],
         studentName: json["StudentName"],
         fatherName: json["FatherName"],
-        className: json["ClassName"],
+        className: json["ClassName"] ?? '',
         sectionName: json["SectionName"],
         createdBy: json["CreatedBy"],
         schoolName: json["SchoolName"],

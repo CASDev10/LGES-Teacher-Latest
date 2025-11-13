@@ -10,10 +10,13 @@ class GetStudentsCubit extends Cubit<GetStudentsState> {
   GetStudentsCubit(this._repository) : super(GetStudentsState.initial());
   HomeRepository _repository;
 
-  Future getGetStudents() async {
+  Future getGetStudents(String classId, String sectionId) async {
     emit(state.copyWith(status: GetStudentsStatus.loading));
     try {
-      GetStudentsResponse response = await _repository.getStudents();
+      GetStudentsResponse response = await _repository.getStudents(
+        classId,
+        sectionId,
+      );
       if (response.result == ApiResult.success) {
         emit(
           state.copyWith(

@@ -13,12 +13,11 @@ class ClassesSectionsRepository {
   AuthRepository _authRepository = sl<AuthRepository>();
 
   Future<ClassesModel> getClasses(String schoolId) async {
-
     try {
-      Map<String, dynamic> input =  {
+      Map<String, dynamic> input = {
         "UC_LoginUserId": _authRepository.user.userId,
         "UC_EntityId": _authRepository.user.entityId,
-        "UC_SchoolId": schoolId,
+        "SchoolIdFk": schoolId,
       };
 
       var response = await _networkService.get(
@@ -39,10 +38,10 @@ class ClassesSectionsRepository {
 
   Future<SectionsModel> getSections(String classId) async {
     try {
-      Map<String, dynamic> input =  {
+      Map<String, dynamic> input = {
         "UC_LoginUserId": _authRepository.user.userId,
         "UC_EntityId": _authRepository.user.entityId,
-        "UC_SchoolId": _authRepository.user.schoolId,
+        "SchoolIdFk": _authRepository.user.schoolId,
         "ClassIdFk": classId,
       };
 
@@ -51,8 +50,10 @@ class ClassesSectionsRepository {
         data: input,
       );
 
-      SectionsModel sectionsModel =
-          await compute(sectionsModelFromJson, response);
+      SectionsModel sectionsModel = await compute(
+        sectionsModelFromJson,
+        response,
+      );
 
       return sectionsModel;
     } on BaseFailure catch (_) {

@@ -81,57 +81,83 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _showAttendanceDialog(BuildContext context) {
-    showDialog(
+    showGeneralDialog(
       context: context,
-      builder: (BuildContext context) {
-        return Dialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Text(
-                  "Select an Option",
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w700,
-                    color: AppColors.primaryDark,
+      barrierDismissible: true,
+      barrierLabel: '',
+      transitionDuration: const Duration(milliseconds: 250),
+      pageBuilder: (context, anim1, anim2) => const SizedBox(),
+      transitionBuilder: (context, animation, secondaryAnimation, child) {
+        return ScaleTransition(
+          scale: CurvedAnimation(parent: animation, curve: Curves.easeOutBack),
+          child: Dialog(
+            insetPadding: const EdgeInsets.symmetric(horizontal: 30),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+            ),
+            elevation: 10,
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(20),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.08),
+                    blurRadius: 12,
+                    offset: const Offset(0, 4),
                   ),
-                ),
-                const SizedBox(height: 20),
-                // ✅ Mark Attendance Button
-                CustomButton(
-                  title: "Mark Attendance",
-                  height: 45,
-                  onPressed: () {
-                    Navigator.pop(context);
-                    _gotoAttendance();
-                  },
-                ),
-                const SizedBox(height: 10),
-                // ✅ Attendance History Button
-                CustomButton(
-                  title: "Attendance History",
-                  height: 45,
-                  onPressed: () {
-                    Navigator.pop(context);
-                    NavRouter.push(context, AttendanceFilterScreen());
-                  },
-                ),
-                const SizedBox(height: 10),
-                // ❌ Close Button
-                CustomButton(
-                  title: "Cancel",
-                  height: 45,
-                  isOutlinedButton: true,
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                ),
-              ],
+                ],
+              ),
+              padding: const EdgeInsets.symmetric(vertical: 25, horizontal: 20),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // 🔹 Title
+                  const Text(
+                    "Attendance Options",
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.primaryDark,
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  Container(
+                    width: 50,
+                    height: 3,
+                    decoration: BoxDecoration(
+                      color: AppColors.primaryDark,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                  const SizedBox(height: 40),
+                  CustomButton(
+                    title: "Mark Attendance",
+                    borderRadius: 12,
+                    onPressed: () {
+                      Navigator.pop(context);
+                      _gotoAttendance();
+                    },
+                  ),
+                  const SizedBox(height: 20),
+                  CustomButton(
+                    title: "Attendance History",
+                    borderRadius: 12,
+                    onPressed: () {
+                      Navigator.pop(context);
+                      NavRouter.push(context, AttendanceFilterScreen());
+                    },
+                  ),
+                  const SizedBox(height: 40),
+                  CustomButton(
+                    title: "Cancel",
+                    borderRadius: 12,
+                    isOutlinedButton: true,
+                    textColor: AppColors.primaryDark,
+                    onPressed: () => Navigator.pop(context),
+                  ),
+                ],
+              ),
             ),
           ),
         );
@@ -384,8 +410,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                 child: GestureDetector(
                                   child: HomeTabCard(
                                     homeTabModel: HomeTabModel(
-                                      "File Sharing",
-                                      "assets/images/svg/file_sharing1.svg",
+                                      "Notifications\n& Alerts",
+                                      "assets/images/svg/notification_and_alert1.svg",
                                     ),
                                   ),
                                   onTap: () {
@@ -415,7 +441,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   },
                                   child: HomeTabCard(
                                     homeTabModel: HomeTabModel(
-                                      "Notifications\n& Alerts",
+                                      "Chat",
                                       "assets/images/svg/notification_and_alert1.svg",
                                     ),
                                   ),

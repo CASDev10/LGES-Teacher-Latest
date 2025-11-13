@@ -4,7 +4,6 @@ import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
 import 'package:lges_teacher_app/components/base_scaffold.dart';
 import 'package:lges_teacher_app/components/custom_appbar.dart';
-import 'package:lges_teacher_app/components/h_padding.dart';
 import 'package:lges_teacher_app/components/loading_indicator.dart';
 import 'package:lges_teacher_app/components/search_textfield.dart';
 import 'package:lges_teacher_app/components/text_view.dart';
@@ -67,136 +66,134 @@ class _AttendanceHistoryScreenState extends State<AttendanceHistoryScreen> {
               topRight: Radius.circular(50),
             ),
           ),
-          child: BlocBuilder<StudentAttendanceCubit, StudentAttendanceState>(
-            builder: (context, state) {
-              if (state.studentAttendanceStatus ==
-                  StudentAttendanceStatus.loading) {
-                return Center(child: LoadingIndicator());
-              } else if (state.studentAttendanceStatus ==
-                  StudentAttendanceStatus.success) {
-                studentAttendanceList = List.from(state.attendanceList)
-                  ..sort(
-                    (a, b) => a.studentName.toLowerCase().compareTo(
-                      b.studentName.toLowerCase(),
+          child: Padding(
+            padding:
+                const EdgeInsets.symmetric(horizontal: 20) +
+                const EdgeInsets.only(top: 30),
+            child: Column(
+              children: [
+                Row(
+                  children: [
+                    const Expanded(
+                      flex: 1,
+                      child: TextView(
+                        "Attendance",
+                        color: AppColors.primaryDark,
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
-                  );
-
-                filterStudentAttendanceList = List.from(studentAttendanceList);
-                return Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 20) +
-                      const EdgeInsets.only(top: 30),
-                  child: Column(
-                    children: [
-                      Row(
+                    Expanded(
+                      flex: 1,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
                         children: [
-                          const Expanded(
-                            flex: 1,
-                            child: TextView(
-                              "Attendance",
-                              color: AppColors.primaryDark,
-                              fontSize: 18,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                          Expanded(
-                            flex: 1,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                SvgPicture.asset(
-                                  "assets/images/svg/ic_calendar.svg",
-                                ),
-                                const SizedBox(width: 5),
-                                TextView(
-                                  formattedDate,
-                                  textAlign: TextAlign.end,
-                                  color: AppColors.darkGreyColor,
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.w400,
-                                ),
-                              ],
-                            ),
+                          SvgPicture.asset("assets/images/svg/ic_calendar.svg"),
+                          const SizedBox(width: 5),
+                          TextView(
+                            formattedDate,
+                            textAlign: TextAlign.end,
+                            color: AppColors.darkGreyColor,
+                            fontSize: 10,
+                            fontWeight: FontWeight.w400,
                           ),
                         ],
                       ),
-                      const SizedBox(height: 15),
-                      SearchTextField(
-                        hint: "Search Student",
-                        readOnly: false,
-                        onValueChange: (String value) {
-                          context
-                              .read<StudentAttendanceCubit>()
-                              .filterSearchResults(value);
-                        },
-                      ).hPadding(padding: 10),
-                      const SizedBox(height: 15),
-                      Expanded(
-                        child: Container(
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 15),
+                SearchTextField(
+                  hint: "Search Student",
+                  readOnly: false,
+                  onValueChange: (String value) {
+                    context.read<StudentAttendanceCubit>().filterSearchResults(
+                      value,
+                    );
+                  },
+                ),
+                const SizedBox(height: 15),
+                Expanded(
+                  child: Container(
+                    decoration: const BoxDecoration(
+                      color: AppColors.lightGreyColor,
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(15),
+                        topRight: Radius.circular(15),
+                      ),
+                    ),
+                    child: Column(
+                      children: [
+                        Container(
+                          margin: const EdgeInsets.fromLTRB(8, 8, 8, 0),
+                          padding: const EdgeInsets.all(15),
                           decoration: const BoxDecoration(
-                            color: AppColors.lightGreyColor,
-                            borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(15),
-                              topRight: Radius.circular(15),
-                            ),
+                            color: AppColors.primaryDark,
+                            borderRadius: BorderRadius.all(Radius.circular(12)),
                           ),
-                          child: Column(
-                            children: [
-                              Container(
-                                margin: const EdgeInsets.fromLTRB(8, 8, 8, 0),
-                                padding: const EdgeInsets.all(15),
-                                decoration: const BoxDecoration(
-                                  color: AppColors.primaryDark,
-                                  borderRadius: BorderRadius.all(
-                                    Radius.circular(12),
-                                  ),
-                                ),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: const [
-                                    Expanded(
-                                      flex: 2,
-                                      child: TextView(
-                                        "Student List",
-                                        textAlign: TextAlign.start,
-                                        color: AppColors.whiteColor,
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
-                                    Expanded(
-                                      child: TextView(
-                                        "Absent",
-                                        textAlign: TextAlign.center,
-                                        color: AppColors.whiteColor,
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
-                                    Expanded(
-                                      child: TextView(
-                                        "Present",
-                                        textAlign: TextAlign.center,
-                                        color: AppColors.whiteColor,
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
-                                    Expanded(
-                                      child: TextView(
-                                        "Leave",
-                                        textAlign: TextAlign.center,
-                                        color: AppColors.whiteColor,
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
-                                  ],
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: const [
+                              Expanded(
+                                flex: 2,
+                                child: TextView(
+                                  "Student List",
+                                  textAlign: TextAlign.start,
+                                  color: AppColors.whiteColor,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
                                 ),
                               ),
                               Expanded(
-                                child: Container(
+                                child: TextView(
+                                  "Absent",
+                                  textAlign: TextAlign.center,
+                                  color: AppColors.whiteColor,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                              Expanded(
+                                child: TextView(
+                                  "Present",
+                                  textAlign: TextAlign.center,
+                                  color: AppColors.whiteColor,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                              Expanded(
+                                child: TextView(
+                                  "Leave",
+                                  textAlign: TextAlign.center,
+                                  color: AppColors.whiteColor,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Expanded(
+                          child: BlocBuilder<StudentAttendanceCubit, StudentAttendanceState>(
+                            builder: (context, state) {
+                              if (state.studentAttendanceStatus ==
+                                  StudentAttendanceStatus.loading) {
+                                return Center(child: LoadingIndicator());
+                              } else if (state.studentAttendanceStatus ==
+                                  StudentAttendanceStatus.success) {
+                                studentAttendanceList =
+                                    List.from(state.attendanceList)..sort(
+                                      (a, b) =>
+                                          a.studentName.toLowerCase().compareTo(
+                                            b.studentName.toLowerCase(),
+                                          ),
+                                    );
+
+                                filterStudentAttendanceList = List.from(
+                                  studentAttendanceList,
+                                );
+                                return Container(
                                   child: filterStudentAttendanceList.isNotEmpty
                                       ? ListView.separated(
                                           padding: const EdgeInsets.symmetric(
@@ -208,12 +205,23 @@ class _AttendanceHistoryScreenState extends State<AttendanceHistoryScreen> {
                                           physics: BouncingScrollPhysics(),
                                           itemBuilder: (context, index) {
                                             return AttendanceTile(
+                                              enableSelection: false,
                                               attendanceModel:
                                                   filterStudentAttendanceList[index],
                                               index: index + 1,
-                                              enableSelection: false,
-                                              onSelect:
-                                                  (studentStatus, studentId) {},
+                                              onSelect: (studentStatus, studentId) {
+                                                final index =
+                                                    studentAttendanceList
+                                                        .indexWhere(
+                                                          (element) =>
+                                                              element
+                                                                  .studentId ==
+                                                              studentId,
+                                                        );
+                                                studentAttendanceList[index]
+                                                        .attendanceStatusIdFk =
+                                                    studentStatus;
+                                              },
                                             );
                                           },
                                           separatorBuilder:
@@ -231,22 +239,24 @@ class _AttendanceHistoryScreenState extends State<AttendanceHistoryScreen> {
                                             color: AppColors.greyColor,
                                           ),
                                         ),
-                                ),
-                              ),
-                              SizedBox(height: 20),
-                            ],
+                                );
+                              } else if (state.studentAttendanceStatus ==
+                                  StudentAttendanceStatus.failure) {
+                                return Center(
+                                  child: Text(state.failure.message),
+                                );
+                              }
+                              return SizedBox();
+                            },
                           ),
                         ),
-                      ),
-                    ],
+                        SizedBox(height: 20),
+                      ],
+                    ),
                   ),
-                );
-              } else if (state.studentAttendanceStatus ==
-                  StudentAttendanceStatus.failure) {
-                return Center(child: Text(state.failure.message));
-              }
-              return SizedBox();
-            },
+                ),
+              ],
+            ),
           ),
         ),
         hMargin: 0,

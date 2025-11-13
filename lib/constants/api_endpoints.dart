@@ -1,10 +1,8 @@
 class Endpoints {
   static const String login = '/AuthenticateEmployee';
   static const String getUserSchools = '/GetUserSchools';
-  static const String getClassesForAttendance =
-      '/GetClassesOfSchoolForAttendance';
-  static const String getSectionsForAttendance =
-      '/GetSectionsOfClassForAttendance';
+  static const String getClassesForAttendance = '/GetClassesOfTeacher';
+  static const String getSectionsForAttendance = '/GetSectionsOfTeacherClass';
   static const String getGetSectionStudentList = '/GetSectionStudentList';
   static const String getSubjectOfClass = '/GetSubjectOfClass';
   static const String getDiaryList = '/GetDiaryList';
@@ -38,6 +36,7 @@ class Endpoints {
   static const String saveTeacherObservation = '/SaveTeacherObservation';
   static const String getObservationReport = '/GetObservationReport';
   static const String uploadTeacherFile = '/UploadTeacherFile';
+  static const String addNotification = '/AddNotification';
   static const String getEmployeeLeaveBalance = '/GetEmployeeLeaveBalance';
   static const String getEmployeeLeavesByEmpId = '/GetEmployeeLeavesByEmpId';
   static const String uploadLeave = '/AddEmployeeLeave';

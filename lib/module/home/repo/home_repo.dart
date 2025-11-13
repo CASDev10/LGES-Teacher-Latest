@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:developer';
 
-import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:lges_teacher_app/module/file_sharing/models/get_students_response.dart';
 import 'package:lges_teacher_app/module/home/models/app_config_reponse.dart';
@@ -69,20 +68,29 @@ class HomeRepository {
 
   Future<BaseResponseModel> uploadTeacherFile(FileSharingInput input) async {
     try {
-      Map<String, dynamic> description = {
-        "UC_LoginUserId": _authRepository.user.userId,
-        "UC_EntityId": _authRepository.user.entityId,
-        "UC_SchoolId": _authRepository.user.schoolId,
-        "ClassIdFk": input.classId,
-        "SectionIdFk": input.sectionId,
-      };
-      FormData toFormData() => FormData.fromMap({
-        "Description": jsonEncode(description),
-        "TeacherFile": input.file,
-      });
       var response = await _networkService.post(
         Endpoints.uploadTeacherFile,
-        data: toFormData(),
+        data: input.toJson(),
+      );
+
+      BaseResponseModel baseResponseModel = await compute(
+        baseResponseModelFromJson,
+        response,
+      );
+      return baseResponseModel;
+    } on BaseFailure catch (_) {
+      rethrow;
+    } on TypeError catch (e) {
+      log('TYPE error stackTrace :: ${e.stackTrace}');
+      rethrow;
+    }
+  }
+
+  Future<BaseResponseModel> addNotification(NotificationInput input) async {
+    try {
+      var response = await _networkService.post(
+        Endpoints.addNotification,
+        data: input.toJson(),
       );
 
       BaseResponseModel baseResponseModel = await compute(
@@ -117,9 +125,21 @@ class HomeRepository {
     }
   }
 
-  Future<GetStudentsResponse> getStudents() async {
+  Future<GetStudentsResponse> getStudents(
+    String classId,
+    String sectionId,
+  ) async {
     try {
-      var response = await _networkService.get(Endpoints.getStudents);
+      var response = await _networkService.post(
+        Endpoints.getStudents,
+        data: {
+          "UC_EntityId": _authRepository.user.entityId,
+          "UC_SchoolId": _authRepository.user.schoolId,
+          "StatusId": 2,
+          "ClassIdFk": classId,
+          "SectionIdFk": sectionId,
+        },
+      );
 
       GetStudentsResponse getStudentsResponse = await compute(
         getStudentsResponseFromJson,

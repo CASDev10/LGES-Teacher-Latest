@@ -114,12 +114,17 @@ class DiaryRepository {
     }
   }
 
-  Future<SubjectsResponseModel> getClassSubjects(String classId) async {
+  Future<SubjectsResponseModel> getClassSubjects(
+    String classId,
+    String sectionId,
+  ) async {
     try {
       Map<String, dynamic> input = {
+        "UC_LoginUserId": _authRepository.user.userId,
         "UC_EntityId": _authRepository.user.entityId,
         "UC_SchoolId": _authRepository.user.schoolId,
         "ClassIdFk": classId,
+        "SectionIdFk": sectionId,
       };
       var response = await _networkService.get(
         Endpoints.getSubjectOfClass,

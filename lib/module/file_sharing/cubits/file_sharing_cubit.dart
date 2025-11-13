@@ -59,4 +59,32 @@ class FileSharingCubit extends Cubit<FileSharingState> {
       );
     } catch (_) {}
   }
+
+  Future addNotification(NotificationInput input) async {
+    emit(state.copyWith(status: FileSharingStatus.loading));
+
+    try {
+      BaseResponseModel baseResponseModel = await _repository.addNotification(
+        input,
+      );
+
+      if (baseResponseModel.result == ApiResult.success) {
+        emit(state.copyWith(status: FileSharingStatus.success));
+      } else {
+        emit(
+          state.copyWith(
+            status: FileSharingStatus.failure,
+            failure: HighPriorityException(baseResponseModel.message),
+          ),
+        );
+      }
+    } on BaseFailure catch (e) {
+      emit(
+        state.copyWith(
+          status: FileSharingStatus.failure,
+          failure: HighPriorityException(e.message),
+        ),
+      );
+    } catch (_) {}
+  }
 }

@@ -24,7 +24,6 @@ import 'package:lges_teacher_app/utils/custom_date_time_picker.dart';
 import 'package:path_provider/path_provider.dart';
 
 import '../../../components/generic_drop_down.dart';
-import '../../../components/loading_indicator.dart';
 import '../../../config/routes/nav_router.dart';
 import '../../../core/di/service_locator.dart';
 import '../../../utils/display/dialogs/dialog_utils.dart';
@@ -34,6 +33,7 @@ import '../../class_section/cubit/classes_cubit/classes_cubit.dart';
 import '../../class_section/cubit/sections_cubit/sections_cubit.dart';
 import '../../class_section/model/classes_model.dart';
 import '../../class_section/model/sections_model.dart';
+import '../../file_sharing/cubits/get_students/get_students_cubit.dart';
 import '../models/diary_list_response.dart';
 
 class AddDailyDiaryScreen extends StatefulWidget {
@@ -372,6 +372,7 @@ class _AddDailyDiaryScreenState extends State<AddDailyDiaryScreen> {
         BlocProvider(create: (context) => SectionsCubit(sl())),
         BlocProvider(create: (context) => SubjectsCubit(sl())),
         BlocProvider(create: (context) => AddDiaryCubit(sl())),
+        BlocProvider(create: (context) => GetStudentsCubit(sl())),
       ],
       child: BaseScaffold(
         appBar: CustomAppbar(
@@ -390,311 +391,306 @@ class _AddDailyDiaryScreenState extends State<AddDailyDiaryScreen> {
               topRight: Radius.circular(50),
             ),
           ),
-          child: BlocBuilder<ClassesCubit, ClassesState>(
-            builder: (context, classState) {
-              if (classState.classesStatus == ClassesStatus.loading) {
-                return Center(child: LoadingIndicator());
-              }
-              if (classState.classesStatus == ClassesStatus.success) {
-                return SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      const SizedBox(height: 12),
-                      CustomTextField(
-                        hintText: 'From Date',
-                        height: 50,
-                        inputType: TextInputType.text,
-                        fillColor: AppColors.lightGreyColor,
-                        hintColor: AppColors.primaryDark,
-                        fontWeight: FontWeight.w500,
-                        readOnly: true,
-                        fontSize: 16,
-                        suffixWidget: SvgPicture.asset(
-                          'assets/images/svg/ic_drop_down.svg',
-                          color: AppColors.primaryDark,
-                        ),
-                        onTap: widget.diary == null
-                            ? () async {
-                                fromDateController.text =
-                                    await CustomDateTimePicker.selectDiaryDate(
-                                      context,
-                                    );
-                              }
-                            : null,
-                        controller: fromDateController,
-                      ),
-                      CustomTextField(
-                        hintText: 'To Date',
-                        height: 50,
-                        fontSize: 16,
-                        inputType: TextInputType.text,
-                        fillColor: AppColors.lightGreyColor,
-                        hintColor: AppColors.primaryDark,
-                        fontWeight: FontWeight.w500,
-                        readOnly: true,
-                        suffixWidget: SvgPicture.asset(
-                          'assets/images/svg/ic_drop_down.svg',
-                          color: AppColors.primaryDark,
-                        ),
-                        onTap: widget.diary == null
-                            ? () async {
-                                toDateController.text =
-                                    await CustomDateTimePicker.selectDiaryDate(
-                                      context,
-                                    );
-                              }
-                            : null,
-                        controller: toDateController,
-                      ),
-                      GestureDetector(
-                        onTap: widget.diary != null
-                            ? () {
-                                DisplayUtils.showSnackBar(
-                                  context,
-                                  "You can't change class while updating diary.",
-                                );
-                              }
-                            : null,
-                        child: AbsorbPointer(
-                          absorbing: widget.diary != null,
-                          child: GenericDropDown<Class>(
-                            allPadding: 0,
-                            horizontalPadding: 15,
-                            isOutline: false,
-                            hintColor: AppColors.primaryDark,
-                            iconColor: AppColors.primaryDark,
-                            suffixIconPath: '',
-                            hint: 'Select Class',
-                            items: classState.classes,
-                            onSelect: (Class value) {
-                              setState(() {
-                                dropdownValueClass = value.className;
-                                dropdownValueSection = null;
-                                dropdownValueSubject = null;
-                                sections = [];
-                                subjects = [];
-                                classId = value.classId.toString();
-                              });
-                              context.read<SectionsCubit>().fetchSections(
-                                classId.toString(),
-                              );
-                            },
-                            getLabel: (classModel) => classModel.className,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 12),
-                      BlocConsumer<SectionsCubit, SectionsState>(
-                        listener: (context, sectionStatus) {
-                          if (sectionStatus.sectionsStatus ==
-                              SectionsStatus.loading) {
-                            DisplayUtils.showLoader();
-                          } else if (sectionStatus.sectionsStatus ==
-                              SectionsStatus.success) {
-                            DisplayUtils.removeLoader();
-                          } else if (sectionStatus.sectionsStatus ==
-                              SectionsStatus.failure) {
-                            DisplayUtils.removeLoader();
-                            DisplayUtils.showSnackBar(
-                              context,
-                              sectionStatus.failure.message,
-                            );
-                          }
-                        },
-                        builder: (context, sectionStatus) {
-                          sections = sectionStatus.sections;
-                          return GestureDetector(
-                            onTap: dropdownValueClass == null
-                                ? () {
-                                    DisplayUtils.showSnackBar(
-                                      context,
-                                      "Please select Class First",
-                                    );
-                                  }
-                                : null,
-                            child: AbsorbPointer(
-                              absorbing: widget.diary != null,
-                              child: GenericDropDown<Section>(
-                                allPadding: 0,
-                                horizontalPadding: 15,
-                                isOutline: false,
-                                hintColor: AppColors.primaryDark,
-                                iconColor: AppColors.primaryDark,
-                                suffixIconPath: '',
-                                hint: 'Select Section',
-                                items: sectionStatus.sections,
-                                onSelect: (Section value) {
-                                  setState(() {
-                                    dropdownValueSection = value.sectionName;
-                                    dropdownValueSubject = null;
-                                    subjects = [];
-                                    sectionId = value.sectionId.toString();
-                                  });
-                                  context.read<SubjectsCubit>().fetchSubjects(
-                                    classId!,
-                                  );
-                                },
-                                getLabel: (section) => section.sectionName,
-                              ),
-                            ),
-                          );
-                        },
-                      ),
-                      const SizedBox(height: 12),
-                      BlocConsumer<SubjectsCubit, SubjectsState>(
-                        listener: (context, subjectsState) {
-                          if (subjectsState.subjectsStatus ==
-                              SectionsStatus.loading) {
-                            DisplayUtils.showLoader();
-                          } else if (subjectsState.subjectsStatus ==
-                              SectionsStatus.success) {
-                            DisplayUtils.removeLoader();
-                          } else if (subjectsState.subjectsStatus ==
-                              SectionsStatus.failure) {
-                            DisplayUtils.removeLoader();
-                            DisplayUtils.showSnackBar(
-                              context,
-                              subjectsState.failure.message,
-                            );
-                          }
-                        },
-                        builder: (context, subjectsState) {
-                          subjects = subjectsState.subjects;
-                          return GestureDetector(
-                            onTap: dropdownValueSection == null
-                                ? () {
-                                    DisplayUtils.showSnackBar(
-                                      context,
-                                      "Please select section First",
-                                    );
-                                  }
-                                : null,
-                            child: AbsorbPointer(
-                              absorbing: widget.diary != null,
-                              child: GenericDropDown<SubjectModel>(
-                                allPadding: 0,
-                                horizontalPadding: 15,
-                                isOutline: false,
-                                hintColor: AppColors.primaryDark,
-                                iconColor: AppColors.primaryDark,
-                                suffixIconPath: '',
-                                hint: 'Select Subjects',
-                                items: subjectsState.subjects,
-                                onSelect: (SubjectModel value) {
-                                  setState(() {
-                                    dropdownValueSubject = value.subjectName;
-                                    subjectId = value.subjectId.toString();
-                                  });
-                                },
-                                getLabel: (section) => section.subjectName,
-                              ),
-                            ),
-                          );
-                        },
-                      ),
-                      const SizedBox(height: 12),
-                      buildFilePreview(),
-                      const SizedBox(height: 10),
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: CustomButton(
-                          height: 50,
-                          width: 180,
-                          borderRadius: 15,
-                          onPressed: () async {
-                            result = await FilePicker.platform.pickFiles(
-                              type: FileType.custom,
-                              allowMultiple: false,
-                              allowedExtensions: ['pdf', 'jpg', 'jpeg', 'png'],
-                            );
-                            if (result == null) {
-                              DisplayUtils.showToast(
-                                context,
-                                "No file selected",
-                              );
-                            } else {
-                              file = File(result!.files.single.path.toString());
-                              fileNameController.text =
-                                  result!.files.single.name;
-                              setState(() {});
-                            }
-                          },
-                          title: 'Upload Picture',
-                          isEnabled: true,
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      CustomTextField(
-                        hintText: 'Text',
-                        height: 230,
-                        inputType: TextInputType.text,
-                        fillColor: AppColors.lightGreyColor,
-                        maxLines: 14,
-                        controller: textBoxController,
-                        hintColor: AppColors.primaryDark,
-                      ),
-                      const SizedBox(height: 20),
-                      BlocConsumer<AddDiaryCubit, AddDiaryState>(
-                        listener: (context, state) {
-                          if (state.addDiaryStatus == AddDiaryStatus.loading) {
-                            DisplayUtils.showLoader();
-                          } else if (state.addDiaryStatus ==
-                              AddDiaryStatus.success) {
-                            DisplayUtils.removeLoader();
-                            Fluttertoast.showToast(
-                              msg:
-                                  "Diary ${widget.diary != null ? 'updated' : 'added'} successfully!",
-                            );
-                            NavRouter.pop(context);
-                          } else if (state.addDiaryStatus ==
-                              AddDiaryStatus.failure) {
-                            DisplayUtils.removeLoader();
-                            DisplayUtils.showSnackBar(
-                              context,
-                              state.failure.message,
-                            );
-                          }
-                        },
-                        builder: (context, state) {
-                          return CustomButton(
-                            height: 50,
-                            borderRadius: 15,
-                            onPressed: () {
-                              if (widget.diary != null) {
-                                UpdateDiaryInput input = UpdateDiaryInput(
-                                  diaryId: widget.diary!.diaryId,
-                                  text: textBoxController.text,
-                                  ucSchoolId: authRepository.user.schoolId
-                                      .toString(),
-                                  ucLoginUserId: authRepository.user.userId
-                                      .toString(),
-                                );
-                                context.read<AddDiaryCubit>().updateDiary(
-                                  input,
-                                  file,
-                                );
-                              } else {
-                                AddDiaryInput input = _onSaveButtonPressed();
-                                context.read<AddDiaryCubit>().addDiary(
-                                  input,
-                                  file,
-                                );
-                              }
-                            },
-                            title: widget.diary != null ? 'Update' : 'Save',
-                            isEnabled: true,
-                          );
-                        },
-                      ),
-                    ],
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                const SizedBox(height: 12),
+                CustomTextField(
+                  hintText: 'From Date',
+                  height: 50,
+                  inputType: TextInputType.text,
+                  fillColor: AppColors.lightGreyColor,
+                  hintColor: AppColors.primaryDark,
+                  fontWeight: FontWeight.w500,
+                  readOnly: true,
+                  fontSize: 16,
+                  suffixWidget: SvgPicture.asset(
+                    'assets/images/svg/ic_drop_down.svg',
+                    color: AppColors.primaryDark,
                   ),
-                );
-              }
-              if (classState.classesStatus == ClassesStatus.failure) {
-                return Center(child: Text(classState.failure.message));
-              }
-              return SizedBox();
-            },
+                  onTap: widget.diary == null
+                      ? () async {
+                          fromDateController.text =
+                              await CustomDateTimePicker.selectDiaryDate(
+                                context,
+                              );
+                        }
+                      : null,
+                  controller: fromDateController,
+                ),
+                CustomTextField(
+                  hintText: 'To Date',
+                  height: 50,
+                  fontSize: 16,
+                  inputType: TextInputType.text,
+                  fillColor: AppColors.lightGreyColor,
+                  hintColor: AppColors.primaryDark,
+                  fontWeight: FontWeight.w500,
+                  readOnly: true,
+                  suffixWidget: SvgPicture.asset(
+                    'assets/images/svg/ic_drop_down.svg',
+                    color: AppColors.primaryDark,
+                  ),
+                  onTap: widget.diary == null
+                      ? () async {
+                          toDateController.text =
+                              await CustomDateTimePicker.selectDiaryDate(
+                                context,
+                              );
+                        }
+                      : null,
+                  controller: toDateController,
+                ),
+                BlocConsumer<ClassesCubit, ClassesState>(
+                  listener: (context, classState) {
+                    if (classState.classesStatus == ClassesStatus.loading) {
+                      DisplayUtils.showLoader();
+                    } else if (classState.classesStatus ==
+                        ClassesStatus.success) {
+                      DisplayUtils.removeLoader();
+                    } else if (classState.classesStatus ==
+                        ClassesStatus.failure) {
+                      DisplayUtils.removeLoader();
+                      DisplayUtils.showSnackBar(
+                        context,
+                        classState.failure.message,
+                      );
+                    }
+                  },
+                  builder: (context, classState) {
+                    return GestureDetector(
+                      onTap: widget.diary != null
+                          ? () {
+                              DisplayUtils.showSnackBar(
+                                context,
+                                "You can't change class while updating diary.",
+                              );
+                            }
+                          : null,
+                      child: AbsorbPointer(
+                        absorbing: widget.diary != null,
+                        child: GenericDropDown<Class>(
+                          allPadding: 0,
+                          horizontalPadding: 15,
+                          isOutline: false,
+                          hintColor: AppColors.primaryDark,
+                          iconColor: AppColors.primaryDark,
+                          suffixIconPath: '',
+                          hint: dropdownValueClass ?? 'Select Class',
+                          items: classState.classes,
+                          onSelect: (Class value) {
+                            setState(() {
+                              dropdownValueClass = value.className;
+                              dropdownValueSection = null;
+                              dropdownValueSubject = null;
+                              sections = [];
+                              subjects = [];
+                              classId = value.classId.toString();
+                            });
+                            context.read<SectionsCubit>().fetchSections(
+                              classId.toString(),
+                            );
+                          },
+                          getLabel: (classModel) => classModel.className,
+                        ),
+                      ),
+                    );
+                  },
+                ),
+                const SizedBox(height: 12),
+                BlocConsumer<SectionsCubit, SectionsState>(
+                  listener: (context, sectionStatus) {
+                    if (sectionStatus.sectionsStatus ==
+                        SectionsStatus.loading) {
+                      DisplayUtils.showLoader();
+                    } else if (sectionStatus.sectionsStatus ==
+                        SectionsStatus.success) {
+                      DisplayUtils.removeLoader();
+                    } else if (sectionStatus.sectionsStatus ==
+                        SectionsStatus.failure) {
+                      DisplayUtils.removeLoader();
+                      DisplayUtils.showSnackBar(
+                        context,
+                        sectionStatus.failure.message,
+                      );
+                    }
+                  },
+                  builder: (context, sectionStatus) {
+                    sections = sectionStatus.sections;
+                    return GestureDetector(
+                      onTap: dropdownValueClass == null
+                          ? () {
+                              DisplayUtils.showSnackBar(
+                                context,
+                                "Please select Class First",
+                              );
+                            }
+                          : null,
+                      child: AbsorbPointer(
+                        absorbing: widget.diary != null,
+                        child: GenericDropDown<Section>(
+                          allPadding: 0,
+                          horizontalPadding: 15,
+                          isOutline: false,
+                          hintColor: AppColors.primaryDark,
+                          iconColor: AppColors.primaryDark,
+                          suffixIconPath: '',
+                          hint: dropdownValueSection ?? 'Select Section',
+                          items: sectionStatus.sections,
+                          onSelect: (Section value) {
+                            setState(() {
+                              dropdownValueSection = value.sectionName;
+                              dropdownValueSubject = null;
+                              subjects = [];
+                              sectionId = value.sectionId.toString();
+                            });
+                            context.read<SubjectsCubit>().fetchSubjects(
+                              classId!,
+                              sectionId!,
+                            );
+                          },
+                          getLabel: (section) => section.sectionName,
+                        ),
+                      ),
+                    );
+                  },
+                ),
+                const SizedBox(height: 12),
+                BlocConsumer<SubjectsCubit, SubjectsState>(
+                  listener: (context, subjectsState) {
+                    if (subjectsState.subjectsStatus ==
+                        SectionsStatus.loading) {
+                      DisplayUtils.showLoader();
+                    } else if (subjectsState.subjectsStatus ==
+                        SectionsStatus.success) {
+                      DisplayUtils.removeLoader();
+                    } else if (subjectsState.subjectsStatus ==
+                        SectionsStatus.failure) {
+                      DisplayUtils.removeLoader();
+                      DisplayUtils.showSnackBar(
+                        context,
+                        subjectsState.failure.message,
+                      );
+                    }
+                  },
+                  builder: (context, subjectsState) {
+                    subjects = subjectsState.subjects;
+                    return GestureDetector(
+                      onTap: dropdownValueSection == null
+                          ? () {
+                              DisplayUtils.showSnackBar(
+                                context,
+                                "Please select section First",
+                              );
+                            }
+                          : null,
+                      child: AbsorbPointer(
+                        absorbing: widget.diary != null,
+                        child: GenericDropDown<SubjectModel>(
+                          allPadding: 0,
+                          horizontalPadding: 15,
+                          isOutline: false,
+                          hintColor: AppColors.primaryDark,
+                          iconColor: AppColors.primaryDark,
+                          suffixIconPath: '',
+                          hint: dropdownValueSubject ?? 'Select Subjects',
+                          items: subjectsState.subjects,
+                          onSelect: (SubjectModel value) {
+                            setState(() {
+                              dropdownValueSubject = value.subjectName;
+                              subjectId = value.subjectId.toString();
+                            });
+                          },
+                          getLabel: (section) => section.subjectName,
+                        ),
+                      ),
+                    );
+                  },
+                ),
+                const SizedBox(height: 12),
+                buildFilePreview(),
+                const SizedBox(height: 10),
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: CustomButton(
+                    height: 50,
+                    width: 180,
+                    borderRadius: 15,
+                    onPressed: () async {
+                      result = await FilePicker.platform.pickFiles(
+                        type: FileType.custom,
+                        allowMultiple: false,
+                        allowedExtensions: ['pdf', 'jpg', 'jpeg', 'png'],
+                      );
+                      if (result == null) {
+                        DisplayUtils.showToast(context, "No file selected");
+                      } else {
+                        file = File(result!.files.single.path.toString());
+                        fileNameController.text = result!.files.single.name;
+                        setState(() {});
+                      }
+                    },
+                    title: 'Upload Picture',
+                    isEnabled: true,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                CustomTextField(
+                  hintText: 'Diary Description',
+                  height: 230,
+                  inputType: TextInputType.text,
+                  fillColor: AppColors.lightGreyColor,
+                  maxLines: 14,
+                  controller: textBoxController,
+                  hintColor: AppColors.grey,
+                ),
+                const SizedBox(height: 20),
+                BlocConsumer<AddDiaryCubit, AddDiaryState>(
+                  listener: (context, state) {
+                    if (state.addDiaryStatus == AddDiaryStatus.loading) {
+                      DisplayUtils.showLoader();
+                    } else if (state.addDiaryStatus == AddDiaryStatus.success) {
+                      DisplayUtils.removeLoader();
+                      Fluttertoast.showToast(
+                        msg:
+                            "Diary ${widget.diary != null ? 'updated' : 'added'} successfully!",
+                      );
+                      NavRouter.pop(context);
+                    } else if (state.addDiaryStatus == AddDiaryStatus.failure) {
+                      DisplayUtils.removeLoader();
+                      DisplayUtils.showSnackBar(context, state.failure.message);
+                    }
+                  },
+                  builder: (context, state) {
+                    return CustomButton(
+                      height: 50,
+                      borderRadius: 15,
+                      onPressed: () {
+                        if (widget.diary != null) {
+                          UpdateDiaryInput input = UpdateDiaryInput(
+                            diaryId: widget.diary!.diaryId,
+                            text: textBoxController.text,
+                            ucSchoolId: authRepository.user.schoolId.toString(),
+                            ucLoginUserId: authRepository.user.userId
+                                .toString(),
+                          );
+                          context.read<AddDiaryCubit>().updateDiary(
+                            input,
+                            file,
+                          );
+                        } else {
+                          AddDiaryInput input = _onSaveButtonPressed();
+                          print(input.toJson());
+                          context.read<AddDiaryCubit>().addDiary(input, file);
+                        }
+                      },
+                      title: widget.diary != null ? 'Update' : 'Save',
+                      isEnabled: true,
+                    );
+                  },
+                ),
+              ],
+            ),
           ),
         ),
         backgroundColor: AppColors.primaryDark,

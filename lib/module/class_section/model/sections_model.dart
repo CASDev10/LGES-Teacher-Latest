@@ -1,6 +1,7 @@
 import 'dart:convert';
 
-SectionsModel sectionsModelFromJson(dynamic json) => SectionsModel.fromJson(json);
+SectionsModel sectionsModelFromJson(dynamic json) =>
+    SectionsModel.fromJson(json);
 
 String sectionsModelToJson(SectionsModel data) => json.encode(data.toJson());
 
@@ -46,20 +47,20 @@ class Section {
   });
 
   factory Section.fromJson(Map<String, dynamic> json) => Section(
-    sectionId: json["SectionId"],
-    sessionName: json["SessionName"],
-    sectionName: json["SectionName"],
-    sectionCode: json["SectionCode"],
-    sessionIdFk: json["SessionIdFk"],
+    sectionId: json["SectionClassId"],
+    sessionName: json["SessionName"] ?? '',
+    sectionName: json["ClassSection"] ?? '',
+    sectionCode: json["SectionCode"] ?? '',
+    sessionIdFk: json["SectionIdFk"],
     isActive: json["isActive"],
   );
 
   Map<String, dynamic> toJson() => {
-    "SectionId": sectionId,
+    "SectionClassId": sectionId,
     "SessionName": sessionName,
-    "SectionName": sectionName,
+    "ClassSection": sectionName,
     "SectionCode": sectionCode,
-    "SessionIdFk": sessionIdFk,
+    "SectionIdFk": sessionIdFk,
     "isActive": isActive,
   };
 }
