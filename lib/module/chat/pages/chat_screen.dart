@@ -1,85 +1,103 @@
-import 'dart:io';
-
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:lges_teacher_app/components/base_scaffold.dart';
 import 'package:lges_teacher_app/components/custom_appbar.dart';
 import 'package:lges_teacher_app/constants/app_colors.dart';
+import 'package:lges_teacher_app/module/auth/repo/auth_repository.dart';
+import 'package:lges_teacher_app/module/chat/cubits/chat_history/chat_history_cubit.dart';
+import 'package:lges_teacher_app/module/chat/cubits/chat_history/chat_history_state.dart';
+import 'package:lges_teacher_app/module/chat/cubits/send_message/send_message_state.dart';
+import 'package:lges_teacher_app/utils/display/display_utils.dart';
 
-class ChatDetailScreen extends StatefulWidget {
+import '../../../core/di/service_locator.dart';
+import '../../../utils/custom_date_time_picker.dart';
+import '../cubits/send_message/send_message_cubit.dart';
+
+class ChatDetailScreen extends StatelessWidget {
   final String userName;
-  const ChatDetailScreen({super.key, required this.userName});
+  final int conversationId;
+  final int studentId;
+
+  const ChatDetailScreen({
+    super.key,
+    required this.userName,
+    required this.conversationId,
+    required this.studentId,
+  });
 
   @override
-  State<ChatDetailScreen> createState() => _ChatDetailScreenState();
+  Widget build(BuildContext context) {
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (context) => ChatHistoryCubit(sl())),
+        BlocProvider(create: (context) => MessageCubit(sl())),
+      ],
+      child: ChatDetailScreenView(
+        userName: userName,
+        conversationId: conversationId,
+        studentId: studentId,
+      ),
+    );
+  }
 }
 
-class _ChatDetailScreenState extends State<ChatDetailScreen> {
+class ChatDetailScreenView extends StatefulWidget {
+  final String userName;
+  final int conversationId;
+  final int studentId;
+
+  const ChatDetailScreenView({
+    super.key,
+    required this.userName,
+    required this.conversationId,
+    required this.studentId,
+  });
+
+  @override
+  State<ChatDetailScreenView> createState() => _ChatDetailScreenViewState();
+}
+
+class _ChatDetailScreenViewState extends State<ChatDetailScreenView> {
   final TextEditingController _messageController = TextEditingController();
-
-  final List<Map<String, dynamic>> _messages = [
-    {
-      'isMe': false,
-      'type': 'text',
-      'text': 'Hi! How are you doing today?',
-      'time': '10:00 AM',
-      'status': null,
-    },
-    {
-      'isMe': true,
-      'type': 'text',
-      'text': 'Hey! I’m doing great, thanks 😊',
-      'time': '10:02 AM',
-      'status': 'seen',
-    },
-    {
-      'isMe': false,
-      'type': 'text',
-      'text': 'Glad to hear that! Did you complete the attendance update?',
-      'time': '10:05 AM',
-      'status': null,
-    },
-    {
-      'isMe': true,
-      'type': 'text',
-      'text': 'Yes, I submitted it this morning.',
-      'time': '10:06 AM',
-      'status': 'delivered',
-    },
-  ];
-
+  AuthRepository authRepository = sl<AuthRepository>();
+  final ScrollController _scrollController = ScrollController();
   final ImagePicker _picker = ImagePicker();
-
-  void _sendMessage({String? text, File? file, String? fileType}) {
-    if ((text == null || text.trim().isEmpty) && file == null) return;
-
-    setState(() {
-      _messages.add({
-        'isMe': true,
-        'type': file != null ? fileType : 'text',
-        'text': text ?? '',
-        'file': file,
-        'time':
-            '${TimeOfDay.now().hourOfPeriod}:${TimeOfDay.now().minute.toString().padLeft(2, '0')} ${TimeOfDay.now().period == DayPeriod.am ? 'AM' : 'PM'}',
-        'status': 'sent',
-      });
-    });
-    _messageController.clear();
+  int studentId = -1;
+  void _sendMessage(String message) {
+    context.read<MessageCubit>().sendMessage(studentId, message);
   }
 
   Future<void> _pickImage() async {
     final picked = await _picker.pickImage(source: ImageSource.gallery);
-    if (picked != null) {
-      _sendMessage(file: File(picked.path), fileType: 'image');
-    }
+    if (picked != null) {}
   }
 
   Future<void> _pickFile() async {
     final result = await FilePicker.platform.pickFiles();
-    if (result != null && result.files.single.path != null) {
-      _sendMessage(file: File(result.files.single.path!), fileType: 'file');
-    }
+    if (result != null && result.files.single.path != null) {}
+  }
+
+  void _scrollToBottom() {
+    print('Scrolling to bottom');
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_scrollController.hasClients) {
+        _scrollController.animateTo(
+          _scrollController.position.maxScrollExtent,
+          duration: const Duration(milliseconds: 500),
+          curve: Curves.easeOut,
+        );
+      }
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    studentId = widget.studentId;
+    if (widget.conversationId != -1)
+      context.read<ChatHistoryCubit>().getChatHistory(widget.conversationId);
   }
 
   @override
@@ -88,180 +106,330 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
       appBar: CustomAppbar(widget.userName, centerTitle: false),
       backgroundColor: AppColors.primaryDark,
       hMargin: 0,
-      body: Container(
-        width: double.infinity,
-        decoration: const BoxDecoration(
-          color: AppColors.whiteColor,
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(40),
-            topRight: Radius.circular(40),
-          ),
-        ),
-        child: Column(
-          children: [
-            Expanded(
-              child: ListView.builder(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 12,
-                ),
-                itemCount: _messages.length,
-                itemBuilder: (context, index) {
-                  final message = _messages[index];
-                  final isMe = message['isMe'] as bool;
-
-                  return Align(
-                    alignment: isMe
-                        ? Alignment.centerRight
-                        : Alignment.centerLeft,
-                    child: Container(
-                      margin: const EdgeInsets.symmetric(vertical: 6),
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 14,
-                        vertical: 10,
-                      ),
-                      decoration: BoxDecoration(
-                        color: isMe
-                            ? AppColors.primaryDark
-                            : Colors.grey.shade200,
-                        borderRadius: BorderRadius.only(
-                          topLeft: const Radius.circular(16),
-                          topRight: const Radius.circular(16),
-                          bottomLeft: Radius.circular(isMe ? 16 : 0),
-                          bottomRight: Radius.circular(isMe ? 0 : 16),
-                        ),
-                      ),
-                      child: Column(
-                        crossAxisAlignment: isMe
-                            ? CrossAxisAlignment.end
-                            : CrossAxisAlignment.start,
-                        children: [
-                          if (message['type'] == 'text')
-                            Text(
-                              message['text'],
-                              style: TextStyle(
-                                color: isMe ? Colors.white : Colors.black87,
-                                fontSize: 15,
-                              ),
-                            ),
-                          if (message['type'] == 'image' &&
-                              message['file'] != null)
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(10),
-                              child: Image.file(
-                                message['file'],
-                                height: 150,
-                                width: 150,
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                          if (message['type'] == 'file' &&
-                              message['file'] != null)
-                            Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                const Icon(
-                                  Icons.insert_drive_file,
-                                  color: Colors.white,
-                                  size: 18,
+      body: BlocConsumer<MessageCubit, MessageState>(
+        listener: (context, messageState) {
+          if (messageState.messageStatus == MessageStatus.loading) {
+            DisplayUtils.showLoader();
+          }
+          if (messageState.messageStatus == MessageStatus.success) {
+            DisplayUtils.removeLoader();
+            _messageController.clear();
+            context.read<ChatHistoryCubit>().getChatHistory(
+              widget.conversationId,
+              isLoading: false,
+            );
+          }
+          if (messageState.messageStatus == MessageStatus.failure) {
+            DisplayUtils.removeLoader();
+            DisplayUtils.showSnackBar(context, messageState.message);
+          }
+        },
+        builder: (context, messageState) {
+          return Container(
+            width: double.infinity,
+            height: double.infinity,
+            decoration: const BoxDecoration(
+              color: AppColors.whiteColor,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(40),
+                topRight: Radius.circular(40),
+              ),
+            ),
+            child: Column(
+              children: [
+                Expanded(
+                  child: BlocConsumer<ChatHistoryCubit, ChatHistoryState>(
+                    listener: (context, state) {
+                      if (state.chatHistoryStatus ==
+                          ChatHistoryStatus.success) {
+                        studentId = state.messages.first.studentId;
+                        _scrollToBottom();
+                      }
+                    },
+                    builder: (context, state) {
+                      if (state.chatHistoryStatus ==
+                          ChatHistoryStatus.loading) {
+                        return Center(
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              SizedBox(
+                                height: 45,
+                                width: 45,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 4,
+                                  color: AppColors.primaryDark,
                                 ),
-                                const SizedBox(width: 6),
-                                Flexible(
-                                  child: Text(
-                                    message['file'].path.split('/').last,
+                              ),
+                              const SizedBox(height: 16),
+                              const Text(
+                                "Loading messages...",
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                  color: AppColors.primaryDark,
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      }
+                      if (state.chatHistoryStatus ==
+                          ChatHistoryStatus.failure) {
+                        return Center(
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                Icons.error_outline,
+                                color: Colors.red.shade600,
+                                size: 48,
+                              ),
+                              const SizedBox(height: 12),
+                              Text(
+                                messageState.message,
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.red.shade600,
+                                ),
+                              ),
+                              const SizedBox(height: 6),
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 24,
+                                ),
+                                child: Text(
+                                  state.message,
+                                  textAlign: TextAlign.center,
+                                  style: const TextStyle(
+                                    fontSize: 14,
+                                    color: Colors.black54,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(height: 14),
+                              ElevatedButton.icon(
+                                onPressed: () {
+                                  context
+                                      .read<ChatHistoryCubit>()
+                                      .getChatHistory(widget.conversationId);
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: AppColors.primaryDark,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 20,
+                                    vertical: 10,
+                                  ),
+                                ),
+                                icon: const Icon(
+                                  Icons.refresh,
+                                  color: Colors.white,
+                                ),
+                                label: const Text(
+                                  "Retry",
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      }
+                      if (state.chatHistoryStatus ==
+                          ChatHistoryStatus.success) {
+                        return ListView.builder(
+                          controller: _scrollController,
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 12,
+                          ),
+                          itemCount: state.messages.length,
+                          itemBuilder: (context, index) {
+                            final message = state.messages[index];
+                            final isMe =
+                                message.empId == authRepository.user.empId;
+                            return Align(
+                              alignment: isMe
+                                  ? Alignment.centerRight
+                                  : Alignment.centerLeft,
+                              child: Container(
+                                margin: const EdgeInsets.symmetric(vertical: 6),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 14,
+                                  vertical: 10,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: isMe
+                                      ? AppColors.primaryDark
+                                      : Colors.grey.shade200,
+                                  borderRadius: BorderRadius.only(
+                                    topLeft: const Radius.circular(16),
+                                    topRight: const Radius.circular(16),
+                                    bottomLeft: Radius.circular(isMe ? 16 : 0),
+                                    bottomRight: Radius.circular(isMe ? 0 : 16),
+                                  ),
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: isMe
+                                      ? CrossAxisAlignment.end
+                                      : CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      message.text,
+                                      style: TextStyle(
+                                        color: isMe
+                                            ? Colors.white
+                                            : Colors.black87,
+                                        fontSize: 15,
+                                      ),
+                                    ),
+                                    /*if (message['type'] == 'text')
+                                  Text(
+                                    message['text'],
                                     style: TextStyle(
                                       color: isMe
                                           ? Colors.white
                                           : Colors.black87,
-                                      fontSize: 14,
-                                      overflow: TextOverflow.ellipsis,
+                                      fontSize: 15,
                                     ),
                                   ),
-                                ),
-                              ],
-                            ),
-                          const SizedBox(height: 4),
-                          Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text(
-                                message['time'],
-                                style: TextStyle(
-                                  color: isMe
-                                      ? Colors.white70
-                                      : Colors.grey.shade600,
-                                  fontSize: 11,
+                                if (message['type'] == 'image' &&
+                                    message['file'] != null)
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(10),
+                                    child: Image.file(
+                                      message['file'],
+                                      height: 150,
+                                      width: 150,
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                                if (message['type'] == 'file' &&
+                                    message['file'] != null)
+                                  Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      const Icon(
+                                        Icons.insert_drive_file,
+                                        color: Colors.white,
+                                        size: 18,
+                                      ),
+                                      const SizedBox(width: 6),
+                                      Flexible(
+                                        child: Text(
+                                          message['file'].path.split('/').last,
+                                          style: TextStyle(
+                                            color: isMe
+                                                ? Colors.white
+                                                : Colors.black87,
+                                            fontSize: 14,
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),*/
+                                    const SizedBox(height: 4),
+                                    Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Text(
+                                          changeDateTimeFormat(
+                                            message.sentDate,
+                                            'hh:mm a',
+                                          ),
+                                          style: TextStyle(
+                                            color: isMe
+                                                ? Colors.white70
+                                                : Colors.grey.shade600,
+                                            fontSize: 11,
+                                          ),
+                                        ),
+                                        if (isMe) ...[
+                                          const SizedBox(width: 4),
+                                          _buildMessageStatusIcon(
+                                            message.isSeen,
+                                          ),
+                                        ],
+                                      ],
+                                    ),
+                                  ],
                                 ),
                               ),
-                              if (isMe) ...[
-                                const SizedBox(width: 4),
-                                _buildMessageStatusIcon(message['status']),
-                              ],
-                            ],
-                          ),
-                        ],
+                            );
+                          },
+                        );
+                      }
+
+                      return SizedBox.shrink();
+                    },
+                  ),
+                ),
+                SafeArea(
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 14,
+                      vertical: 8,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      border: Border(
+                        top: BorderSide(color: Colors.grey.shade300),
                       ),
                     ),
-                  );
-                },
-              ),
-            ),
-            SafeArea(
-              child: Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 14,
-                  vertical: 8,
-                ),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  border: Border(top: BorderSide(color: Colors.grey.shade300)),
-                ),
-                child: Row(
-                  children: [
-                    IconButton(
-                      onPressed: _showAttachmentOptions,
-                      icon: Icon(
-                        Icons.attach_file,
-                        color: AppColors.primaryDark,
-                      ),
-                    ),
-                    Expanded(
-                      child: TextField(
-                        controller: _messageController,
-                        decoration: InputDecoration(
-                          hintText: 'Type your message...',
-                          contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 10,
-                          ),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(25),
-                            borderSide: BorderSide(color: Colors.grey.shade300),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(25),
-                            borderSide: const BorderSide(
-                              color: AppColors.primaryDark,
+                    child: Row(
+                      children: [
+                        // IconButton(
+                        //   onPressed: _showAttachmentOptions,
+                        //   icon: Icon(
+                        //     Icons.attach_file,
+                        //     color: AppColors.primaryDark,
+                        //   ),
+                        // ),
+                        Expanded(
+                          child: TextField(
+                            controller: _messageController,
+                            decoration: InputDecoration(
+                              hintText: 'Type your message...',
+                              contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 10,
+                              ),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(25),
+                                borderSide: BorderSide(
+                                  color: Colors.grey.shade300,
+                                ),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(25),
+                                borderSide: const BorderSide(
+                                  color: AppColors.primaryDark,
+                                ),
+                              ),
                             ),
                           ),
                         ),
-                      ),
+                        const SizedBox(width: 10),
+                        GestureDetector(
+                          onTap: () => _sendMessage(_messageController.text),
+                          child: CircleAvatar(
+                            radius: 24,
+                            backgroundColor: AppColors.primaryDark,
+                            child: const Icon(Icons.send, color: Colors.white),
+                          ),
+                        ),
+                      ],
                     ),
-                    const SizedBox(width: 10),
-                    GestureDetector(
-                      onTap: () => _sendMessage(text: _messageController.text),
-                      child: CircleAvatar(
-                        radius: 24,
-                        backgroundColor: AppColors.primaryDark,
-                        child: const Icon(Icons.send, color: Colors.white),
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
-              ),
+              ],
             ),
-          ],
-        ),
+          );
+        },
       ),
     );
   }
@@ -333,27 +501,19 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
     );
   }
 
-  Widget _buildMessageStatusIcon(String? status) {
-    IconData icon;
-    Color color;
-
-    switch (status) {
-      case 'seen':
-        icon = Icons.done_all;
-        color = Colors.lightBlueAccent;
-        break;
-      case 'delivered':
-        icon = Icons.done_all;
-        color = Colors.white70;
-        break;
-      case 'sent':
-        icon = Icons.check;
-        color = Colors.white70;
-        break;
-      default:
-        return const SizedBox.shrink();
+  Widget _buildMessageStatusIcon(bool isSeen) {
+    if (isSeen) {
+      return const Icon(
+        Icons.done_all,
+        size: 16,
+        color: Colors.lightBlueAccent, // Seen (Blue Double Tick)
+      );
+    } else {
+      return const Icon(
+        Icons.done_all,
+        size: 16,
+        color: Colors.white70, // Delivered (Grey Double Tick)
+      );
     }
-
-    return Icon(icon, size: 16, color: color);
   }
 }

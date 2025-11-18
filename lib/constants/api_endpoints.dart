@@ -45,4 +45,7 @@ class Endpoints {
   static const String calendarEvents = '/GetCalendar';
   static const String getNotificationTypeList = '/GetNotificationTypeList';
   static const String getStudents = '/GetStudentListForNotification';
+  static const String getConversations = '/GetAllTeacherConversations';
+  static const String getChatHistory = '/GetTeacherConversationById';
+  static const String sendMessage = '/SendMessageToStudent';
 }

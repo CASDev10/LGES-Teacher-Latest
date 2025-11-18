@@ -12,6 +12,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../config/flavors/flavors.dart';
 import '../../module/auth/repo/auth_repository.dart';
+import '../../module/chat/repo/chat_repository.dart';
 import '../../module/class_section/repo/classes_sections_repo.dart';
 import '../../module/leaves/repo/leaves_repo.dart';
 import '../core.dart';
@@ -60,4 +61,5 @@ Future<void> initDependencies(AppEnv appEnv) async {
   );
   sl.registerLazySingleton<LeavesRepository>(() => LeavesRepository());
   sl.registerLazySingleton<EventsRepository>(() => EventsRepository());
+  sl.registerLazySingleton<ChatRepository>(() => ChatRepository());
 }
