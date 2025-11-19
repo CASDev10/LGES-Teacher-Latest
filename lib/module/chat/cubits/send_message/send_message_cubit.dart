@@ -1,10 +1,10 @@
 import 'package:bloc/bloc.dart';
-import 'package:lges_teacher_app/module/base_resposne_model.dart';
 import 'package:lges_teacher_app/module/chat/cubits/send_message/send_message_state.dart';
 import 'package:lges_teacher_app/module/chat/repo/chat_repository.dart';
 
 import '../../../../core/api_result.dart';
 import '../../../../core/failures/base_failures/base_failure.dart';
+import '../../models/send_message_response.dart';
 
 class MessageCubit extends Cubit<MessageState> {
   MessageCubit(this._repository) : super(MessageState.initial());
@@ -13,7 +13,7 @@ class MessageCubit extends Cubit<MessageState> {
   Future sendMessage(int studentId, String message) async {
     emit(state.copyWith(messageStatus: MessageStatus.loading));
     try {
-      BaseResponseModel response = await _repository.sendMessage(
+      SendMessageResponse response = await _repository.sendMessage(
         studentId,
         message,
       );
@@ -22,6 +22,7 @@ class MessageCubit extends Cubit<MessageState> {
           state.copyWith(
             messageStatus: MessageStatus.success,
             message: response.message,
+            conversationId: response.data.first.conversationId,
           ),
         );
       } else {

@@ -65,6 +65,7 @@ class _ChatDetailScreenViewState extends State<ChatDetailScreenView> {
   final ScrollController _scrollController = ScrollController();
   final ImagePicker _picker = ImagePicker();
   int studentId = -1;
+  int conversationId = -1;
   void _sendMessage(String message) {
     context.read<MessageCubit>().sendMessage(studentId, message);
   }
@@ -96,8 +97,9 @@ class _ChatDetailScreenViewState extends State<ChatDetailScreenView> {
   void initState() {
     super.initState();
     studentId = widget.studentId;
+    conversationId = widget.conversationId;
     if (widget.conversationId != -1)
-      context.read<ChatHistoryCubit>().getChatHistory(widget.conversationId);
+      context.read<ChatHistoryCubit>().getChatHistory(conversationId);
   }
 
   @override
@@ -114,10 +116,12 @@ class _ChatDetailScreenViewState extends State<ChatDetailScreenView> {
           if (messageState.messageStatus == MessageStatus.success) {
             DisplayUtils.removeLoader();
             _messageController.clear();
-            context.read<ChatHistoryCubit>().getChatHistory(
-              widget.conversationId,
-              isLoading: false,
-            );
+            conversationId = messageState.conversationId;
+            if (conversationId != -1)
+              context.read<ChatHistoryCubit>().getChatHistory(
+                conversationId,
+                isLoading: false,
+              );
           }
           if (messageState.messageStatus == MessageStatus.failure) {
             DisplayUtils.removeLoader();
@@ -211,9 +215,10 @@ class _ChatDetailScreenViewState extends State<ChatDetailScreenView> {
                               const SizedBox(height: 14),
                               ElevatedButton.icon(
                                 onPressed: () {
-                                  context
-                                      .read<ChatHistoryCubit>()
-                                      .getChatHistory(widget.conversationId);
+                                  if (conversationId != -1)
+                                    context
+                                        .read<ChatHistoryCubit>()
+                                        .getChatHistory(conversationId);
                                 },
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: AppColors.primaryDark,

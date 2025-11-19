@@ -633,10 +633,14 @@ class StudentMultiSelectDropdown extends StatefulWidget {
   final List<NotificationStudentModel> students;
   final Function(List<NotificationStudentModel>) onSelectionChanged;
 
+  /// If true -> multiple selection allowed. If false -> single selection only.
+  final bool allowMultiple;
+
   const StudentMultiSelectDropdown({
     super.key,
     required this.students,
     required this.onSelectionChanged,
+    this.allowMultiple = true,
   });
 
   @override
@@ -720,10 +724,12 @@ class _StudentMultiSelectDropdownState
             }
 
             bool allSelected =
+                widget.allowMultiple &&
                 tempSelectedIds.length == widget.students.length &&
                 widget.students.isNotEmpty;
 
             void toggleSelectAll() {
+              if (!widget.allowMultiple) return;
               setModalState(() {
                 if (allSelected) {
                   tempSelectedIds.clear();
@@ -758,7 +764,7 @@ class _StudentMultiSelectDropdownState
                   ),
                   const SizedBox(height: 10),
 
-                  // 🔹 Search Field
+                  // Search Field
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     child: TextField(
@@ -786,39 +792,40 @@ class _StudentMultiSelectDropdownState
 
                   const SizedBox(height: 8),
 
-                  // 🔹 Select All Button
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 4,
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          allSelected
-                              ? 'All Students Selected'
-                              : 'Select All Students',
-                          style: const TextStyle(
-                            color: AppColors.primaryDark,
-                            fontWeight: FontWeight.w500,
+                  // Select All (only for multiple)
+                  if (widget.allowMultiple)
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 4,
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            allSelected
+                                ? 'All Students Selected'
+                                : 'Select All Students',
+                            style: const TextStyle(
+                              color: AppColors.primaryDark,
+                              fontWeight: FontWeight.w500,
+                            ),
                           ),
-                        ),
-                        Switch(
-                          value: allSelected,
-                          activeColor: AppColors.primaryDark,
-                          onChanged: (val) => toggleSelectAll(),
-                        ),
-                      ],
+                          Switch(
+                            value: allSelected,
+                            activeColor: AppColors.primaryDark,
+                            onChanged: (val) => toggleSelectAll(),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
 
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     child: const Divider(),
                   ),
 
-                  // 🔹 Student List
+                  // Student List
                   Expanded(
                     child: filteredStudents.isEmpty
                         ? const Center(
@@ -842,10 +849,29 @@ class _StudentMultiSelectDropdownState
                                 borderRadius: BorderRadius.circular(12),
                                 onTap: () {
                                   setModalState(() {
-                                    if (isSelected) {
-                                      tempSelectedIds.remove(student.studentId);
+                                    if (widget.allowMultiple) {
+                                      if (isSelected) {
+                                        tempSelectedIds.remove(
+                                          student.studentId,
+                                        );
+                                      } else {
+                                        tempSelectedIds.add(student.studentId);
+                                      }
                                     } else {
+                                      // Single selection: immediately return result
+                                      tempSelectedIds.clear();
                                       tempSelectedIds.add(student.studentId);
+
+                                      // Update the local selected list so UI reflects choice when sheet closes
+                                      setState(() {
+                                        _selectedStudents
+                                          ..clear()
+                                          ..add(student);
+                                      });
+
+                                      // Notify parent and close sheet
+                                      widget.onSelectionChanged([student]);
+                                      Navigator.pop(context);
                                     }
                                   });
                                 },
@@ -883,9 +909,9 @@ class _StudentMultiSelectDropdownState
                                     crossAxisAlignment:
                                         CrossAxisAlignment.center,
                                     children: [
-                                      // 🔹 Enlarged Checkbox
+                                      // Enlarged Checkbox
                                       Transform.scale(
-                                        scale: 1.4, // ✅ Bigger checkbox
+                                        scale: 1.4,
                                         child: Checkbox(
                                           shape: RoundedRectangleBorder(
                                             borderRadius: BorderRadius.circular(
@@ -896,6 +922,26 @@ class _StudentMultiSelectDropdownState
                                           value: isSelected,
                                           onChanged: (checked) {
                                             setModalState(() {
+                                              if (!widget.allowMultiple) {
+                                                // behave like tap above
+                                                tempSelectedIds.clear();
+                                                tempSelectedIds.add(
+                                                  student.studentId,
+                                                );
+
+                                                setState(() {
+                                                  _selectedStudents
+                                                    ..clear()
+                                                    ..add(student);
+                                                });
+
+                                                widget.onSelectionChanged([
+                                                  student,
+                                                ]);
+                                                Navigator.pop(context);
+                                                return;
+                                              }
+
                                               if (checked == true) {
                                                 tempSelectedIds.add(
                                                   student.studentId,
@@ -935,10 +981,12 @@ class _StudentMultiSelectDropdownState
                       Padding(
                         padding: const EdgeInsets.symmetric(
                           horizontal: 12,
-                          vertical: 20,
+                          vertical: 30,
                         ),
                         child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          mainAxisAlignment: widget.allowMultiple
+                              ? MainAxisAlignment.spaceBetween
+                              : MainAxisAlignment.center,
                           children: [
                             CustomButton(
                               height: 45,
@@ -948,26 +996,30 @@ class _StudentMultiSelectDropdownState
                               isEnabled: true,
                               onPressed: () => Navigator.pop(context),
                             ),
-                            CustomButton(
-                              height: 45,
-                              width: 120,
-                              borderRadius: 10,
-                              title: 'Add',
-                              isEnabled: true,
-                              onPressed: () {
-                                setState(() {
-                                  _selectedStudents.clear();
-                                  _selectedStudents.addAll(
-                                    widget.students.where(
-                                      (s) =>
-                                          tempSelectedIds.contains(s.studentId),
-                                    ),
-                                  );
-                                });
-                                widget.onSelectionChanged(_selectedStudents);
-                                Navigator.pop(context);
-                              },
-                            ),
+
+                            // If multiple selection allowed, show Add button to confirm selection.
+                            if (widget.allowMultiple)
+                              CustomButton(
+                                height: 45,
+                                width: 120,
+                                borderRadius: 10,
+                                title: 'Add',
+                                isEnabled: true,
+                                onPressed: () {
+                                  setState(() {
+                                    _selectedStudents.clear();
+                                    _selectedStudents.addAll(
+                                      widget.students.where(
+                                        (s) => tempSelectedIds.contains(
+                                          s.studentId,
+                                        ),
+                                      ),
+                                    );
+                                  });
+                                  widget.onSelectionChanged(_selectedStudents);
+                                  Navigator.pop(context);
+                                },
+                              ),
                           ],
                         ),
                       ),

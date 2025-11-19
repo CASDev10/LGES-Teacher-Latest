@@ -470,9 +470,9 @@ class _TeacherListSheetState extends State<_TeacherListSheet> {
                         ),
                       );
                     }
-
                     return StudentMultiSelectDropdown(
                       students: studentState.students,
+                      allowMultiple: false,
                       onSelectionChanged: (list) {
                         setState(() => selectedStudents = list);
                       },
