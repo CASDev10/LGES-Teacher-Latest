@@ -22,6 +22,7 @@ import '../../file_sharing/cubits/get_students/get_students_cubit.dart';
 import '../../file_sharing/cubits/get_students/get_students_state.dart';
 import '../../file_sharing/models/get_students_response.dart';
 import '../../file_sharing/pages/file_sharing_screen.dart';
+import '../models/conversations_response.dart';
 import 'chat_screen.dart';
 
 class ConversationsScreen extends StatelessWidget {
@@ -45,37 +46,6 @@ class ConversationsScreenView extends StatefulWidget {
 }
 
 class _ConversationsScreenViewState extends State<ConversationsScreenView> {
-  final List<Map<String, dynamic>> _conversations = [
-    {
-      'name': 'Ali Raza',
-      'message': 'Hey! Are you available tomorrow?',
-      'time': '10:45 AM',
-      'unread': 2,
-      'avatar': 'https://i.pravatar.cc/150?img=1',
-    },
-    {
-      'name': 'Sara Khan',
-      'message': 'Thanks for your help!',
-      'time': '9:20 AM',
-      'unread': 0,
-      'avatar': 'https://i.pravatar.cc/150?img=2',
-    },
-    {
-      'name': 'Class 5B Group',
-      'message': 'Reminder: Meeting at 3PM',
-      'time': 'Yesterday',
-      'unread': 1,
-      'avatar': 'https://i.pravatar.cc/150?img=5',
-    },
-    {
-      'name': 'Principal',
-      'message': 'Please submit your attendance report.',
-      'time': 'Mon',
-      'unread': 0,
-      'avatar': 'https://i.pravatar.cc/150?img=3',
-    },
-  ];
-
   void _openNewChatDialog() async {
     final selectedData = await showModalBottomSheet<Map<String, dynamic>>(
       context: context,
@@ -86,14 +56,38 @@ class _ConversationsScreenViewState extends State<ConversationsScreenView> {
 
     if (selectedData != null) {
       print('selectedData $selectedData');
+
+      // Get the current state to check existing conversations
+      final conversationsState = context.read<ConversationsCubit>().state;
+
+      // Find if conversation already exists with this student
+      final existingConversation = conversationsState.conversations.firstWhere(
+        (conversation) => conversation.studentId == selectedData["id"],
+        orElse: () => ConversationModel(
+          conversationId: -1,
+          teacherName: '',
+          studentId: -1,
+          studentName: '',
+          latestMessage: '',
+          className: '',
+          sectionName: '',
+          latestMessageDate: DateTime.now(),
+        ),
+      );
+
+      // Use existing conversationId if found, otherwise use -1 for new conversation
+      final conversationId = existingConversation.conversationId ?? -1;
+
       NavRouter.push(
         context,
         ChatDetailScreen(
           userName: selectedData["name"],
-          conversationId: -1,
+          conversationId: conversationId,
           studentId: selectedData["id"],
         ),
-      );
+      ).then((value) {
+        context.read<ConversationsCubit>().getConversations(isLoading: false);
+      });
     }
   }
 
@@ -224,50 +218,130 @@ class _ConversationsScreenViewState extends State<ConversationsScreenView> {
                       });
                     },
                     child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 10,
-                        horizontal: 10,
-                      ),
+                      padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
-                        color: AppColors.primaryDark.withOpacity(0.06),
-                        borderRadius: BorderRadius.circular(16),
+                        gradient: LinearGradient(
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                          colors: [
+                            AppColors.primaryDark.withOpacity(0.08),
+                            AppColors.primaryDark.withOpacity(0.03),
+                          ],
+                        ),
+                        borderRadius: BorderRadius.circular(20),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.05),
+                            blurRadius: 8,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                        border: Border.all(
+                          color: AppColors.primaryDark.withOpacity(0.1),
+                          width: 1,
+                        ),
                       ),
                       child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(
-                                  chat.studentName,
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 16,
-                                    color: Colors.black87,
-                                  ),
+                                // Header Row with Name and Time
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Expanded(
+                                      child: Text(
+                                        "${chat.studentName}",
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: const TextStyle(
+                                          fontWeight: FontWeight.w700,
+                                          fontSize: 16,
+                                          color: Colors.black87,
+                                          letterSpacing: -0.2,
+                                        ),
+                                      ),
+                                    ),
+
+                                    // Time with better styling
+                                    Container(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 8,
+                                        vertical: 4,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: AppColors.primaryDark
+                                            .withOpacity(0.08),
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      child: Text(
+                                        changeDateTimeFormat(
+                                          chat.latestMessageDate,
+                                          'hh:mm a',
+                                        ),
+                                        style: TextStyle(
+                                          color: Colors.grey[600],
+                                          fontSize: 11,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                                const SizedBox(height: 4),
-                                Text(
-                                  chat.latestMessage,
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: TextStyle(
-                                    color: Colors.grey[600],
-                                    fontSize: 14,
-                                  ),
+
+                                const SizedBox(height: 6),
+
+                                // Class & Section with icon
+                                Row(
+                                  children: [
+                                    Icon(
+                                      Icons.school_outlined,
+                                      color: Colors.grey[600],
+                                      size: 14,
+                                    ),
+                                    const SizedBox(width: 4),
+                                    Text(
+                                      "${chat.className} - ${chat.sectionName}",
+                                      style: TextStyle(
+                                        color: Colors.grey[700],
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+
+                                const SizedBox(height: 8),
+
+                                // Latest Message with message icon
+                                Row(
+                                  children: [
+                                    Icon(
+                                      Icons.message_outlined,
+                                      color: Colors.grey[500],
+                                      size: 14,
+                                    ),
+                                    const SizedBox(width: 6),
+                                    Expanded(
+                                      child: Text(
+                                        chat.latestMessage,
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: TextStyle(
+                                          color: Colors.grey[600],
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w400,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ],
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                          Text(
-                            changeDateTimeFormat(
-                              chat.latestMessageDate,
-                              'hh:mm a',
-                            ),
-                            style: TextStyle(
-                              color: Colors.grey[500],
-                              fontSize: 12,
                             ),
                           ),
                         ],

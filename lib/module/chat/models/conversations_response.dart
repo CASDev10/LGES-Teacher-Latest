@@ -43,6 +43,8 @@ class ConversationModel {
   int studentId;
   String studentName;
   String latestMessage;
+  String className;
+  String sectionName;
   DateTime latestMessageDate;
 
   ConversationModel({
@@ -52,6 +54,8 @@ class ConversationModel {
     required this.studentName,
     required this.latestMessage,
     required this.latestMessageDate,
+    required this.className,
+    required this.sectionName,
   });
 
   factory ConversationModel.fromJson(Map<String, dynamic> json) =>
@@ -61,6 +65,8 @@ class ConversationModel {
         studentId: json["StudentId"],
         studentName: json["StudentName"],
         latestMessage: json["LatestMessage"],
+        className: json["ClassName"],
+        sectionName: json["SectionName"],
         latestMessageDate: DateTime.parse(json["LatestMessageDate"]),
       );
 
@@ -70,6 +76,8 @@ class ConversationModel {
     "StudentId": studentId,
     "StudentName": studentName,
     "LatestMessage": latestMessage,
+    "ClassName": className,
+    "SectionName": sectionName,
     "LatestMessageDate": latestMessageDate.toIso8601String(),
   };
 }
