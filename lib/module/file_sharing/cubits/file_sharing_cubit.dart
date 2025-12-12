@@ -60,10 +60,18 @@ class FileSharingCubit extends Cubit<FileSharingState> {
     } catch (_) {}
   }
 
-  Future addNotification(NotificationInput input) async {
+  Future addNotification(NotificationInput input, File? file) async {
     emit(state.copyWith(status: FileSharingStatus.loading));
 
     try {
+      if (file != null) {
+        final fileName = file.path.split('/').last;
+        final multipartFile = await MultipartFile.fromFile(
+          file.path,
+          filename: fileName,
+        );
+        input.file = multipartFile;
+      }
       BaseResponseModel baseResponseModel = await _repository.addNotification(
         input,
       );

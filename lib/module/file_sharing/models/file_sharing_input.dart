@@ -29,6 +29,7 @@ class NotificationInput {
   String? studentIds;
   String? startDate;
   String? endDate;
+  MultipartFile? file;
 
   NotificationInput({
     required this.ucLoginUserId,
@@ -39,6 +40,7 @@ class NotificationInput {
     required this.studentIds,
     required this.startDate,
     required this.endDate,
+    this.file,
   });
 
   Map<String, dynamic> toJson() => {

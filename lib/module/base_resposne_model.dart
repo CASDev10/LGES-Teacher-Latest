@@ -11,24 +11,24 @@ String baseResponseModelToJson(BaseResponseModel data) => json.encode(data.toJso
 class BaseResponseModel {
   String result;
   String message;
-  Data data;
+  Data? data;
 
   BaseResponseModel({
     required this.result,
     required this.message,
-    required this.data,
+    this.data,
   });
 
   factory BaseResponseModel.fromJson(Map<String, dynamic> json) => BaseResponseModel(
     result: json["result"],
     message: json["message"],
-    data: Data.fromJson(json["data"]),
+    data: json["data"] != null ? Data.fromJson(json["data"]) : null,
   );
 
   Map<String, dynamic> toJson() => {
     "result": result,
     "message": message,
-    "data": data.toJson(),
+    if (data != null) "data": data!.toJson(),
   };
 }
 

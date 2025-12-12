@@ -4,6 +4,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:lges_teacher_app/components/text_view.dart';
 import 'package:lges_teacher_app/module/auth/repo/auth_repository.dart';
 import 'package:lges_teacher_app/module/daily_diary/cubit/subject_cubit/subjects_cubit.dart';
 import 'package:lges_teacher_app/module/file_sharing/cubits/notification_types/notification_types_state.dart';
@@ -17,6 +18,7 @@ import '../../../components/generic_drop_down.dart';
 import '../../../config/routes/nav_router.dart';
 import '../../../constants/app_colors.dart';
 import '../../../core/di/service_locator.dart';
+import '../../../utils/display/dialogs/dialog_utils.dart';
 import '../../../utils/display/display_utils.dart';
 import '../../class_section/cubit/classes_cubit/classes_cubit.dart';
 import '../../class_section/cubit/sections_cubit/sections_cubit.dart';
@@ -374,8 +376,8 @@ class _FileSharingScreenState extends State<FileSharingScreen> {
                       ),
                       SizedBox(height: 12),
 
-                      /*// 🔹 File Upload Section
-                      const Align(
+                      // 🔹 File Upload Section
+                      Align(
                         alignment: Alignment.centerLeft,
                         child: Padding(
                           padding: EdgeInsets.all(8),
@@ -425,6 +427,7 @@ class _FileSharingScreenState extends State<FileSharingScreen> {
                                         fileNameController.text =
                                             'No file selected';
                                         result = null;
+                                        file = null;
                                         setState(() {});
                                         NavRouter.pop(context);
                                       },
@@ -473,7 +476,7 @@ class _FileSharingScreenState extends State<FileSharingScreen> {
                           isEnabled: true,
                         ),
                       ),
-                      const SizedBox(height: 16),*/
+                      const SizedBox(height: 16),
                       CustomTextField(
                         hintText: 'Notification Title',
                         height: 230,
@@ -610,8 +613,8 @@ class _FileSharingScreenState extends State<FileSharingScreen> {
 
                         print(input.toJson());
 
-                        // 🔹 Call Cubit to submit
-                        context.read<FileSharingCubit>().addNotification(input);
+                        // 🔹 Call Cubit to submit with file
+                        context.read<FileSharingCubit>().addNotification(input, file);
                       },
                       title: 'Submit',
                       isEnabled: true,

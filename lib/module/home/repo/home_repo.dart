@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:developer';
 
+import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:lges_teacher_app/module/file_sharing/models/get_students_response.dart';
 import 'package:lges_teacher_app/module/home/models/app_config_reponse.dart';
@@ -88,9 +89,13 @@ class HomeRepository {
 
   Future<BaseResponseModel> addNotification(NotificationInput input) async {
     try {
+      FormData formData = FormData.fromMap({
+        "Description": jsonEncode(input.toJson()),
+        "NotificationFile": input.file,
+      });
       var response = await _networkService.post(
         Endpoints.addNotification,
-        data: input.toJson(),
+        data: formData,
       );
 
       BaseResponseModel baseResponseModel = await compute(
