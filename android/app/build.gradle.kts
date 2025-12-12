@@ -28,7 +28,7 @@ android {
 
     defaultConfig {
         applicationId = "com.cas.lgesTeacherApp"
-        minSdk = 23
+        minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = 7
         versionName = "1.0.7"
