@@ -116,12 +116,12 @@ class AuthRepository {
 
   Map<String, dynamic>? getHeaders() {
     //live
-    // String username = 'LgesApiExtPass';
-    // String password = '7A527#APIAB#@LlmX#1@LGES\$WEB';
+    String username = 'LgesApiExtPass';
+    String password = '7A527#APIAB#@LlmX#1@LGES\$WEB';
 
     //test
-    String username = 'LgesApiExtPass';
-    String password = 'lgeswebtest@cyberasol';
+    // String username = 'LgesApiExtPass';
+    // String password = 'lgeswebtest@cyberasol';
 
     String basicAuth =
         'Basic ' + base64.encode(utf8.encode('$username:$password'));
