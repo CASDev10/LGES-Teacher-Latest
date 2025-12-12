@@ -1,0 +1,124 @@
+{
+  "project_info": {
+    "project_number": "883117959707",
+    "project_id": "esm-teacher-owner-apps",
+    "storage_bucket": "esm-teacher-owner-apps.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:883117959707:android:1726ad207e67b2c1fae6be",
+        "android_client_info": {
+          "package_name": "com.bkmc_student"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBlvCbY-xN9K7XtTTp-yo_QdBR0-itdiTc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:883117959707:android:e43e7db2cb7cf92efae6be",
+        "android_client_info": {
+          "package_name": "com.bkmc_teacher"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBlvCbY-xN9K7XtTTp-yo_QdBR0-itdiTc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:883117959707:android:82b0eb246a7477f1fae6be",
+        "android_client_info": {
+          "package_name": "com.cas.fmrTeacherApp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBlvCbY-xN9K7XtTTp-yo_QdBR0-itdiTc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:883117959707:android:957c5dbf19db067efae6be",
+        "android_client_info": {
+          "package_name": "com.cas.ja_teacher_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBlvCbY-xN9K7XtTTp-yo_QdBR0-itdiTc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:883117959707:android:06b97d2606700fa8fae6be",
+        "android_client_info": {
+          "package_name": "com.cas.lgesTeacherApp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBlvCbY-xN9K7XtTTp-yo_QdBR0-itdiTc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:883117959707:android:4de2d5c438a38a2afae6be",
+        "android_client_info": {
+          "package_name": "com.example.cothm"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBlvCbY-xN9K7XtTTp-yo_QdBR0-itdiTc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
