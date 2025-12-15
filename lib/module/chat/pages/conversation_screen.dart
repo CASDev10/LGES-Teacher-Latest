@@ -145,20 +145,20 @@ class _ConversationsScreenViewState extends State<ConversationsScreenView> {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(
-                      Icons.error_outline,
-                      size: 50,
-                      color: Colors.red.shade600,
-                    ),
-                    const SizedBox(height: 10),
-                    Text(
-                      "Something went wrong",
-                      style: TextStyle(
-                        color: Colors.red.shade600,
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+                    // Icon(
+                    //   Icons.error_outline,
+                    //   size: 50,
+                    //   color: Colors.red.shade600,
+                    // ),
+                    // const SizedBox(height: 10),
+                    // Text(
+                    //   "Something went wrong",
+                    //   style: TextStyle(
+                    //     color: Colors.red.shade600,
+                    //     fontSize: 16,
+                    //     fontWeight: FontWeight.bold,
+                    //   ),
+                    // ),
                     const SizedBox(height: 6),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -166,7 +166,7 @@ class _ConversationsScreenViewState extends State<ConversationsScreenView> {
                         state.message,
                         style: const TextStyle(
                           color: Colors.black54,
-                          fontSize: 14,
+                          fontSize: 20,
                         ),
                         textAlign: TextAlign.center,
                       ),
