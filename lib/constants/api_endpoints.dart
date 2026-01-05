@@ -48,4 +48,8 @@ class Endpoints {
   static const String getConversations = '/GetAllTeacherConversations';
   static const String getChatHistory = '/GetTeacherConversationById';
   static const String sendMessage = '/SendMessageToStudent';
+
+  static const String getEvaluationGroups = '/GetEvaluationGroups';
+  static const String getEvaluationTypes = '/GetEvaluationTypes';
+  static const String getEvaluation = '/GetEvaluation';
 }

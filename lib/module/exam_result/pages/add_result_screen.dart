@@ -21,7 +21,9 @@ import 'package:lges_teacher_app/module/exam_result/models/import_exam_result_da
 import 'package:lges_teacher_app/module/exam_result/models/student_model.dart';
 import 'package:lges_teacher_app/module/exam_result/pages/process_result_screen.dart';
 import 'package:lges_teacher_app/module/exam_result/pages/show_result_screen.dart';
+import 'package:lges_teacher_app/utils/custom_countdown.dart';
 import 'package:lges_teacher_app/utils/display/display_utils.dart';
+import 'package:lges_teacher_app/utils/extensions/extended_string.dart';
 
 import '../../../components/base_scaffold.dart';
 import '../../../components/custom_appbar.dart';
@@ -35,7 +37,11 @@ import '../../../utils/custom_date_time_picker.dart';
 import '../../../utils/display/dialogs/dialog_utils.dart';
 import '../../auth/repo/auth_repository.dart';
 import '../cubit/exam_class_cubit/exam_classes_state.dart';
+import '../models/evaluation_response.dart';
+import '../models/evaluation_type_response.dart';
 import '../models/exam_class_response.dart';
+import '../models/group_evaluation_response.dart';
+import '../widget/dropdown_place_holder.dart';
 
 class AddResultScreen extends StatefulWidget {
   const AddResultScreen({super.key});
@@ -90,50 +96,50 @@ class _AddResultScreenState extends State<AddResultScreen> {
     return result;
   }
 
+  EvaluationGroupModel? selectedEvaluatedGroup;
+  EvaluationTypeModel? selectedEvaluatedType;
+  EvaluationModel? selectedEvaluated;
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
         BlocProvider(
-          create: (context) => ExamClassesCubit(sl())
-            ..fetchClasses(authRepository.user.schoolId.toString()),
+          create: (context) =>
+              ExamClassesCubit(sl())
+                ..fetchClasses(authRepository.user.schoolId.toString()),
         ),
         BlocProvider(
-          create: (context) => ExamClassSectionsCubit(sl()),
+          create: (context) =>
+              ExamClassSectionsCubit(sl())..fetchEvaluationType(),
         ),
-        BlocProvider(
-          create: (context) => ImportExamResultCubit(sl()),
-        ),
+        BlocProvider(create: (context) => ImportExamResultCubit(sl())),
       ],
       child: BaseScaffold(
-        appBar: const CustomAppbar(
-          'Exam Result',
-          centerTitle: true,
-        ),
+        appBar: const CustomAppbar('Exam Result', centerTitle: true),
         body: Container(
           width: double.infinity,
           decoration: const BoxDecoration(
             color: AppColors.whiteColor,
             borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(50), topRight: Radius.circular(50)),
+              topLeft: Radius.circular(50),
+              topRight: Radius.circular(50),
+            ),
           ),
           child: BlocBuilder<ExamClassesCubit, ExamClassesState>(
-            builder: (context, state) {
-              if (state.examClassesStatus == ExamClassesStatus.loading) {
-                return Center(
-                  child: LoadingIndicator(),
-                );
-              } else if (state.examClassesStatus == ExamClassesStatus.success) {
+            builder: (context, stateClass) {
+              if (stateClass.examClassesStatus == ExamClassesStatus.loading) {
+                return Center(child: LoadingIndicator());
+              } else if (stateClass.examClassesStatus ==
+                  ExamClassesStatus.success) {
                 return Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20) +
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 20) +
                       const EdgeInsets.symmetric(vertical: 30),
                   child: Stack(
                     children: [
                       Column(
                         children: [
-                          const SizedBox(
-                            height: 10,
-                          ),
+                          const SizedBox(height: 10),
                           CustomDropDown(
                             allPadding: 0,
                             horizontalPadding: 15,
@@ -142,28 +148,30 @@ class _AddResultScreenState extends State<AddResultScreen> {
                             iconColor: AppColors.primaryDark,
                             suffixIconPath: '',
                             hint: 'Select Class',
-                            items: state.classes
+                            items: stateClass.classes
                                 .map((selectClass) => selectClass.className)
                                 .toList(),
                             onSelect: (String value) {
-                              ExamClassModel selectedClass = state.classes
+                              ExamClassModel selectedClass = stateClass.classes
                                   .firstWhere(
-                                      (element) => element.className == value);
+                                    (element) => element.className == value,
+                                  );
                               setState(() {
                                 dropdownValueClass = value;
                                 classId = selectedClass.classId.toString();
                                 context
                                     .read<ExamClassSectionsCubit>()
                                     .fetchClassSections(
-                                        selectedClass.classId.toString());
+                                      selectedClass.classId.toString(),
+                                    );
                               });
                             },
                           ),
-                          const SizedBox(
-                            height: 16,
-                          ),
-                          BlocConsumer<ExamClassSectionsCubit,
-                              ExamClassSectionsState>(
+                          const SizedBox(height: 16),
+                          BlocConsumer<
+                            ExamClassSectionsCubit,
+                            ExamClassSectionsState
+                          >(
                             listener: (context, examClassSectionsState) {
                               if (examClassSectionsState
                                       .examClassSectionsStatus ==
@@ -177,8 +185,10 @@ class _AddResultScreenState extends State<AddResultScreen> {
                                       .examClassSectionsStatus ==
                                   ExamClassSectionsStatus.failure) {
                                 DisplayUtils.removeLoader();
-                                DisplayUtils.showSnackBar(context,
-                                    examClassSectionsState.failure.message);
+                                DisplayUtils.showSnackBar(
+                                  context,
+                                  examClassSectionsState.failure.message,
+                                );
                               }
                             },
                             builder: (context, examClassSectionsState) {
@@ -186,8 +196,10 @@ class _AddResultScreenState extends State<AddResultScreen> {
                               return GestureDetector(
                                 onTap: dropdownValueClass == null
                                     ? () {
-                                        DisplayUtils.showSnackBar(context,
-                                            "Please select Class First");
+                                        DisplayUtils.showSnackBar(
+                                          context,
+                                          "Please select Class First",
+                                        );
                                       }
                                     : null,
                                 child: CustomDropDown(
@@ -204,11 +216,13 @@ class _AddResultScreenState extends State<AddResultScreen> {
                                   onSelect: (String value) {
                                     ExamClassSectionModel selectedSection =
                                         examClassSectionsState.classSections
-                                            .firstWhere((element) =>
-                                                element.sectionName == value);
+                                            .firstWhere(
+                                              (element) =>
+                                                  element.sectionName == value,
+                                            );
                                     setState(() {
-                                      sectionId =
-                                          selectedSection.sectionId.toString();
+                                      sectionId = selectedSection.sectionId
+                                          .toString();
                                       dropdownValueSection = value;
                                     });
                                   },
@@ -216,36 +230,167 @@ class _AddResultScreenState extends State<AddResultScreen> {
                               );
                             },
                           ),
-                          const SizedBox(
-                            height: 16,
-                          ),
-                          CustomTextField(
-                            hintText: 'Month / Year',
-                            height: 50,
-                            readOnly: true,
-                            bottomMargin: 0,
-                            suffixWidget: SvgPicture.asset(
-                              'assets/images/svg/ic_drop_down.svg',
-                              color: AppColors.primaryDark,
-                            ),
-                            controller: monthYearDateController,
-                            fontWeight: FontWeight.normal,
-                            inputType: TextInputType.text,
-                            fillColor: AppColors.lightGreyColor,
-                            hintColor: AppColors.primaryDark,
-                            onTap: () async {
-                              String date =
-                                  await CustomDateTimePicker.selectMonthYear(
-                                      context);
-                              DateTime dateTime =
-                                  DateFormat("dd/MM/yyyy").parse(date);
-                              monthYearDateController.text =
-                                  DateFormat("MM-yyyy").format(dateTime);
+                          const SizedBox(height: 16),
+
+                          BlocConsumer<
+                            ExamClassSectionsCubit,
+                            ExamClassSectionsState
+                          >(
+                            listener: (context, state) {
+                              // TODO: implement listener
+                            },
+                            builder: (context, state) {
+                              return Column(
+                                children: [
+                                  state.examClassSectionsStatus ==
+                                          ExamClassSectionsStatus.loading
+                                      ? DropdownPlaceHolder(
+                                          name: selectedEvaluatedType != null
+                                              ? selectedEvaluatedType!.name
+                                              : "Select Evaluation Type",
+                                        )
+                                      : GeneralCustomDropDown<
+                                          EvaluationTypeModel
+                                        >(
+                                          allPadding: 0,
+                                          selectedValue: selectedEvaluatedType,
+                                          horizontalPadding: 15,
+                                          isOutline: false,
+                                          hintColor: AppColors.primaryDark,
+                                          iconColor: AppColors.primaryDark,
+                                          suffixIconPath: '',
+                                          displayField: (item) => item.name,
+                                          hint: 'Select Evaluation Type',
+                                          items: state.evaluationTypes,
+                                          onSelect: (value) {
+                                            setState(() {
+                                              setState(() {
+                                                selectedEvaluatedGroup = null;
+                                                selectedEvaluated = null;
+                                                selectedEvaluatedType = value;
+                                              });
+                                              context
+                                                  .read<
+                                                    ExamClassSectionsCubit
+                                                  >()
+                                                  .fetchEvaluation(
+                                                    evaluationTypeId:
+                                                        value.evaluationTypeId,
+                                                  )
+                                                  .then((_) {
+                                                    if (value
+                                                            .evaluationTypeId ==
+                                                        2) {
+                                                      context
+                                                          .read<
+                                                            ExamClassSectionsCubit
+                                                          >()
+                                                          .fetchGroupEvaluation(
+                                                            evaluationTypeId: 0,
+                                                          );
+                                                    }
+                                                  });
+                                            });
+                                          },
+                                        ),
+                                  SizedBox(height: 12.0),
+                                  state.examClassSectionsStatus ==
+                                          ExamClassSectionsStatus.loading
+                                      ? DropdownPlaceHolder(
+                                          name: selectedEvaluated != null
+                                              ? selectedEvaluated!.name
+                                              : "Select Evaluation",
+                                        )
+                                      : GeneralCustomDropDown<EvaluationModel>(
+                                          allPadding: 0,
+                                          selectedValue: selectedEvaluated,
+                                          horizontalPadding: 15,
+                                          isOutline: false,
+                                          hintColor: AppColors.primaryDark,
+                                          iconColor: AppColors.primaryDark,
+                                          suffixIconPath: '',
+                                          displayField: (item) => item.name,
+                                          hint: 'Select Evaluation',
+                                          items: state.evaluations,
+                                          onSelect: (value) {
+                                            setState(() {
+                                              setState(() {
+                                                selectedEvaluated = value;
+                                              });
+                                            });
+                                          },
+                                        ),
+                                  SizedBox(height: 12.0),
+                                  selectedEvaluatedType?.evaluationTypeId
+                                              .toInt() ==
+                                          2
+                                      ? //Group Evaluation Type Dropdown
+                                        state.examClassSectionsStatus ==
+                                                ExamClassSectionsStatus.loading
+                                            ? DropdownPlaceHolder(
+                                                name:
+                                                    selectedEvaluatedGroup
+                                                        ?.name ??
+                                                    "Select Group Evaluation Type",
+                                              )
+                                            : GeneralCustomDropDown<
+                                                EvaluationGroupModel
+                                              >(
+                                                allPadding: 0,
+                                                selectedValue:
+                                                    selectedEvaluatedGroup,
+                                                horizontalPadding: 15,
+                                                isOutline: false,
+                                                hintColor:
+                                                    AppColors.primaryDark,
+                                                iconColor:
+                                                    AppColors.primaryDark,
+                                                suffixIconPath: '',
+                                                displayField: (item) =>
+                                                    item.name,
+                                                hint:
+                                                    'Select Group Evaluation Type',
+                                                items: state.evaluationsGroups,
+                                                onSelect: (value) {
+                                                  setState(() {
+                                                    selectedEvaluatedGroup =
+                                                        value;
+                                                  });
+                                                },
+                                              )
+                                      : SizedBox(),
+                                ],
+                              );
                             },
                           ),
-                          const SizedBox(
-                            height: 90,
-                          ),
+                          // selectedEvaluatedType?.evaluationTypeId.toInt() == 2
+                          //     ? SizedBox(height: 12)
+                          //     : SizedBox(),
+                          // CustomTextField(
+                          //   hintText: 'Month / Year',
+                          //   height: 50,
+                          //   readOnly: true,
+                          //   bottomMargin: 0,
+                          //   suffixWidget: SvgPicture.asset(
+                          //     'assets/images/svg/ic_drop_down.svg',
+                          //     color: AppColors.primaryDark,
+                          //   ),
+                          //   controller: monthYearDateController,
+                          //   fontWeight: FontWeight.normal,
+                          //   inputType: TextInputType.text,
+                          //   fillColor: AppColors.lightGreyColor,
+                          //   hintColor: AppColors.primaryDark,
+                          //   onTap: () async {
+                          //     String date =
+                          //         await CustomDateTimePicker.selectMonthYear(
+                          //             context);
+                          //     DateTime dateTime =
+                          //         DateFormat("dd/MM/yyyy").parse(date);
+                          //     monthYearDateController.text =
+                          //         DateFormat("MM-yyyy").format(dateTime);
+                          //   },
+                          // ),
+                          const SizedBox(height: 90),
                           Align(
                             alignment: Alignment.centerLeft,
                             child: Padding(
@@ -259,9 +404,11 @@ class _AddResultScreenState extends State<AddResultScreen> {
                           ),
                           Container(
                             decoration: const BoxDecoration(
-                                color: AppColors.lightGreyColor,
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(12))),
+                              color: AppColors.lightGreyColor,
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(12),
+                              ),
+                            ),
                             child: Row(
                               children: [
                                 Expanded(
@@ -283,28 +430,27 @@ class _AddResultScreenState extends State<AddResultScreen> {
                                   width: 90,
                                   borderRadius: 15,
                                   onPressed: () {
-                                    if(result != null){
+                                    if (result != null) {
                                       DialogUtils.confirmationDialog(
-                                          context: context,
-                                          title: 'Confirmation!',
-                                          content:
-                                          'Are you sure you want to remove the file?',
-                                          onPressYes: () {
-                                            fileNameController.clear();
-                                            result = null;
-                                            setState(() {});
-                                          });
+                                        context: context,
+                                        title: 'Confirmation!',
+                                        content:
+                                            'Are you sure you want to remove the file?',
+                                        onPressYes: () {
+                                          fileNameController.clear();
+                                          result = null;
+                                          setState(() {});
+                                        },
+                                      );
                                     }
                                   },
                                   title: 'Remove',
                                   isEnabled: true,
-                                )
+                                ),
                               ],
                             ),
                           ),
-                          const SizedBox(
-                            height: 16,
-                          ),
+                          const SizedBox(height: 16),
                           Align(
                             alignment: Alignment.centerLeft,
                             child: CustomButton(
@@ -317,17 +463,21 @@ class _AddResultScreenState extends State<AddResultScreen> {
                                   allowMultiple: false,
                                   allowedExtensions: [
                                     'xlsx',
+                                    'xls',
                                     'xlsm',
                                     'xlsb',
-                                    'xltx'
+                                    'xltx',
                                   ],
                                 );
                                 if (result == null) {
                                   DisplayUtils.showToast(
-                                      context, "No file selected");
+                                    context,
+                                    "No file selected",
+                                  );
                                 } else {
                                   File file = File(
-                                      result!.files.single.path.toString());
+                                    result!.files.single.path.toString(),
+                                  );
                                   fileNameController.text =
                                       result!.files.single.name;
                                   setState(() {});
@@ -345,74 +495,86 @@ class _AddResultScreenState extends State<AddResultScreen> {
                               isEnabled: true,
                             ),
                           ),
-                          const SizedBox(
-                            height: 20,
-                          ),
+                          const SizedBox(height: 20),
                         ],
                       ),
                       Positioned(
                         bottom: 0,
                         left: 0,
                         right: 0,
-                        child: BlocConsumer<ImportExamResultCubit, ImportExamResultState>(
-                          listener: (context, examResultState) {
-                            if(examResultState.importExamResultStatus == ImportExamResultStatus.loading){
-                              DisplayUtils.showLoader();
-                            }else if(examResultState.importExamResultStatus == ImportExamResultStatus.success){
-                              DisplayUtils.removeLoader();
-                              DisplayUtils.showToast(context, "Exam result added successfully!");
-                              NavRouter.pop(context);
-                            }else if(examResultState.importExamResultStatus == ImportExamResultStatus.failure){
-                              DisplayUtils.removeLoader();
-                              DisplayUtils.showSnackBar(context, examResultState.failure.message);
-                            }
-                          },
-                          builder: (context, state) {
-                            return CustomButton(
-                              height: 50,
-                              borderRadius: 15,
-                              onPressed: () {
-                                if (sectionId.isNotEmpty) {
-                                  if (monthYearDateController.text
-                                      .toString()
-                                      .isNotEmpty) {
-                                    if (result != null) {
-                                      if (studentData.isNotEmpty) {
-                                        ImportExamResultDataInput input =
-                                            _submitButtonPress();
-                                        context.read<ImportExamResultCubit>()
-                                          ..importExamResult(input);
-                                      } else {
-                                        DisplayUtils.showSnackBar(
-                                            context, "Exam report is empty!");
-                                      }
-                                    } else {
-                                      DisplayUtils.showSnackBar(context,
-                                          "Please import the exam report!");
-                                    }
-                                  } else {
-                                    DisplayUtils.showSnackBar(
-                                        context, "Please select month/year!");
-                                  }
-                                } else {
+                        child:
+                            BlocConsumer<
+                              ImportExamResultCubit,
+                              ImportExamResultState
+                            >(
+                              listener: (context, examResultState) {
+                                if (examResultState.importExamResultStatus ==
+                                    ImportExamResultStatus.loading) {
+                                  DisplayUtils.showLoader();
+                                } else if (examResultState
+                                        .importExamResultStatus ==
+                                    ImportExamResultStatus.success) {
+                                  DisplayUtils.removeLoader();
+                                  DisplayUtils.showToast(
+                                    context,
+                                    "Exam result added successfully!",
+                                  );
+                                  NavRouter.pop(context);
+                                } else if (examResultState
+                                        .importExamResultStatus ==
+                                    ImportExamResultStatus.failure) {
+                                  DisplayUtils.removeLoader();
                                   DisplayUtils.showSnackBar(
-                                      context, "Please select section first!");
+                                    context,
+                                    examResultState.failure.message,
+                                  );
                                 }
                               },
-                              title: 'Submit',
-                              isEnabled: true,
-                            );
-                          },
-                        ),
+                              builder: (context, state) {
+                                return CustomButton(
+                                  height: 50,
+                                  borderRadius: 15,
+                                  onPressed: () {
+                                    if (sectionId.isNotEmpty) {
+                                      if (result != null) {
+                                        print('####studentData:${studentData}');
+                                        if (studentData.isNotEmpty) {
+                                          ImportExamResultDataInput input =
+                                              _submitButtonPress();
+                                          context.read<ImportExamResultCubit>()
+                                            ..importExamResult(input);
+                                        } else {
+                                          DisplayUtils.showSnackBar(
+                                            context,
+                                            "Exam report is empty!",
+                                          );
+                                        }
+                                      } else {
+                                        DisplayUtils.showSnackBar(
+                                          context,
+                                          "Please import the exam report!",
+                                        );
+                                      }
+                                    } else {
+                                      DisplayUtils.showSnackBar(
+                                        context,
+                                        "Please select month/year!",
+                                      );
+                                    }
+                                  },
+                                  title: 'Submit',
+                                  isEnabled: true,
+                                );
+                              },
+                            ),
                       ),
                     ],
                   ),
                 );
-              } else if (state.examClassesStatus == ExamClassesStatus.failure) {
-                return Center(
-                  child: TextView(state.failure.message),
-                );
               }
+              // else if (state.examClassesStatus == ExamClassesStatus.failure) {
+              //   return Center(child: TextView(state.failure.message));
+              // }
               return SizedBox();
             },
           ),
@@ -426,40 +588,42 @@ class _AddResultScreenState extends State<AddResultScreen> {
   ImportExamResultDataInput _submitButtonPress() {
     for (StudentModel model in studentData) {
       ResultSheetFixDataModel resultSheetFixData = ResultSheetFixDataModel(
-          studentId: model.studentId,
-          fileNo: model.fileNo,
-          obtainedMarks: model.obtainedMarks,
-          maxMarks: model.maxMarks,
-          percentage: model.percentage);
+        studentId: model.studentId,
+        fileNo: model.fileNo,
+        obtainedMarks: model.obtainedMarks,
+        maxMarks: model.maxMarks,
+        percentage: model.percentage,
+      );
       fixData.add(resultSheetFixData);
       ResultSheetDynamicSubjectModel resultSheetDynamicSubject =
           ResultSheetDynamicSubjectModel(
-              studentId: model.studentId,
-              biology: model.biology,
-              chemistry: model.chemistry,
-              englishLanguage: model.englishLanguage,
-              islamiyat: model.islamiyat,
-              mathematics: model.mathematics,
-              pakistanStudies: model.pakistanStudies,
-              physics: model.physics,
-              urdu: model.urdu);
+            studentId: model.studentId,
+            biology: model.biology,
+            chemistry: model.chemistry,
+            englishLanguage: model.englishLanguage,
+            islamiyat: model.islamiyat,
+            mathematics: model.mathematics,
+            pakistanStudies: model.pakistanStudies,
+            physics: model.physics,
+            urdu: model.urdu,
+          );
       dynamicSubjects.add(resultSheetDynamicSubject);
     }
 
-    List<Map<String, dynamic>> fixDataJsonList =
-        fixData.map((model) => model.toJson()).toList();
-    List<Map<String, dynamic>> dynamicSubjectJsonList =
-        dynamicSubjects.map((model) => model.toJson()).toList();
+    List<Map<String, dynamic>> fixDataJsonList = fixData
+        .map((model) => model.toJson())
+        .toList();
+    List<Map<String, dynamic>> dynamicSubjectJsonList = dynamicSubjects
+        .map((model) => model.toJson())
+        .toList();
 
     ImportExamResultDataInput input = ImportExamResultDataInput(
-        ucEntityId: authRepository.user.entityId.toString(),
-        ucLoginUserId: authRepository.user.userId.toString(),
-        ucSchoolId: authRepository.user.schoolId.toString(),
-        classId: classId,
-        sectionId: sectionId,
-        monthYear: monthYearDateController.text.toString(),
-        fixData: jsonEncode(fixDataJsonList),
-        dynamicSubject: jsonEncode(dynamicSubjectJsonList));
+      ucLoginUserId: authRepository.user.userId.toInt(),
+      classId: classId.toInt(),
+      sectionId: sectionId.toInt(),
+      evaluationGroupId: selectedEvaluatedGroup?.evaluationGroupId ?? 0,
+      evaluationIdFk: selectedEvaluated?.evaluationId ?? 0,
+    );
 
     return input;
   }

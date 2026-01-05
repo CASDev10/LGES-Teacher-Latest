@@ -1,4 +1,3 @@
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:lges_teacher_app/components/text_view.dart';
@@ -19,25 +18,23 @@ class ExamResultScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BaseScaffold(
-      appBar: const CustomAppbar(
-        'Exam & Result',
-        centerTitle: true,
-      ),
+      appBar: const CustomAppbar('Exam & Result', centerTitle: true),
       body: Container(
         width: double.infinity,
         decoration: const BoxDecoration(
           color: AppColors.whiteColor,
           borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(50), topRight: Radius.circular(50)),
+            topLeft: Radius.circular(50),
+            topRight: Radius.circular(50),
+          ),
         ),
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20) +
+          padding:
+              const EdgeInsets.symmetric(horizontal: 20) +
               const EdgeInsets.symmetric(vertical: 30),
           child: Column(
             children: [
-              const SizedBox(
-                height: 10,
-              ),
+              const SizedBox(height: 10),
               CustomTextField(
                 hintText: 'Add Result',
                 height: 50,
@@ -89,9 +86,7 @@ class ExamResultScreen extends StatelessWidget {
 
               //   },
               // ),
-              const SizedBox(
-                height: 20,
-              ),
+              const SizedBox(height: 20),
             ],
           ),
         ),
