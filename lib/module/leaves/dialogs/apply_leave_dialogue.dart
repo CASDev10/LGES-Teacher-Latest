@@ -53,7 +53,7 @@ class _ApplyLeaveDialogueState extends State<ApplyLeaveDialogue> {
 
   int calculateDaysBetweenDates() {
     if (fromDate == null || toDate == null) {
-      DisplayUtils.showSnackBar(context, "Select Date");
+      DisplayUtils.showToast(context, "Select Date");
       return 0;
     }
     DateTime from = DateTime.parse(fromDate!);
@@ -304,7 +304,7 @@ class _ApplyLeaveDialogueState extends State<ApplyLeaveDialogue> {
                     child: CustomButton(
                       onPressed: () async {
                         if (selectedLeaveType == null) {
-                          DisplayUtils.showSnackBar(
+                          DisplayUtils.showToast(
                             context,
                             "Please select a leave type",
                           );
@@ -312,7 +312,7 @@ class _ApplyLeaveDialogueState extends State<ApplyLeaveDialogue> {
                         }
 
                         if (fromDate == null) {
-                          DisplayUtils.showSnackBar(
+                          DisplayUtils.showToast(
                             context,
                             "Please select From Date",
                           );
@@ -320,7 +320,7 @@ class _ApplyLeaveDialogueState extends State<ApplyLeaveDialogue> {
                         }
 
                         if (toDate == null) {
-                          DisplayUtils.showSnackBar(
+                          DisplayUtils.showToast(
                             context,
                             "Please select To Date",
                           );
@@ -328,7 +328,7 @@ class _ApplyLeaveDialogueState extends State<ApplyLeaveDialogue> {
                         }
 
                         if (_reasonController.text.trim().isEmpty) {
-                          DisplayUtils.showSnackBar(
+                          DisplayUtils.showToast(
                             context,
                             "Please enter reason",
                           );
@@ -336,7 +336,7 @@ class _ApplyLeaveDialogueState extends State<ApplyLeaveDialogue> {
                         }
 
                         // if (file == null) {
-                        //   DisplayUtils.showSnackBar(
+                        //   DisplayUtils.showToast(
                         //     context,
                         //     "Please upload an attachment",
                         //   );

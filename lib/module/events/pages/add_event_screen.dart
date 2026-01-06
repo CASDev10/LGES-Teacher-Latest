@@ -92,14 +92,14 @@ class _AddEventScreenViewState extends State<AddEventScreenView> {
                       DisplayUtils.showLoader();
                     } else if (state.status == AddEventStatus.success) {
                       DisplayUtils.removeLoader();
-                      DisplayUtils.showSnackBar(
+                      DisplayUtils.showToast(
                         context,
                         'Event added successfully!',
                       );
                       Navigator.pop(context, true);
                     } else if (state.status == AddEventStatus.failure) {
                       DisplayUtils.removeLoader();
-                      DisplayUtils.showSnackBar(context, state.failure.message);
+                      DisplayUtils.showToast(context, state.failure.message);
                     }
                   },
                   builder: (context, state) {
@@ -264,7 +264,7 @@ class _AddEventScreenViewState extends State<AddEventScreenView> {
                   print(input.toJson());
                   context.read<AddEventCubit>().addEvent(input: input);
                 } else {
-                  DisplayUtils.showSnackBar(
+                  DisplayUtils.showToast(
                     context,
                     "Please select class and section",
                   );

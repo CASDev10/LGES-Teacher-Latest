@@ -200,7 +200,7 @@ class _FileSharingScreenState extends State<FileSharingScreen> {
                           return GestureDetector(
                             onTap: dropdownValueNotificationType == null
                                 ? () {
-                                    DisplayUtils.showSnackBar(
+                                    DisplayUtils.showToast(
                                       context,
                                       "Please Select Notification Type",
                                     );
@@ -251,7 +251,7 @@ class _FileSharingScreenState extends State<FileSharingScreen> {
                           return GestureDetector(
                             onTap: dropdownValueClass == null
                                 ? () {
-                                    DisplayUtils.showSnackBar(
+                                    DisplayUtils.showToast(
                                       context,
                                       "Please select Class First",
                                     );
@@ -302,7 +302,7 @@ class _FileSharingScreenState extends State<FileSharingScreen> {
                           return GestureDetector(
                             onTap: dropdownValueSection == null
                                 ? () {
-                                    DisplayUtils.showSnackBar(
+                                    DisplayUtils.showToast(
                                       context,
                                       "Please select Section First",
                                     );
@@ -517,7 +517,7 @@ class _FileSharingScreenState extends State<FileSharingScreen> {
                   } else if (fileSharingState.status ==
                       FileSharingStatus.failure) {
                     DisplayUtils.removeLoader();
-                    DisplayUtils.showSnackBar(
+                    DisplayUtils.showToast(
                       context,
                       fileSharingState.failure.message,
                     );
@@ -532,7 +532,7 @@ class _FileSharingScreenState extends State<FileSharingScreen> {
                         // 🔹 Validation checks
                         if (dropdownValueNotificationType == null ||
                             dropdownValueNotificationType!.isEmpty) {
-                          DisplayUtils.showSnackBar(
+                          DisplayUtils.showToast(
                             context,
                             "Please select Notification Type",
                           );
@@ -540,7 +540,7 @@ class _FileSharingScreenState extends State<FileSharingScreen> {
                         }
                         if (dropdownValueClass == null ||
                             dropdownValueClass!.isEmpty) {
-                          DisplayUtils.showSnackBar(
+                          DisplayUtils.showToast(
                             context,
                             "Please select Class",
                           );
@@ -548,7 +548,7 @@ class _FileSharingScreenState extends State<FileSharingScreen> {
                         }
                         if (dropdownValueSection == null ||
                             dropdownValueSection!.isEmpty) {
-                          DisplayUtils.showSnackBar(
+                          DisplayUtils.showToast(
                             context,
                             "Please select Section",
                           );
@@ -556,35 +556,35 @@ class _FileSharingScreenState extends State<FileSharingScreen> {
                         }
                         if (dropdownValueSubject == null ||
                             dropdownValueSubject!.isEmpty) {
-                          DisplayUtils.showSnackBar(
+                          DisplayUtils.showToast(
                             context,
                             "Please select Subject",
                           );
                           return;
                         }
                         if (selectedStudents.isEmpty) {
-                          DisplayUtils.showSnackBar(
+                          DisplayUtils.showToast(
                             context,
                             "Please select students",
                           );
                           return;
                         }
                         if (titleController.text.trim().isEmpty) {
-                          DisplayUtils.showSnackBar(
+                          DisplayUtils.showToast(
                             context,
                             "Please enter Notification Title",
                           );
                           return;
                         }
                         if (descriptionController.text.trim().isEmpty) {
-                          DisplayUtils.showSnackBar(
+                          DisplayUtils.showToast(
                             context,
                             "Please enter Description",
                           );
                           return;
                         }
                         if (selectedStudents.isEmpty) {
-                          DisplayUtils.showSnackBar(
+                          DisplayUtils.showToast(
                             context,
                             "Please select at least one Student",
                           );

@@ -365,7 +365,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                             } else if (state.submitAttendanceStatus ==
                                 SubmitAttendanceStatus.failure) {
                               DisplayUtils.removeLoader();
-                              DisplayUtils.showSnackBar(
+                              DisplayUtils.showToast(
                                 context,
                                 state.failure.message,
                               );

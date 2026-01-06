@@ -309,7 +309,7 @@ class _DailyDiaryScreenViewState extends State<DailyDiaryScreenView> {
           }
           if (deleteState.deleteDiaryStatus == DeleteDiaryStatus.failure) {
             DisplayUtils.removeLoader();
-            DisplayUtils.showSnackBar(context, deleteState.failure.message);
+            DisplayUtils.showToast(context, deleteState.failure.message);
           }
           if (deleteState.deleteDiaryStatus == DeleteDiaryStatus.success) {
             DisplayUtils.removeLoader();

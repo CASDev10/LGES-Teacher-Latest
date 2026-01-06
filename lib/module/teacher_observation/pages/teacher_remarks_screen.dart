@@ -99,7 +99,7 @@ class _TeacherRemarksScreenState extends State<TeacherRemarksScreen> {
                         } else if (remarksState.remarksStatus ==
                             AddUpdateDeleteRemarksStatus.failure) {
                           DisplayUtils.removeLoader();
-                          DisplayUtils.showSnackBar(
+                          DisplayUtils.showToast(
                               context, remarksState.failure.message);
                         }
                       },
@@ -318,11 +318,11 @@ class _TeacherRemarksScreenState extends State<TeacherRemarksScreen> {
                                           areaId.toString());
                                   }
                                 } else {
-                                  DisplayUtils.showSnackBar(
+                                  DisplayUtils.showToast(
                                       context, "Please add remarks");
                                 }
                               } else {
-                                DisplayUtils.showSnackBar(
+                                DisplayUtils.showToast(
                                     context, "Please select area!");
                               }
                             },

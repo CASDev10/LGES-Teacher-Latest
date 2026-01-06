@@ -362,7 +362,7 @@ class _SubmitObservationScreenState extends State<SubmitObservationScreen> {
                             DisplayUtils.showToast(context, "Teacher observation added successfully!");
                           }else if(state.submitObservationStatus == SubmitObservationStatus.failure){
                             DisplayUtils.removeLoader();
-                            DisplayUtils.showSnackBar(context, state.failure.message);
+                            DisplayUtils.showToast(context, state.failure.message);
                           }
                         },
                         builder: (context, state) {
@@ -392,15 +392,15 @@ class _SubmitObservationScreenState extends State<SubmitObservationScreen> {
                                     print(jsonEncode(input));
                                     context.read<SubmitObservationCubit>()..submitTeacherObservation(input);
                                   } else {
-                                    DisplayUtils.showSnackBar(
+                                    DisplayUtils.showToast(
                                         context, "Please select date!");
                                   }
                                 }else {
-                                  DisplayUtils.showSnackBar(
+                                  DisplayUtils.showToast(
                                       context, "Please select level!");
                                 }
                               } else {
-                                DisplayUtils.showSnackBar(
+                                DisplayUtils.showToast(
                                     context, "Please select remarks!");
                               }
                             },

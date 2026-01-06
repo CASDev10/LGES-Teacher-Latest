@@ -213,7 +213,7 @@ class _LeavesScreenViewState extends State<LeavesScreenView> {
                 } else if (applyLeaveState.studentAttendanceStatus ==
                     ApplyLeaveStatus.failure) {
                   DisplayUtils.removeLoader();
-                  DisplayUtils.showSnackBar(
+                  DisplayUtils.showToast(
                     context,
                     applyLeaveState.failure.message,
                   );

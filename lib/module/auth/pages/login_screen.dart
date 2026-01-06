@@ -84,7 +84,7 @@ class _LoginScreenState extends State<LoginScreen> {
             Fluttertoast.showToast(msg: 'Logged in Successfully');
           } else if (state.loginStatus == LoginStatus.failure) {
             DisplayUtils.removeLoader();
-            DisplayUtils.showSnackBar(context, state.failure.message);
+            DisplayUtils.showToast(context, state.failure.message);
           }
         },
         builder: (context, state) {

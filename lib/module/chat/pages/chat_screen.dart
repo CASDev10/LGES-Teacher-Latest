@@ -125,7 +125,7 @@ class _ChatDetailScreenViewState extends State<ChatDetailScreenView> {
           }
           if (messageState.messageStatus == MessageStatus.failure) {
             DisplayUtils.removeLoader();
-            DisplayUtils.showSnackBar(context, messageState.message);
+            DisplayUtils.showToast(context, messageState.message);
           }
         },
         builder: (context, messageState) {

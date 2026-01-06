@@ -93,7 +93,7 @@ class _AttendanceFilterScreenState extends State<AttendanceFilterScreen> {
                           } else if (classState.classesStatus ==
                               ClassesStatus.failure) {
                             DisplayUtils.removeLoader();
-                            DisplayUtils.showSnackBar(
+                            DisplayUtils.showToast(
                               context,
                               classState.failure.message,
                             );
@@ -135,7 +135,7 @@ class _AttendanceFilterScreenState extends State<AttendanceFilterScreen> {
                           } else if (sectionStatus.sectionsStatus ==
                               SectionsStatus.failure) {
                             DisplayUtils.removeLoader();
-                            DisplayUtils.showSnackBar(
+                            DisplayUtils.showToast(
                               context,
                               sectionStatus.failure.message,
                             );
@@ -146,7 +146,7 @@ class _AttendanceFilterScreenState extends State<AttendanceFilterScreen> {
                           return GestureDetector(
                             onTap: dropdownValueClass == null
                                 ? () {
-                                    DisplayUtils.showSnackBar(
+                                    DisplayUtils.showToast(
                                       context,
                                       "Please select Class First",
                                     );
@@ -182,14 +182,14 @@ class _AttendanceFilterScreenState extends State<AttendanceFilterScreen> {
                   onPressed: () {
                     if (dropdownValueSection == null &&
                         dropdownValueClass == null) {
-                      DisplayUtils.showSnackBar(
+                      DisplayUtils.showToast(
                         context,
                         "Please select Class & Section",
                       );
                     } else if (dropdownValueClass == null) {
-                      DisplayUtils.showSnackBar(context, "Please select Class");
+                      DisplayUtils.showToast(context, "Please select Class");
                     } else if (dropdownValueSection == null) {
-                      DisplayUtils.showSnackBar(
+                      DisplayUtils.showToast(
                         context,
                         "Please select Section",
                       );

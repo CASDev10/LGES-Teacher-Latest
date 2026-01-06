@@ -105,7 +105,7 @@ class _StudentEvaluationScreenState extends State<StudentEvaluationScreen> {
                 DisplayUtils.showToast(context, "Evaluation added successfully!");
               }else if(addEvaluationState.addEvaluationStatus == AddEvaluationStatus.failure){
                 DisplayUtils.removeLoader();
-                DisplayUtils.showSnackBar(context, addEvaluationState.failure.message);
+                DisplayUtils.showToast(context, addEvaluationState.failure.message);
               }
             },
             builder: (context, addEvaluationState) {
@@ -649,7 +649,7 @@ class _StudentEvaluationScreenState extends State<StudentEvaluationScreen> {
                                     evaluationLogBookDetail2: evaluationLogBookDetail2);
                                 context.read<AddEvaluationCubit>()..addEvaluation(addEvaluationInput);
                               }else{
-                                DisplayUtils.showSnackBar(context, "Select evaluation date!");
+                                DisplayUtils.showToast(context, "Select evaluation date!");
                               }
                             },
                             title: 'Save',
@@ -796,7 +796,7 @@ class _StudentEvaluationScreenState extends State<StudentEvaluationScreen> {
                               } else if (state.addEvaluationRemarksStatus ==
                                   AddEvaluationRemarksStatus.failure) {
                                 DisplayUtils.removeLoader();
-                                DisplayUtils.showSnackBar(
+                                DisplayUtils.showToast(
                                     context, state.failure.message);
                               }
                             },

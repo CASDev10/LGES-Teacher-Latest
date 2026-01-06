@@ -48,25 +48,22 @@ class _ObservationReportScreenState extends State<ObservationReportScreen>
   Widget build(BuildContext context) {
     return BaseScaffold(
       backgroundColor: AppColors.primaryDark,
-      appBar: const CustomAppbar(
-        'Teacher Observation',
-        centerTitle: true,
-      ),
+      appBar: const CustomAppbar('Teacher Observation', centerTitle: true),
       body: Container(
         width: double.infinity,
         height: MediaQuery.of(context).size.height,
         decoration: const BoxDecoration(
           color: AppColors.whiteColor,
           borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(50), topRight: Radius.circular(50)),
+            topLeft: Radius.circular(50),
+            topRight: Radius.circular(50),
+          ),
         ),
         child: SingleChildScrollView(
           padding: EdgeInsets.all(30),
           child: Column(
             children: [
-              SizedBox(
-                height: 10,
-              ),
+              SizedBox(height: 10),
               CustomTextField(
                 hintText: 'Start Date',
                 height: 50,
@@ -82,16 +79,14 @@ class _ObservationReportScreenState extends State<ObservationReportScreen>
                   color: AppColors.primaryDark,
                 ),
                 onTap: () async {
-                  String date =
-                      await CustomDateTimePicker.selectDate(context);
+                  String date = await CustomDateTimePicker.selectDate(context);
                   DateTime dateTime = DateFormat("dd/MM/yyyy").parse(date);
-                  startDateTextController.text =
-                      DateFormat("yyyy-MM-dd").format(dateTime);
+                  startDateTextController.text = DateFormat(
+                    "yyyy-MM-dd",
+                  ).format(dateTime);
                 },
               ),
-              SizedBox(
-                height: 16,
-              ),
+              SizedBox(height: 16),
               CustomTextField(
                 hintText: 'End Date',
                 height: 50,
@@ -107,38 +102,38 @@ class _ObservationReportScreenState extends State<ObservationReportScreen>
                   color: AppColors.primaryDark,
                 ),
                 onTap: () async {
-                  String date =
-                      await CustomDateTimePicker.selectDate(context);
+                  String date = await CustomDateTimePicker.selectDate(context);
                   DateTime dateTime = DateFormat("dd/MM/yyyy").parse(date);
-                  endDateTextController.text =
-                      DateFormat("yyyy-MM-dd").format(dateTime);
+                  endDateTextController.text = DateFormat(
+                    "yyyy-MM-dd",
+                  ).format(dateTime);
                 },
               ),
-              SizedBox(
-                height: 16,
-              ),
-              SizedBox(
-                height: 70,
-              ),
+              SizedBox(height: 16),
+              SizedBox(height: 70),
               CustomButton(
                 onPressed: () {
                   if (startDateTextController.text.isNotEmpty) {
                     if (endDateTextController.text.isNotEmpty) {
-                      NavRouter.push(context, ShowReportScreen(startDate: startDateTextController.text
-                          .trim()
-                          .toString(), endDate:  endDateTextController.text.trim().toString()));
+                      NavRouter.push(
+                        context,
+                        ShowReportScreen(
+                          startDate: startDateTextController.text
+                              .trim()
+                              .toString(),
+                          endDate: endDateTextController.text.trim().toString(),
+                        ),
+                      );
                     } else {
-                      DisplayUtils.showSnackBar(
-                          context, "Please end date");
+                      DisplayUtils.showToast(context, "Please end date");
                     }
                   } else {
-                    DisplayUtils.showSnackBar(
-                        context, "Please start date");
+                    DisplayUtils.showToast(context, "Please start date");
                   }
                 },
                 title: 'Get Report',
                 height: 50,
-              )
+              ),
             ],
           ),
         ),

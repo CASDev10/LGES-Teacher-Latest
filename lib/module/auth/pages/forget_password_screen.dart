@@ -60,7 +60,7 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
           } else if (state.forgetPasswordStatus ==
               ForgetPasswordStatus.failure) {
             DisplayUtils.removeLoader();
-            DisplayUtils.showSnackBar(context, state.failure.message);
+            DisplayUtils.showToast(context, state.failure.message);
           }
         },
         builder: (context, state) {
