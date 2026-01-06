@@ -1,13 +1,9 @@
-import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
-
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:excel/excel.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/svg.dart';
-import 'package:intl/intl.dart';
 import 'package:lges_teacher_app/components/text_view.dart';
 import 'package:lges_teacher_app/config/config.dart';
 import 'package:lges_teacher_app/module/exam_result/cubit/exam_class_cubit/exam_classes_cubit.dart';
@@ -19,12 +15,9 @@ import 'package:lges_teacher_app/module/exam_result/models/add_exam_result_input
 import 'package:lges_teacher_app/module/exam_result/models/exam_class_sections_response.dart';
 import 'package:lges_teacher_app/module/exam_result/models/import_exam_result_data_input.dart';
 import 'package:lges_teacher_app/module/exam_result/models/student_model.dart';
-import 'package:lges_teacher_app/module/exam_result/pages/process_result_screen.dart';
-import 'package:lges_teacher_app/module/exam_result/pages/show_result_screen.dart';
 import 'package:lges_teacher_app/utils/custom_countdown.dart';
 import 'package:lges_teacher_app/utils/display/display_utils.dart';
 import 'package:lges_teacher_app/utils/extensions/extended_string.dart';
-
 import '../../../components/base_scaffold.dart';
 import '../../../components/custom_appbar.dart';
 import '../../../components/custom_button.dart';
@@ -33,7 +26,6 @@ import '../../../components/custom_textfield.dart';
 import '../../../components/loading_indicator.dart';
 import '../../../constants/app_colors.dart';
 import '../../../core/di/service_locator.dart';
-import '../../../utils/custom_date_time_picker.dart';
 import '../../../utils/display/dialogs/dialog_utils.dart';
 import '../../auth/repo/auth_repository.dart';
 import '../cubit/exam_class_cubit/exam_classes_state.dart';
@@ -57,7 +49,6 @@ class _AddResultScreenState extends State<AddResultScreen> {
   AuthRepository authRepository = sl<AuthRepository>();
   FilePickerResult? result;
   TextEditingController fileNameController = TextEditingController();
-  TextEditingController monthYearDateController = TextEditingController();
   List<StudentModel> studentData = [];
   List<ResultSheetFixDataModel> fixData = [];
   List<ResultSheetDynamicSubjectModel> dynamicSubjects = [];
@@ -215,7 +206,7 @@ class _AddResultScreenState extends State<AddResultScreen> {
                                       .examClassSectionsStatus ==
                                   ExamClassSectionsStatus.failure) {
                                 DisplayUtils.removeLoader();
-                                DisplayUtils.showSnackBar(
+                                DisplayUtils.showToast(
                                   context,
                                   examClassSectionsState.failure.message,
                                 );
@@ -226,7 +217,7 @@ class _AddResultScreenState extends State<AddResultScreen> {
                               return GestureDetector(
                                 onTap: dropdownValueClass == null
                                     ? () {
-                                        DisplayUtils.showSnackBar(
+                                        DisplayUtils.showToast(
                                           context,
                                           "Please select Class First",
                                         );
@@ -568,7 +559,7 @@ class _AddResultScreenState extends State<AddResultScreen> {
                                         .importExamResultStatus ==
                                     ImportExamResultStatus.failure) {
                                   DisplayUtils.removeLoader();
-                                  DisplayUtils.showSnackBar(
+                                  DisplayUtils.showToast(
                                     context,
                                     examResultState.failure.message,
                                   );
@@ -579,37 +570,77 @@ class _AddResultScreenState extends State<AddResultScreen> {
                                   height: 50,
                                   borderRadius: 15,
                                   onPressed: () {
-                                    if (sectionId.isNotEmpty) {
-                                      if (result != null) {
-                                        print('####studentData:${studentData}');
-                                        if (studentData.isNotEmpty) {
-                                          ImportExamResultDataInput input =
-                                              _submitButtonPress();
-                                            context.read<ImportExamResultCubit>()
-                                              ..importExamResult(
-                                                input,
-                                                excelFileBytes!,
-                                                fileNameController.text,
-                                              );
-                                        } else {
-                                          DisplayUtils.showSnackBar(
-                                            context,
-                                            "Exam report is empty!",
-                                          );
-                                        }
-                                      } else {
-                                        DisplayUtils.showSnackBar(
+                                    bool _validateFields() {
+                                      if (dropdownValueClass == null ||
+                                          classId.isEmpty) {
+                                        DisplayUtils.showToast(
                                           context,
-                                          "Please import the exam report!",
+                                          "Please select Class",
                                         );
+                                        return false;
                                       }
-                                    } else {
-                                      DisplayUtils.showSnackBar(
-                                        context,
-                                        "Please select month/year!",
-                                      );
+                                      if (dropdownValueSection == null ||
+                                          sectionId.isEmpty) {
+                                        DisplayUtils.showToast(
+                                          context,
+                                          "Please select Section",
+                                        );
+                                        return false;
+                                      }
+                                      if (selectedEvaluatedType == null) {
+                                        DisplayUtils.showToast(
+                                          context,
+                                          "Please select Evaluation Type",
+                                        );
+                                        return false;
+                                      }
+                                      if (selectedEvaluated == null) {
+                                        DisplayUtils.showToast(
+                                          context,
+                                          "Please select Evaluation",
+                                        );
+                                        return false;
+                                      }
+                                      if (selectedEvaluatedType
+                                                  ?.evaluationTypeId ==
+                                              2 &&
+                                          selectedEvaluatedGroup == null) {
+                                        DisplayUtils.showToast(
+                                          context,
+                                          "Please select Group Evaluation Type",
+                                        );
+                                        return false;
+                                      }
+                                      if (result == null ||
+                                          excelFileBytes == null) {
+                                        DisplayUtils.showToast(
+                                          context,
+                                          "Please upload the exam report",
+                                        );
+                                        return false;
+                                      }
+                                      if (studentData.isEmpty) {
+                                        DisplayUtils.showToast(
+                                          context,
+                                          "Exam report is empty!",
+                                        );
+                                        return false;
+                                      }
+                                      return true;
+                                    }
+
+                                    if (_validateFields()) {
+                                      ImportExamResultDataInput input =
+                                          _submitButtonPress();
+                                      context.read<ImportExamResultCubit>()
+                                        ..importExamResult(
+                                          input,
+                                          excelFileBytes!,
+                                          fileNameController.text,
+                                        );
                                     }
                                   },
+
                                   title: 'Submit',
                                   isEnabled: true,
                                 );
