@@ -66,12 +66,12 @@ class LeavesRepository {
   ) async {
     try {
       FormData toFormData() => FormData.fromMap({
-        "LeaveData": jsonEncode(input).toString(),
-        // "EmployeeFile": input.file,
+        "LeaveData": jsonEncode(input),
+        "EmployeeFile": input.file,
       });
       var response = await _networkService.post(
         Endpoints.uploadLeave,
-        data: input.toJson(),
+        data: toFormData(),
       );
       print('############ Api Hit Response is --> ${jsonEncode(input)}');
       if (response["result"] == "error") {

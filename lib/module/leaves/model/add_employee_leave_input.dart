@@ -1,3 +1,5 @@
+import 'package:dio/dio.dart';
+
 class AddEmployeeLeaveInput {
   int id;
   int ucEntityId;
@@ -9,7 +11,7 @@ class AddEmployeeLeaveInput {
   String reason;
   int ucLoginUserId;
   String leaveSponsorship;
-
+  MultipartFile file;
   AddEmployeeLeaveInput({
     required this.id,
     required this.ucEntityId,
@@ -21,6 +23,7 @@ class AddEmployeeLeaveInput {
     required this.reason,
     required this.ucLoginUserId,
     required this.leaveSponsorship,
+    required this.file,
   });
 
   Map<String, dynamic> toJson() => {

@@ -5,24 +5,21 @@ import 'package:fluttertoast/fluttertoast.dart';
 import '../../components/loading_indicator.dart';
 
 class DisplayUtils {
-
   static void showSnackBar(BuildContext context, String title) {
     ScaffoldMessenger.of(context)
       ..hideCurrentSnackBar()
-      ..showSnackBar(
-        SnackBar(content: Text(title)),
-      );
+      ..showSnackBar(SnackBar(content: Text(title)));
   }
 
   static void showToast(BuildContext context, String title) {
     Fluttertoast.showToast(
-        msg: title,
-        toastLength: Toast.LENGTH_LONG,
-        gravity: ToastGravity.CENTER,
-        timeInSecForIosWeb: 1,
-        /*backgroundColor: Colors.red,
+      msg: title,
+      toastLength: Toast.LENGTH_LONG,
+      gravity: ToastGravity.CENTER,
+      timeInSecForIosWeb: 1,
+      /*backgroundColor: Colors.red,
         textColor: Colors.white,*/
-        fontSize: 16.0
+      fontSize: 16.0,
     );
   }
 
@@ -33,5 +30,4 @@ class DisplayUtils {
   static void removeLoader() {
     BotToast.closeAllLoading();
   }
-
 }

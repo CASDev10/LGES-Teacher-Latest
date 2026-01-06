@@ -3,7 +3,10 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 import 'package:lges_teacher_app/module/auth/repo/auth_repository.dart';
+import 'package:lges_teacher_app/widgets/helper_function.dart';
 
 import '../../../../components/custom_button.dart';
 import '../../../../constants/app_colors.dart';
@@ -11,6 +14,7 @@ import '../../../components/custom_textfield.dart';
 import '../../../config/routes/nav_router.dart';
 import '../../../core/di/service_locator.dart';
 import '../../../utils/custom_countdown.dart';
+import '../../../utils/display/dialogs/dialog_utils.dart';
 import '../../../utils/display/display_utils.dart';
 import '../../leaves/model/employee_leaves_response.dart';
 import '../../leaves/model/leave_balance_response.dart';
@@ -156,7 +160,7 @@ class _ApplyLeaveDialogueState extends State<ApplyLeaveDialogue> {
                   controller: _reasonController,
                 ),
               ),
-              /*SizedBox(height: 12.0),
+              SizedBox(height: 12.0),
               Container(
                 decoration: BoxDecoration(
                   color: AppColors.lightGreyColor,
@@ -296,7 +300,7 @@ class _ApplyLeaveDialogueState extends State<ApplyLeaveDialogue> {
                     ),
                   ],
                 ),
-              ),*/
+              ),
               const SizedBox(height: 16),
               Row(
                 children: [
@@ -357,6 +361,7 @@ class _ApplyLeaveDialogueState extends State<ApplyLeaveDialogue> {
                           reason: _reasonController.text.trim(),
                           ucLoginUserId: authRepository.user.userId,
                           leaveSponsorship: '',
+                          file: await changeMulti(file!),
                         );
                         print("AddUpdateLeaveInput ${input.toJson()}");
                         widget.onSave!(input);
