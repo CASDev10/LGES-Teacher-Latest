@@ -1,82 +1,73 @@
-// To parse this JSON data, do
-//
-//     final studentModel = studentModelFromJson(jsonString);
-
 import 'dart:convert';
 
-List<StudentModel> studentModelFromJson(dynamic json) => List<StudentModel>.from(json.map((x) => StudentModel.fromJson(x)));
+List<StudentModel> studentModelFromJson(List<dynamic> json) =>
+    List<StudentModel>.from(json.map((x) => StudentModel.fromJson(x)));
 
-String studentModelToJson(List<StudentModel> data) => json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
-
-StudentModel studentFromJson(dynamic json) => StudentModel.fromJson(json);
-
-String studentToJson(StudentModel data) => json.encode(data.toJson());
-
+String studentModelToJson(List<StudentModel> data) =>
+    json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
 
 class StudentModel {
-  String studentId;
   String fileNo;
   String studentName;
-  String biology;
-  String chemistry;
-  String englishLanguage;
-  String islamiyat;
-  String mathematics;
-  String pakistanStudies;
-  String physics;
+  String fatherName;
+
+  String english;
   String urdu;
-  String obtainedMarks;
-  String maxMarks;
+  String mathematics;
+  String islamiyat;
+  String wa;
+  String computer;
+
+  String totalObtained;
+  String total;
   String percentage;
 
   StudentModel({
-    required this.studentId,
     required this.fileNo,
     required this.studentName,
-    required this.biology,
-    required this.chemistry,
-    required this.englishLanguage,
-    required this.islamiyat,
-    required this.mathematics,
-    required this.pakistanStudies,
-    required this.physics,
+    required this.fatherName,
+    required this.english,
     required this.urdu,
-    required this.obtainedMarks,
-    required this.maxMarks,
+    required this.mathematics,
+    required this.islamiyat,
+    required this.wa,
+    required this.computer,
+    required this.totalObtained,
+    required this.total,
     required this.percentage,
   });
 
-  factory StudentModel.fromJson(Map<String, dynamic> json) => StudentModel(
-    studentId: json["StudentId"],
-    fileNo: json["FileNo"],
-    studentName: json["StudentName"],
-    biology: json["Biology"],
-    chemistry: json["Chemistry"],
-    englishLanguage: json["English Language"],
-    islamiyat: json["Islamiyat"],
-    mathematics: json["Mathematics"],
-    pakistanStudies: json["Pakistan Studies"],
-    physics: json["Physics"],
-    urdu: json["Urdu"],
-    obtainedMarks: json["ObtainedMarks"],
-    maxMarks: json["MaxMarks"],
-    percentage: json["Percentage"],
-  );
+  factory StudentModel.fromJson(Map<String, dynamic> json) {
+    return StudentModel(
+      fileNo: json['FileNumber']?.toString() ?? '',
+      studentName: json['StudentName']?.toString() ?? '',
+      fatherName: json['FatherName']?.toString() ?? '',
+
+      english: json['English']?.toString() ?? '0',
+      urdu: json['Urdu']?.toString() ?? '0',
+      mathematics: json['Mathematics']?.toString() ?? '0',
+      islamiyat: json['Islamiyat']?.toString() ?? '0',
+      wa: json['WA']?.toString() ?? '0',
+      computer: json['Computer']?.toString() ?? '0',
+
+      totalObtained: json['TotalObtained']?.toString() ?? '0',
+      total: json['Total']?.toString() ?? '0',
+      percentage: json['Percentage']?.toString() ?? '0',
+    );
+  }
 
   Map<String, dynamic> toJson() => {
-    "StudentId": studentId,
-    "FileNo": fileNo,
-    "StudentName": studentName,
-    "Biology": biology,
-    "Chemistry": chemistry,
-    "English Language": englishLanguage,
-    "Islamiyat": islamiyat,
-    "Mathematics": mathematics,
-    "Pakistan Studies": pakistanStudies,
-    "Physics": physics,
-    "Urdu": urdu,
-    "ObtainedMarks": obtainedMarks,
-    "MaxMarks": maxMarks,
-    "Percentage": percentage,
+    'FileNumber': fileNo,
+    'StudentName': studentName,
+    'FatherName': fatherName,
+    'English': english,
+    'Urdu': urdu,
+    'Mathematics': mathematics,
+    'Islamiyat': islamiyat,
+    'WA': wa,
+    'Computer': computer,
+    'TotalObtained': totalObtained,
+    'Total': total,
+    'Percentage': percentage,
   };
 }

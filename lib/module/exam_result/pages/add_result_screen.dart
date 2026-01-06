@@ -63,36 +63,66 @@ class _AddResultScreenState extends State<AddResultScreen> {
   List<ResultSheetDynamicSubjectModel> dynamicSubjects = [];
   String classId = '';
   String sectionId = '';
-
+  Uint8List? excelFileBytes;
   List<Map<String, dynamic>> extractDataFromExcel({required Uint8List bytes}) {
-    Excel excel = Excel.decodeBytes(bytes);
+    final excel = Excel.decodeBytes(bytes);
     final List<Map<String, dynamic>> result = [];
-    final Map<String, dynamic> createMap = {};
-    final keys = <String>[];
 
-    // get data from first sheet
-    final int n = excel.tables[excel.tables.keys.first]?.rows.length ?? 0;
-    debugPrint('n => $n');
-    // final List<Data?> rows in excel.tables[excel.tables.keys.first]!.rows
-    for (int i = 0; i < n; i++) {
-      final rows = excel.tables[excel.tables.keys.first]!.rows[i];
-      for (int j = 0; j < rows.length; j++) {
-        // index = 0 it will show an header of sheet
-        final row = rows[j];
-        // Create Header(Keys) for map
-        if (i == 0 && row != null) {
-          // get header/key from excel and make it list
-          keys.add('${row.value.toString()}'); // Store key as string
-          // Default value is empty
-          createMap['${row.value.toString()}'] = "";
-        }
-        // add value in map
-        else if (i > 0 && row != null) {
-          createMap[keys[j]] = row.value.toString();
-        }
+    if (excel.tables.isEmpty) return [];
+
+    final sheet = excel.tables.values.first;
+    if (sheet == null || sheet.rows.isEmpty) return [];
+
+    final rows = sheet.rows;
+
+    int headerRowIndex = -1;
+    List<String> headers = [];
+
+    // 🔍 Find header row (FileNumber + StudentName)
+    for (int i = 0; i < rows.length; i++) {
+      final row = rows[i]
+          .map((e) => e?.value?.toString().trim() ?? '')
+          .toList();
+
+      if (row.contains('FileNumber') && row.contains('StudentName')) {
+        headerRowIndex = i;
+        headers = row;
+        break;
       }
-      if (i != 0) result.add(Map<String, dynamic>.from(createMap));
     }
+
+    if (headerRowIndex == -1) {
+      debugPrint('❌ Header row not found');
+      return [];
+    }
+
+    debugPrint('✅ Header found at row: $headerRowIndex');
+    debugPrint('HEADERS: $headers');
+
+    // 🔁 Read data rows
+    for (int i = headerRowIndex + 1; i < rows.length; i++) {
+      final row = rows[i];
+      final Map<String, dynamic> rowData = {};
+      bool hasData = false;
+
+      for (int j = 0; j < headers.length; j++) {
+        if (j >= row.length) continue;
+
+        final header = headers[j];
+        final cell = row[j]?.value;
+
+        if (header.isEmpty || cell == null) continue;
+
+        rowData[header] = cell.toString();
+        hasData = true;
+      }
+
+      // skip empty rows
+      if (hasData && rowData['FileNumber'] != null) {
+        result.add(rowData);
+      }
+    }
+
     return result;
   }
 
@@ -463,7 +493,7 @@ class _AddResultScreenState extends State<AddResultScreen> {
                                   allowMultiple: false,
                                   allowedExtensions: [
                                     'xlsx',
-                                    'xls',
+                                    // 'xls',
                                     'xlsm',
                                     'xlsb',
                                     'xltx',
@@ -481,14 +511,28 @@ class _AddResultScreenState extends State<AddResultScreen> {
                                   fileNameController.text =
                                       result!.files.single.name;
                                   setState(() {});
-                                  var bytes = file.readAsBytesSync();
-                                  List<Map<String, dynamic>> finalResult =
-                                      extractDataFromExcel(bytes: bytes);
-                                  String jsonString = json.encode(finalResult);
-                                  studentData =
-                                      (json.decode(jsonString) as List)
-                                          .map((data) => studentFromJson(data))
-                                          .toList();
+                                  // var bytes = file.readAsBytesSync();
+                                  // List<Map<String, dynamic>> finalResult =
+                                  //     extractDataFromExcel(bytes: bytes);
+                                  // String jsonString = json.encode(finalResult);
+                                  // studentData =
+                                  //     (json.decode(jsonString) as List)
+                                  //         .map((data) => studentFromJson(data))
+                                  //         .toList();
+
+                                  final bytes = file.readAsBytesSync();
+                                  excelFileBytes = bytes;
+                                  final excelData = extractDataFromExcel(
+                                    bytes: bytes,
+                                  );
+
+                                  studentData = excelData
+                                      .map((e) => StudentModel.fromJson(e))
+                                      .toList();
+
+                                  print(
+                                    'STUDENTS COUNT: ${studentData.length}',
+                                  );
                                 }
                               },
                               title: 'Browse',
@@ -541,8 +585,12 @@ class _AddResultScreenState extends State<AddResultScreen> {
                                         if (studentData.isNotEmpty) {
                                           ImportExamResultDataInput input =
                                               _submitButtonPress();
-                                          context.read<ImportExamResultCubit>()
-                                            ..importExamResult(input);
+                                            context.read<ImportExamResultCubit>()
+                                              ..importExamResult(
+                                                input,
+                                                excelFileBytes!,
+                                                fileNameController.text,
+                                              );
                                         } else {
                                           DisplayUtils.showSnackBar(
                                             context,
@@ -586,45 +634,41 @@ class _AddResultScreenState extends State<AddResultScreen> {
   }
 
   ImportExamResultDataInput _submitButtonPress() {
+    fixData.clear();
+    dynamicSubjects.clear();
+
     for (StudentModel model in studentData) {
-      ResultSheetFixDataModel resultSheetFixData = ResultSheetFixDataModel(
-        studentId: model.studentId,
-        fileNo: model.fileNo,
-        obtainedMarks: model.obtainedMarks,
-        maxMarks: model.maxMarks,
-        percentage: model.percentage,
+      fixData.add(
+        ResultSheetFixDataModel(
+          studentId: "0", // backend handle karega
+          fileNo: model.fileNo,
+          obtainedMarks: model.totalObtained,
+          maxMarks: model.total,
+          percentage: model.percentage,
+        ),
       );
-      fixData.add(resultSheetFixData);
-      ResultSheetDynamicSubjectModel resultSheetDynamicSubject =
-          ResultSheetDynamicSubjectModel(
-            studentId: model.studentId,
-            biology: model.biology,
-            chemistry: model.chemistry,
-            englishLanguage: model.englishLanguage,
-            islamiyat: model.islamiyat,
-            mathematics: model.mathematics,
-            pakistanStudies: model.pakistanStudies,
-            physics: model.physics,
-            urdu: model.urdu,
-          );
-      dynamicSubjects.add(resultSheetDynamicSubject);
+
+      dynamicSubjects.add(
+        ResultSheetDynamicSubjectModel(
+          studentId: "0",
+          englishLanguage: model.english,
+          urdu: model.urdu,
+          mathematics: model.mathematics,
+          islamiyat: model.islamiyat,
+          biology: model.wa, // agar WA biology ke liye use ho raha
+          chemistry: model.computer,
+          physics: "0",
+          pakistanStudies: "0",
+        ),
+      );
     }
 
-    List<Map<String, dynamic>> fixDataJsonList = fixData
-        .map((model) => model.toJson())
-        .toList();
-    List<Map<String, dynamic>> dynamicSubjectJsonList = dynamicSubjects
-        .map((model) => model.toJson())
-        .toList();
-
-    ImportExamResultDataInput input = ImportExamResultDataInput(
+    return ImportExamResultDataInput(
       ucLoginUserId: authRepository.user.userId.toInt(),
       classId: classId.toInt(),
       sectionId: sectionId.toInt(),
       evaluationGroupId: selectedEvaluatedGroup?.evaluationGroupId ?? 0,
       evaluationIdFk: selectedEvaluated?.evaluationId ?? 0,
     );
-
-    return input;
   }
 }

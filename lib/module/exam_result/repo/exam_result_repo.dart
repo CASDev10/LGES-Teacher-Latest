@@ -1,5 +1,7 @@
+import 'dart:convert';
 import 'dart:developer';
 
+import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:lges_teacher_app/module/base_resposne_model.dart';
 import 'package:lges_teacher_app/module/exam_result/models/evaluation_response.dart';
@@ -81,11 +83,18 @@ class ExamResultRepository {
 
   Future<BaseResponseModel> importExamResult(
     ImportExamResultDataInput input,
+    List<int> bytes,
+    String fileName,
   ) async {
     try {
+      FormData toFormData() => FormData.fromMap({
+        "Description": jsonEncode(input),
+        "ExamFile": MultipartFile.fromBytes(bytes, filename: fileName),
+      });
+      print('--- Exam Result Import Input ---${jsonEncode(input)}');
       var response = await _networkService.post(
         Endpoints.importExamResultData,
-        data: input.toJson(),
+        data: toFormData(),
       );
 
       BaseResponseModel baseResponseModel = await compute(
