@@ -30,13 +30,13 @@ android {
         applicationId = "com.cas.lgesTeacherApp"
         minSdk = 23
         targetSdk = flutter.targetSdkVersion
-        versionCode = 8
-        versionName = "1.0.8"
+        versionCode = 9
+        versionName = "1.0.9"
     }
 
     signingConfigs {
         create("release") {
-            storeFile = file("/Users/usmansaeed/CAS/LGES-Teacher-Latest/android/app/lges_keystore.jks")
+            storeFile = file("E:/lges_teacher_app/android/keystore/lges_keystore.jks")
             storePassword = "lges!@#123"
             keyAlias = "lges"
             keyPassword = "lges!@#123"
