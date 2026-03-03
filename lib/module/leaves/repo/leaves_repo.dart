@@ -20,7 +20,7 @@ class LeavesRepository {
 
   Future<LeaveBalanceResponse> getEmployeeLeaveBalance() async {
     try {
-      var response = await _networkService.get(
+      var response = await _networkService.post(
         Endpoints.getEmployeeLeaveBalance,
         data: {"EmpId": _authRepository.user.empId},
       );
@@ -42,7 +42,7 @@ class LeavesRepository {
     required int next,
   }) async {
     try {
-      var response = await _networkService.get(
+      var response = await _networkService.post(
         Endpoints.getEmployeeLeavesByEmpId,
         data: {
           "EmpId": _authRepository.user.empId,

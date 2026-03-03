@@ -9,20 +9,23 @@ import 'package:lges_teacher_app/module/students_attendance/models/attendance_in
 import 'package:lges_teacher_app/module/students_attendance/models/attendance_reponse.dart';
 import 'package:lges_teacher_app/module/students_attendance/models/submit_attendance_input.dart';
 import 'package:lges_teacher_app/module/students_attendance/models/submit_attendance_reponse.dart';
-
 import '../../base_resposne_model.dart';
 
 class AttendanceRepository {
   final NetworkService _networkService = sl<NetworkService>();
 
-  Future<AttendanceResponseModel> getGetSectionStudentList(AttendanceInput input) async {
+  Future<AttendanceResponseModel> getGetSectionStudentList(
+    AttendanceInput input,
+  ) async {
     try {
-      var response = await _networkService.get(
+      var response = await _networkService.post(
         Endpoints.getGetSectionStudentList,
         data: input.toJson(),
       );
-      AttendanceResponseModel attendanceResponseModel =
-          await compute(attendanceResponseModelFromJson, response);
+      AttendanceResponseModel attendanceResponseModel = await compute(
+        attendanceResponseModelFromJson,
+        response,
+      );
       return attendanceResponseModel;
     } on BaseFailure catch (_) {
       rethrow;
@@ -32,14 +35,18 @@ class AttendanceRepository {
     }
   }
 
-  Future<BaseResponseModel> submitAttendance(SubmitAttendanceInput input) async {
+  Future<BaseResponseModel> submitAttendance(
+    SubmitAttendanceInput input,
+  ) async {
     try {
       var response = await _networkService.post(
         Endpoints.addSchoolAttendance,
         data: input.toJson(),
       );
-      BaseResponseModel baseResponseModel =
-      await compute(baseResponseModelFromJson, response);
+      BaseResponseModel baseResponseModel = await compute(
+        baseResponseModelFromJson,
+        response,
+      );
       return baseResponseModel;
     } on BaseFailure catch (_) {
       rethrow;

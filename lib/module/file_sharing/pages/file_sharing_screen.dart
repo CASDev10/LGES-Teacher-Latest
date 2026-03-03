@@ -268,8 +268,8 @@ class _FileSharingScreenState extends State<FileSharingScreen> {
                               items: sectionStatus.sections,
                               onSelect: (Section value) {
                                 setState(() {
-                                  dropdownValueSection = value.sectionName;
-                                  sectionId = value.sectionId.toString();
+                                  dropdownValueSection = value.classSection;
+                                  sectionId = value.sectionIdFk.toString();
                                   resetSubjectData();
                                 });
 
@@ -280,7 +280,7 @@ class _FileSharingScreenState extends State<FileSharingScreen> {
                                 );
                                 selectedStudents.clear();
                               },
-                              getLabel: (section) => section.sectionName,
+                              getLabel: (section) => section.classSection,
                             ),
                           );
                         },
@@ -614,7 +614,10 @@ class _FileSharingScreenState extends State<FileSharingScreen> {
                         print(input.toJson());
 
                         // 🔹 Call Cubit to submit with file
-                        context.read<FileSharingCubit>().addNotification(input, file);
+                        context.read<FileSharingCubit>().addNotification(
+                          input,
+                          file,
+                        );
                       },
                       title: 'Submit',
                       isEnabled: true,

@@ -190,11 +190,11 @@ class _ClassSectionScreenState extends State<ClassSectionScreen> {
                               items: sectionStatus.sections,
                               onSelect: (Section value) {
                                 setState(() {
-                                  dropdownValueSection = value.sectionName;
-                                  sectionId = value.sectionId.toString();
+                                  dropdownValueSection = value.classSection;
+                                  sectionId = value.schoolIdFk.toString();
                                 });
                               },
-                              getLabel: (section) => section.sectionName,
+                              getLabel: (section) => section.classSection,
                             ),
                           );
                         },

@@ -163,11 +163,11 @@ class _AttendanceFilterScreenState extends State<AttendanceFilterScreen> {
                               items: sectionStatus.sections,
                               onSelect: (Section value) {
                                 setState(() {
-                                  dropdownValueSection = value.sectionName;
-                                  sectionId = value.sectionId.toString();
+                                  dropdownValueSection = value.classSection;
+                                  sectionId = value.sectionIdFk.toString();
                                 });
                               },
-                              getLabel: (section) => section.sectionName,
+                              getLabel: (section) => section.classSection,
                             ),
                           );
                         },
@@ -189,10 +189,7 @@ class _AttendanceFilterScreenState extends State<AttendanceFilterScreen> {
                     } else if (dropdownValueClass == null) {
                       DisplayUtils.showToast(context, "Please select Class");
                     } else if (dropdownValueSection == null) {
-                      DisplayUtils.showToast(
-                        context,
-                        "Please select Section",
-                      );
+                      DisplayUtils.showToast(context, "Please select Section");
                     } else {
                       print("Class --- $dropdownValueClass");
                       print("Section --- $dropdownValueSection");

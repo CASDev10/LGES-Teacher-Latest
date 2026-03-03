@@ -21,7 +21,7 @@ class EvaluationRepository {
 
   Future<EvaluationRemarksResponse> getEvaluationRemarks() async {
     try {
-      var response = await _networkService.get(
+      var response = await _networkService.post(
         Endpoints.getEvaluationRemarksList,
       );
       EvaluationRemarksResponse evaluationRemarksList =
@@ -37,7 +37,7 @@ class EvaluationRepository {
 
   Future<StudentEvaluationAreasResponse> getEvaluationAreas(StudentEvaluationAreasInput studentEvaluationAreasInput) async {
     try {
-      var response = await _networkService.get(
+      var response = await _networkService.post(
         Endpoints.getStudentEvaluationAreas,
         data: studentEvaluationAreasInput.toJson()
       );

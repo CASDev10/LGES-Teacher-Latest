@@ -539,17 +539,17 @@ class _AddDailyDiaryScreenState extends State<AddDailyDiaryScreen> {
                           items: sectionStatus.sections,
                           onSelect: (Section value) {
                             setState(() {
-                              dropdownValueSection = value.sectionName;
+                              dropdownValueSection = value.classSection;
                               dropdownValueSubject = null;
                               subjects = [];
-                              sectionId = value.sectionId.toString();
+                              sectionId = value.sectionIdFk.toString();
                             });
                             context.read<SubjectsCubit>().fetchSubjects(
                               classId!,
                               sectionId!,
                             );
                           },
-                          getLabel: (section) => section.sectionName,
+                          getLabel: (section) => section.classSection,
                         ),
                       ),
                     );

@@ -481,8 +481,8 @@ class _TeacherListSheetState extends State<_TeacherListSheet> {
                       hintColor: AppColors.primaryDark,
                       onSelect: (Section value) {
                         setState(() {
-                          selectedSection = value.sectionName;
-                          sectionId = value.sectionId.toString();
+                          selectedSection = value.classSection;
+                          sectionId = value.sectionIdFk.toString();
 
                           selectedSubject = null;
                           subjectId = null;
@@ -494,7 +494,7 @@ class _TeacherListSheetState extends State<_TeacherListSheet> {
                           sectionId!,
                         );
                       },
-                      getLabel: (s) => s.sectionName,
+                      getLabel: (s) => s.classSection,
                     );
                   },
                 ),

@@ -20,7 +20,7 @@ class ClassesSectionsRepository {
         "SchoolIdFk": schoolId,
       };
 
-      var response = await _networkService.get(
+      var response = await _networkService.post(
         Endpoints.getClassesForAttendance,
         data: input,
       );
@@ -45,7 +45,7 @@ class ClassesSectionsRepository {
         "ClassIdFk": classId,
       };
 
-      var response = await _networkService.get(
+      var response = await _networkService.post(
         Endpoints.getSectionsForAttendance,
         data: input,
       );

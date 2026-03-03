@@ -214,17 +214,18 @@ class _AddEventScreenViewState extends State<AddEventScreenView> {
                                           allPadding: 0,
                                           horizontalPadding: 15,
                                           items: sectionState.sections
-                                              .map((s) => s.sectionName)
+                                              .map((s) => s.classSection)
                                               .toList(),
                                           onSelect: (value) {
                                             Section selected = sectionState
                                                 .sections
                                                 .firstWhere(
-                                                  (s) => s.sectionName == value,
+                                                  (s) =>
+                                                      s.classSection == value,
                                                 );
                                             setState(() {
                                               _selectedSection = value;
-                                              _sectionId = selected.sectionId
+                                              _sectionId = selected.sectionIdFk
                                                   .toString();
                                             });
                                           },

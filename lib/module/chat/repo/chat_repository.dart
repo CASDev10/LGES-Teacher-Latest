@@ -40,7 +40,7 @@ class ChatRepository {
     try {
       Map<String, dynamic> input = {"ConversationId": id};
 
-      var response = await _networkService.get(
+      var response = await _networkService.post(
         Endpoints.getChatHistory,
         data: input,
       );

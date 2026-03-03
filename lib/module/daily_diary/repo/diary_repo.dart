@@ -32,7 +32,7 @@ class DiaryRepository {
         "DateTo": toDate,
       };
 
-      var response = await _networkService.get(
+      var response = await _networkService.post(
         Endpoints.getDiaryList,
         data: input,
       );
@@ -126,7 +126,7 @@ class DiaryRepository {
         "ClassIdFk": classId,
         "SectionIdFk": sectionId,
       };
-      var response = await _networkService.get(
+      var response = await _networkService.post(
         Endpoints.getSubjectOfClass,
         data: input,
       );

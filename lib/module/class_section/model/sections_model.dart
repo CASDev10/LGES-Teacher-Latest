@@ -30,37 +30,37 @@ class SectionsModel {
 }
 
 class Section {
-  int sectionId;
-  String sessionName;
-  String sectionName;
-  String sectionCode;
-  int sessionIdFk;
+  int sectionIdFk;
+  int classIdFk;
+  int schoolIdFk;
+  String classSection;
+  String className;
   bool isActive;
 
   Section({
-    required this.sectionId,
-    required this.sessionName,
-    required this.sectionName,
-    required this.sectionCode,
-    required this.sessionIdFk,
+    required this.sectionIdFk,
+    required this.classIdFk,
+    required this.schoolIdFk,
+    required this.classSection,
+    required this.className,
     required this.isActive,
   });
 
   factory Section.fromJson(Map<String, dynamic> json) => Section(
-    sectionId: json["SectionClassId"],
-    sessionName: json["SessionName"] ?? '',
-    sectionName: json["ClassSection"] ?? '',
-    sectionCode: json["SectionCode"] ?? '',
-    sessionIdFk: json["SectionIdFk"],
-    isActive: json["isActive"],
+    sectionIdFk: json["SectionIdFk"],
+    classIdFk: json["ClassIdFk"],
+    schoolIdFk: json["SchoolIdFk"],
+    classSection: json["ClassSection"] ?? '',
+    className: json["ClassName"] ?? '',
+    isActive: json["isActive"] ?? false,
   );
 
   Map<String, dynamic> toJson() => {
-    "SectionClassId": sectionId,
-    "SessionName": sessionName,
-    "ClassSection": sectionName,
-    "SectionCode": sectionCode,
-    "SectionIdFk": sessionIdFk,
+    "SectionIdFk": sectionIdFk,
+    "ClassIdFk": classIdFk,
+    "SchoolIdFk": schoolIdFk,
+    "ClassSection": classSection,
+    "ClassName": className,
     "isActive": isActive,
   };
 }

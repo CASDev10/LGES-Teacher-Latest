@@ -90,7 +90,7 @@ class ObservationRepository {
 
   Future<ObservationLevelsResponse> getObservationLevels() async {
     try {
-      var response = await _networkService.get(
+      var response = await _networkService.post(
         Endpoints.getObservationLevelList,
       );
 
@@ -124,7 +124,7 @@ class ObservationRepository {
 
   Future<ObservationRemarksResponse> getObservationRemarks() async {
     try {
-      var response = await _networkService.get(
+      var response = await _networkService.post(
         Endpoints.getObservationAreaRemarksList,
       );
 
@@ -214,7 +214,7 @@ class ObservationRepository {
     try {
       Map<String, dynamic> input = {"EmpId": empId};
       var response =
-          await _networkService.get(Endpoints.getEmployeeById, data: input);
+          await _networkService.post(Endpoints.getEmployeeById, data: input);
 
       EmployeeDetailResponse employeeDetailResponse =
           await compute(employeeDetailResponseFromJson, response);
@@ -251,7 +251,7 @@ class ObservationRepository {
         "StartDate": startDate,
         "EndDate": endDate,
       };
-      var response = await _networkService.get(
+      var response = await _networkService.post(
         Endpoints.getObservationReport,
         data: input,
       );

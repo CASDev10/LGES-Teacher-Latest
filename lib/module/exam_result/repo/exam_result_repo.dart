@@ -29,7 +29,7 @@ class ExamResultRepository {
         "UC_SchoolId": schoolId,
       };
 
-      var response = await _networkService.get(
+      var response = await _networkService.post(
         Endpoints.getClassesForExam,
         data: input,
       );
@@ -62,7 +62,7 @@ class ExamResultRepository {
         "ClassId": classId,
       };
 
-      var response = await _networkService.get(
+      var response = await _networkService.post(
         Endpoints.getSectionsForExam,
         data: input,
       );
