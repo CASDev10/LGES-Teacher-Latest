@@ -4,8 +4,11 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:excel/excel.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:lges_teacher_app/components/generic_drop_down.dart';
 import 'package:lges_teacher_app/components/text_view.dart';
 import 'package:lges_teacher_app/config/config.dart';
+import 'package:lges_teacher_app/module/class_section/cubit/classes_cubit/classes_cubit.dart';
+import 'package:lges_teacher_app/module/class_section/model/classes_model.dart';
 import 'package:lges_teacher_app/module/exam_result/cubit/exam_class_cubit/exam_classes_cubit.dart';
 import 'package:lges_teacher_app/module/exam_result/cubit/exam_class_sections_cubit/exam_class_sections_cubit.dart';
 import 'package:lges_teacher_app/module/exam_result/cubit/exam_class_sections_cubit/exam_class_sections_state.dart';
@@ -52,7 +55,7 @@ class _AddResultScreenState extends State<AddResultScreen> {
   List<StudentModel> studentData = [];
   List<ResultSheetFixDataModel> fixData = [];
   List<ResultSheetDynamicSubjectModel> dynamicSubjects = [];
-  String classId = '';
+  String? classId;
   String sectionId = '';
   Uint8List? excelFileBytes;
   List<Map<String, dynamic>> extractDataFromExcel({required Uint8List bytes}) {
@@ -126,7 +129,7 @@ class _AddResultScreenState extends State<AddResultScreen> {
       providers: [
         BlocProvider(
           create: (context) =>
-              ExamClassesCubit(sl())
+              ClassesCubit(sl())
                 ..fetchClasses(authRepository.user.schoolId.toString()),
         ),
         BlocProvider(
@@ -146,12 +149,11 @@ class _AddResultScreenState extends State<AddResultScreen> {
               topRight: Radius.circular(50),
             ),
           ),
-          child: BlocBuilder<ExamClassesCubit, ExamClassesState>(
+          child: BlocBuilder<ClassesCubit, ClassesState>(
             builder: (context, stateClass) {
-              if (stateClass.examClassesStatus == ExamClassesStatus.loading) {
+              if (stateClass.classesStatus == ClassesStatus.loading) {
                 return Center(child: LoadingIndicator());
-              } else if (stateClass.examClassesStatus ==
-                  ExamClassesStatus.success) {
+              } else if (stateClass.classesStatus == ClassesStatus.success) {
                 return Padding(
                   padding:
                       const EdgeInsets.symmetric(horizontal: 20) +
@@ -161,7 +163,7 @@ class _AddResultScreenState extends State<AddResultScreen> {
                       Column(
                         children: [
                           const SizedBox(height: 10),
-                          CustomDropDown(
+                          GenericDropDown<Class>(
                             allPadding: 0,
                             horizontalPadding: 15,
                             isOutline: false,
@@ -169,21 +171,20 @@ class _AddResultScreenState extends State<AddResultScreen> {
                             iconColor: AppColors.primaryDark,
                             suffixIconPath: '',
                             hint: 'Select Class',
-                            items: stateClass.classes
-                                .map((selectClass) => selectClass.className)
-                                .toList(),
-                            onSelect: (String value) {
-                              ExamClassModel selectedClass = stateClass.classes
-                                  .firstWhere(
-                                    (element) => element.className == value,
-                                  );
+                            items: stateClass.classes,
+                            getLabel: (classModel) => classModel.className,
+                            onSelect: (Class value) {
+                              // ExamClassModel selectedClass = stateClass.classes
+                              //     .firstWhere(
+                              //       (element) => element.className == value,
+                              //     );
                               setState(() {
-                                dropdownValueClass = value;
-                                classId = selectedClass.classId.toString();
+                                dropdownValueClass = value.className;
+                                classId = value.classId.toString();
                                 context
                                     .read<ExamClassSectionsCubit>()
                                     .fetchClassSections(
-                                      selectedClass.classId.toString(),
+                                      value.classId.toString(),
                                     );
                               });
                             },
@@ -572,7 +573,7 @@ class _AddResultScreenState extends State<AddResultScreen> {
                                   onPressed: () {
                                     bool _validateFields() {
                                       if (dropdownValueClass == null ||
-                                          classId.isEmpty) {
+                                          classId?.isEmpty == true) {
                                         DisplayUtils.showToast(
                                           context,
                                           "Please select Class",
@@ -651,7 +652,7 @@ class _AddResultScreenState extends State<AddResultScreen> {
                   ),
                 );
               }
-              // else if (state.examClassesStatus == ExamClassesStatus.failure) {
+              // else if (state.ClassesStatus == ClassesStatus.failure) {
               //   return Center(child: TextView(state.failure.message));
               // }
               return SizedBox();
@@ -696,7 +697,7 @@ class _AddResultScreenState extends State<AddResultScreen> {
 
     return ImportExamResultDataInput(
       ucLoginUserId: authRepository.user.userId.toInt(),
-      classId: classId.toInt(),
+      classId: classId?.toInt() ?? 0,
       sectionId: sectionId.toInt(),
       evaluationGroupId: selectedEvaluatedGroup?.evaluationGroupId ?? 0,
       evaluationIdFk: selectedEvaluated?.evaluationId ?? 0,
