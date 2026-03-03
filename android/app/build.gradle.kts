@@ -30,8 +30,8 @@ android {
         applicationId = "com.cas.lgesTeacherApp"
         minSdk = 23
         targetSdk = flutter.targetSdkVersion
-        versionCode = 9
-        versionName = "1.0.9"
+        versionCode = 10
+        versionName = "1.0.10"
     }
 
     signingConfigs {
