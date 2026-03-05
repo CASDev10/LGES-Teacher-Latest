@@ -3,9 +3,9 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>883117959707-f4mhmjhpmh8gtea5rfedksc0gkp6ag8c.apps.googleusercontent.com</string>
+	<string>883117959707-pjueqpda6sckpapfid7hplpo09dk8gdj.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.883117959707-f4mhmjhpmh8gtea5rfedksc0gkp6ag8c</string>
+	<string>com.googleusercontent.apps.883117959707-pjueqpda6sckpapfid7hplpo09dk8gdj</string>
 	<key>ANDROID_CLIENT_ID</key>
 	<string>883117959707-9d978g77l99e2uehs6a8epomcfl4lv0u.apps.googleusercontent.com</string>
 	<key>API_KEY</key>
@@ -15,7 +15,7 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.cas.lgesTeacherApp</string>
+	<string>com.app.lgesTeacherApp</string>
 	<key>PROJECT_ID</key>
 	<string>esm-teacher-owner-apps</string>
 	<key>STORAGE_BUCKET</key>
@@ -31,6 +31,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:883117959707:ios:301dab4f1cd39ac2fae6be</string>
+	<string>1:883117959707:ios:716ab18266309bbafae6be</string>
 </dict>
 </plist>
