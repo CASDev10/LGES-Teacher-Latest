@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>883117959707-f4mhmjhpmh8gtea5rfedksc0gkp6ag8c.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.883117959707-f4mhmjhpmh8gtea5rfedksc0gkp6ag8c</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>883117959707-9d978g77l99e2uehs6a8epomcfl4lv0u.apps.googleusercontent.com</string>
+	<key>API_KEY</key>
+	<string>AIzaSyBmaYmuxx1QkVbeIOzPbDDXMjw_BBYKSYE</string>
+	<key>GCM_SENDER_ID</key>
+	<string>883117959707</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.cas.lgesTeacherApp</string>
+	<key>PROJECT_ID</key>
+	<string>esm-teacher-owner-apps</string>
+	<key>STORAGE_BUCKET</key>
+	<string>esm-teacher-owner-apps.firebasestorage.app</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:883117959707:ios:301dab4f1cd39ac2fae6be</string>
+</dict>
+</plist>
