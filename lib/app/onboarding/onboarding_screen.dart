@@ -24,11 +24,13 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-      statusBarColor: AppColors.whiteColor,
-      statusBarIconBrightness: Brightness.dark, // For Android (dark icons)
-      statusBarBrightness: Brightness.dark,
-    ));
+    SystemChrome.setSystemUIOverlayStyle(
+      const SystemUiOverlayStyle(
+        statusBarColor: AppColors.whiteColor,
+        statusBarIconBrightness: Brightness.dark, // For Android (dark icons)
+        statusBarBrightness: Brightness.dark,
+      ),
+    );
     return BaseScaffold(
       body: SafeArea(
         child: Container(
@@ -51,30 +53,23 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     PageviewChild(
                       imagePath: "assets/images/svg/onboarding1.svg",
                       title: "Welcome to\nLearner",
-                      subTitle:
-                          'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt dolore magna aliqua',
+                      subTitle: '',
                     ),
                     PageviewChild(
                       imagePath: "assets/images/svg/onboarding2.svg",
                       title: "Welcome to\nLearner",
-                      subTitle:
-                          'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt dolore magna aliqua',
+                      subTitle: '',
                     ),
                     PageviewChild(
                       imagePath: "assets/images/svg/onboarding3.svg",
                       title: "Welcome to\nLearner",
-                      subTitle:
-                          'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt dolore magna aliqua',
+                      subTitle: '',
                     ),
                   ],
                 ),
               ),
-              BuildDotIndicators(
-                selectedIndex: selectedIndex,
-              ),
-              const SizedBox(
-                height: 16,
-              ),
+              BuildDotIndicators(selectedIndex: selectedIndex),
+              const SizedBox(height: 16),
               CustomButton(
                 title: !isLastPage ? "Next" : "Get Started",
                 height: 50,
@@ -83,12 +78,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       ? NavRouter.push(context, LoginScreen())
                       : pageController.nextPage(
                           duration: const Duration(milliseconds: 500),
-                          curve: Curves.easeInOut);
+                          curve: Curves.easeInOut,
+                        );
                 },
               ),
-              const SizedBox(
-                height: 16,
-              ),
+              const SizedBox(height: 16),
               GestureDetector(
                 onTap: () {
                   NavRouter.push(context, LoginScreen());
@@ -98,7 +92,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   color: AppColors.darkGreyColor,
                 ),
               ),
-              SizedBox(height: 20,),
+              SizedBox(height: 20),
             ],
           ),
         ),
@@ -112,25 +106,20 @@ class PageviewChild extends StatelessWidget {
   final String title;
   final String subTitle;
 
-  const PageviewChild(
-      {super.key,
-      required this.imagePath,
-      required this.title,
-      required this.subTitle});
+  const PageviewChild({
+    super.key,
+    required this.imagePath,
+    required this.title,
+    required this.subTitle,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        SizedBox(
-          height: 250,
-          width: 250,
-          child: SvgPicture.asset(imagePath),
-        ),
-        const SizedBox(
-          height: 40,
-        ),
+        SizedBox(height: 250, width: 250, child: SvgPicture.asset(imagePath)),
+        const SizedBox(height: 40),
         TextView(
           title,
           textAlign: TextAlign.center,
@@ -138,9 +127,7 @@ class PageviewChild extends StatelessWidget {
           fontSize: 30,
           color: AppColors.primaryDark,
         ),
-        const SizedBox(
-          height: 22,
-        ),
+        const SizedBox(height: 22),
         TextView(
           subTitle,
           textAlign: TextAlign.center,
