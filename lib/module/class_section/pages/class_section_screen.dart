@@ -191,7 +191,7 @@ class _ClassSectionScreenState extends State<ClassSectionScreen> {
                               onSelect: (Section value) {
                                 setState(() {
                                   dropdownValueSection = value.classSection;
-                                  sectionId = value.schoolIdFk.toString();
+                                  sectionId = value.sectionIdFk.toString();
                                 });
                               },
                               getLabel: (section) => section.classSection,
@@ -256,10 +256,7 @@ class _ClassSectionScreenState extends State<ClassSectionScreen> {
                     } else if (dropdownValueClass == null) {
                       DisplayUtils.showToast(context, "Please select Class");
                     } else if (dropdownValueSection == null) {
-                      DisplayUtils.showToast(
-                        context,
-                        "Please select Section",
-                      );
+                      DisplayUtils.showToast(context, "Please select Section");
                     } else {
                       print("Class --- $dropdownValueClass");
                       print("Section --- $dropdownValueSection");
