@@ -200,26 +200,22 @@ class _LeavesScreenViewState extends State<LeavesScreenView> {
             ),
             SizedBox(height: 12.0),
             BlocConsumer<ApplyLeaveCubit, ApplyLeaveState>(
-              listener: (context, applyLeaveState) {
-                if (applyLeaveState.studentAttendanceStatus ==
-                    ApplyLeaveStatus.loading) {
-                  DisplayUtils.showLoader();
-                } else if (applyLeaveState.studentAttendanceStatus ==
-                    ApplyLeaveStatus.success) {
-                  DisplayUtils.removeLoader();
-                  context.read<TeacherLeaveCubit>()
-                    ..fetchEmployeeLeaves(offSet: 0, next: 10)
-                    ..fetchLeaveBalance();
-                } else if (applyLeaveState.studentAttendanceStatus ==
-                    ApplyLeaveStatus.failure) {
-                  DisplayUtils.removeLoader();
-                  DisplayUtils.showToast(
-                    context,
-                    applyLeaveState.failure.message,
-                  );
-                }
-              },
-              builder: (context, applyLeaveState) {
+           listener: (context, applyLeaveState) {
+  if (applyLeaveState.studentAttendanceStatus ==
+      ApplyLeaveStatus.loading) {
+    DisplayUtils.showLoader();
+  } else if (applyLeaveState.studentAttendanceStatus ==
+      ApplyLeaveStatus.success) {
+    DisplayUtils.removeLoader();
+  } else if (applyLeaveState.studentAttendanceStatus ==
+      ApplyLeaveStatus.failure) {
+    DisplayUtils.removeLoader();
+    DisplayUtils.showToast(
+      context,
+      applyLeaveState.failure.message,
+    );
+  }
+},   builder: (context, applyLeaveState) {
                 return BlocBuilder<LeaveBalanceCubit, LeaveBalanceState>(
                   builder: (context, state) {
                     return CustomButton(
