@@ -38,28 +38,26 @@ class _TeacherObservationScreenState extends State<TeacherObservationScreen> {
       create: (context) => FetchObservationAreasCubit(sl()),
       child: MultiBlocProvider(
         providers: [
-          BlocProvider(create: (context) => FetchObservationAreasCubit(sl()))
+          BlocProvider(create: (context) => FetchObservationAreasCubit(sl())),
         ],
         child: BaseScaffold(
-          appBar: const CustomAppbar(
-            'Teacher Observation',
-            centerTitle: true,
-          ),
+          appBar: const CustomAppbar('Teacher Observation', centerTitle: true),
           body: Container(
             width: double.infinity,
             decoration: const BoxDecoration(
               color: AppColors.whiteColor,
               borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(50), topRight: Radius.circular(50)),
+                topLeft: Radius.circular(50),
+                topRight: Radius.circular(50),
+              ),
             ),
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20) +
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 20) +
                   const EdgeInsets.symmetric(vertical: 30),
               child: Column(
                 children: [
-                  const SizedBox(
-                    height: 10,
-                  ),
+                  const SizedBox(height: 10),
                   CustomTextField(
                     hintText: 'Add Level',
                     height: 50,
@@ -77,8 +75,10 @@ class _TeacherObservationScreenState extends State<TeacherObservationScreen> {
                       NavRouter.push(context, AddLevelScreen());
                     },
                   ),
-                  BlocConsumer<FetchObservationAreasCubit,
-                      FetchObservationAreasState>(
+                  BlocConsumer<
+                    FetchObservationAreasCubit,
+                    FetchObservationAreasState
+                  >(
                     listener: (context, state) {
                       if (state.fetchObservationAreasStatus ==
                           FetchObservationAreasStatus.loading) {
@@ -87,15 +87,15 @@ class _TeacherObservationScreenState extends State<TeacherObservationScreen> {
                           FetchObservationAreasStatus.success) {
                         DisplayUtils.removeLoader();
                         NavRouter.push(
-                            context,
-                            TeacherRemarksScreen(
-                              areas: state.observationModel!.observationArea,
-                            ));
+                          context,
+                          TeacherRemarksScreen(
+                            areas: state.observationModel!.observationArea,
+                          ),
+                        );
                       } else if (state.fetchObservationAreasStatus ==
                           FetchObservationAreasStatus.failure) {
                         DisplayUtils.removeLoader();
-                        DisplayUtils.showToast(
-                            context, state.failure.message);
+                        DisplayUtils.showToast(context, state.failure.message);
                       }
                     },
                     builder: (context, state) {
@@ -133,11 +133,17 @@ class _TeacherObservationScreenState extends State<TeacherObservationScreen> {
                       color: AppColors.primaryDark,
                     ),
                     onTap: () async {
-                      showEmployeeIdDialog(context, onButtonPressYes: (value) {
-                        NavRouter.push(context, SubmitObservationScreen(
-                          employeeModel : employeeModel!
-                        ));
-                      });
+                      showEmployeeIdDialog(
+                        context,
+                        onButtonPressYes: (value) {
+                          NavRouter.push(
+                            context,
+                            SubmitObservationScreen(
+                              employeeModel: employeeModel!,
+                            ),
+                          );
+                        },
+                      );
                     },
                   ),
                   CustomTextField(
@@ -157,9 +163,7 @@ class _TeacherObservationScreenState extends State<TeacherObservationScreen> {
                       NavRouter.push(context, ObservationReportScreen());
                     },
                   ),
-                  const SizedBox(
-                    height: 20,
-                  ),
+                  const SizedBox(height: 20),
                 ],
               ),
             ),
@@ -171,122 +175,123 @@ class _TeacherObservationScreenState extends State<TeacherObservationScreen> {
     );
   }
 
-  void showEmployeeIdDialog(BuildContext context,
-      {void Function(bool val)? onButtonPressYes}) async {
+  void showEmployeeIdDialog(
+    BuildContext context, {
+    void Function(bool val)? onButtonPressYes,
+  }) async {
     showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return Dialog(
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20.0)), //this right here
-            child: BlocConsumer<EmployeeDetailCubit, EmployeeDetailState>(
-              listener: (context, state) {
-                if (state.employeeDetailStatus ==
-                    EmployeeDetailStatus.loading) {
-                  DisplayUtils.showLoader();
-                } else if (state.employeeDetailStatus ==
-                    EmployeeDetailStatus.success) {
-                  employeeModel = state.employeeModel;
-                  DisplayUtils.removeLoader();
-                  employeeIdTextController.text = "";
-                  NavRouter.pop(context);
-                  onButtonPressYes!(true);
-                } else if (state.employeeDetailStatus ==
-                    EmployeeDetailStatus.failure) {
-                  DisplayUtils.removeLoader();
-                  DisplayUtils.showToast(context, state.failure.message);
-                }
-              },
-              builder: (context, state) {
-                return Container(
-                  height: 240,
-                  width: MediaQuery.of(context).size.width - 20,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: TextView(
-                          'Enter Employee ID',
-                          fontSize: 20,
-                          fontWeight: FontWeight.w700,
-                          textAlign: TextAlign.center,
-                        ),
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20.0),
+          ), //this right here
+          child: BlocConsumer<EmployeeDetailCubit, EmployeeDetailState>(
+            listener: (context, state) {
+              if (state.employeeDetailStatus == EmployeeDetailStatus.loading) {
+                DisplayUtils.showLoader();
+              } else if (state.employeeDetailStatus ==
+                  EmployeeDetailStatus.success) {
+                employeeModel = state.employeeModel;
+                DisplayUtils.removeLoader();
+                employeeIdTextController.text = "";
+                NavRouter.pop(context);
+                onButtonPressYes!(true);
+              } else if (state.employeeDetailStatus ==
+                  EmployeeDetailStatus.failure) {
+                DisplayUtils.removeLoader();
+                DisplayUtils.showToast(context, state.failure.message);
+              }
+            },
+            builder: (context, state) {
+              return Container(
+                height: 240,
+                width: MediaQuery.of(context).size.width - 20,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: TextView(
+                        'Enter Employee ID',
+                        fontSize: 20,
+                        fontWeight: FontWeight.w700,
+                        textAlign: TextAlign.center,
                       ),
-                      Divider(
-                        height: 1,
-                        color: AppColors.dividerColor,
+                    ),
+                    Divider(height: 1, color: AppColors.dividerColor),
+                    SizedBox(height: 16),
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 12),
+                      child: CustomTextField(
+                        hintText: 'Employee ID',
+                        height: 50,
+                        bottomMargin: 0,
+                        controller: employeeIdTextController,
+                        fontSize: 14,
+                        fontWeight: FontWeight.normal,
+                        inputType: TextInputType.number,
+                        fillColor: AppColors.lightGreyColor,
+                        hintColor: AppColors.grey,
                       ),
-                      SizedBox(
-                        height: 16,
-                      ),
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 12),
-                        child: CustomTextField(
-                          hintText: 'Employee ID',
-                          height: 50,
-                          bottomMargin: 0,
-                          controller: employeeIdTextController,
-                          fontSize: 14,
-                          fontWeight: FontWeight.normal,
-                          inputType: TextInputType.number,
-                          fillColor: AppColors.lightGreyColor,
-                          hintColor: AppColors.grey,
-                        ),
-                      ),
-                      SizedBox(
-                        height: 24,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Padding(
-                              child: CustomButton(
-                                isOutlinedButton: true,
-                                onPressed: () {
-                                  NavRouter.pop(context);
-                                },
-                                width: 80,
-                                title: 'Close',
-                                fontSize: 14,
-                                height: 45,
-                                textColor: AppColors.primaryDark,
-                              ),
-                              padding: EdgeInsets.symmetric(vertical: 8),
+                    ),
+                    SizedBox(height: 24),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Padding(
+                            child: CustomButton(
+                              isOutlinedButton: true,
+                              onPressed: () {
+                                NavRouter.pop(context);
+                              },
+                              width: 80,
+                              title: 'Close',
+                              fontSize: 14,
+                              height: 45,
+                              textColor: AppColors.primaryDark,
                             ),
-                            SizedBox(
-                              width: 10,
+                            padding: EdgeInsets.symmetric(vertical: 8),
+                          ),
+                          SizedBox(width: 10),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 8),
+                            child: CustomButton(
+                              onPressed: () {
+                                if (employeeIdTextController.text
+                                    .trim()
+                                    .isNotEmpty) {
+                                  context.read<EmployeeDetailCubit>()
+                                    ..getEmployeeDetail(
+                                      employeeIdTextController.text
+                                          .trim()
+                                          .toString(),
+                                    );
+                                } else {
+                                  DisplayUtils.showToast(
+                                    context,
+                                    "Enter Employee ID",
+                                  );
+                                }
+                              },
+                              width: 80,
+                              fontSize: 14,
+                              title: 'Submit',
+                              height: 45,
                             ),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 8),
-                              child: CustomButton(
-                                onPressed: () {
-                                  if (employeeIdTextController.text
-                                      .trim()
-                                      .isNotEmpty) {
-                                    context.read<EmployeeDetailCubit>()..getEmployeeDetail(employeeIdTextController.text.trim().toString());
-                                  } else {
-                                    DisplayUtils.showToast(
-                                        context, "Enter Employee ID");
-                                  }
-                                },
-                                width: 80,
-                                fontSize: 14,
-                                title: 'Submit',
-                                height: 45,
-                              ),
-                            ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                );
-              },
-            ),
-          );
-        });
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
+        );
+      },
+    );
   }
 }

@@ -1,13 +1,7 @@
-
 import '../../../../core/failures/base_failures/base_failure.dart';
 import '../../models/attendance_reponse.dart';
 
-enum StudentAttendanceStatus {
-  none,
-  loading,
-  success,
-  failure,
-}
+enum StudentAttendanceStatus { none, loading, success, failure }
 
 class StudentAttendanceState {
   final StudentAttendanceStatus studentAttendanceStatus;
@@ -34,7 +28,8 @@ class StudentAttendanceState {
     List<AttendanceModel>? attendanceList,
   }) {
     return StudentAttendanceState(
-      studentAttendanceStatus: studentAttendanceStatus ?? this.studentAttendanceStatus,
+      studentAttendanceStatus:
+          studentAttendanceStatus ?? this.studentAttendanceStatus,
       failure: failure ?? this.failure,
       attendanceList: attendanceList ?? this.attendanceList,
     );

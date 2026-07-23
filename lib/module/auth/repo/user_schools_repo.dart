@@ -19,7 +19,10 @@ class UserSchoolsRepository {
         data: input.toJson(),
       );
 
-      UserSchoolsModel userSchoolsModel = await compute(userSchoolsModelFromJson, response);
+      UserSchoolsModel userSchoolsModel = await compute(
+        userSchoolsModelFromJson,
+        response,
+      );
 
       return userSchoolsModel;
     } on BaseFailure catch (_) {

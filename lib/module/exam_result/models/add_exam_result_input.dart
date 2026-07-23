@@ -4,9 +4,11 @@
 
 import 'dart:convert';
 
-AddExamResultInput addExamResultInputFromJson(String str) => AddExamResultInput.fromJson(json.decode(str));
+AddExamResultInput addExamResultInputFromJson(String str) =>
+    AddExamResultInput.fromJson(json.decode(str));
 
-String addExamResultInputToJson(AddExamResultInput data) => json.encode(data.toJson());
+String addExamResultInputToJson(AddExamResultInput data) =>
+    json.encode(data.toJson());
 
 class AddExamResultInput {
   String ucEntityId;
@@ -29,16 +31,23 @@ class AddExamResultInput {
     required this.dynamicSubject,
   });
 
-  factory AddExamResultInput.fromJson(Map<String, dynamic> json) => AddExamResultInput(
-    ucEntityId: json["UC_EntityId"],
-    ucLoginUserId: json["UC_LoginUserId"],
-    ucSchoolId: json["UC_SchoolId"],
-    classId: json["ClassId"],
-    sectionId: json["SectionId"],
-    monthYear: json["MonthYear"],
-    fixData: List<ResultSheetFixDataModel>.from(json["FixData"].map((x) => ResultSheetFixDataModel.fromJson(x))),
-    dynamicSubject: List<ResultSheetDynamicSubjectModel>.from(json["DynamicSubject"].map((x) => ResultSheetDynamicSubjectModel.fromJson(x))),
-  );
+  factory AddExamResultInput.fromJson(Map<String, dynamic> json) =>
+      AddExamResultInput(
+        ucEntityId: json["UC_EntityId"],
+        ucLoginUserId: json["UC_LoginUserId"],
+        ucSchoolId: json["UC_SchoolId"],
+        classId: json["ClassId"],
+        sectionId: json["SectionId"],
+        monthYear: json["MonthYear"],
+        fixData: List<ResultSheetFixDataModel>.from(
+          json["FixData"].map((x) => ResultSheetFixDataModel.fromJson(x)),
+        ),
+        dynamicSubject: List<ResultSheetDynamicSubjectModel>.from(
+          json["DynamicSubject"].map(
+            (x) => ResultSheetDynamicSubjectModel.fromJson(x),
+          ),
+        ),
+      );
 
   Map<String, dynamic> toJson() => {
     "UC_EntityId": ucEntityId,
@@ -75,17 +84,18 @@ class ResultSheetDynamicSubjectModel {
     required this.urdu,
   });
 
-  factory ResultSheetDynamicSubjectModel.fromJson(Map<String, dynamic> json) => ResultSheetDynamicSubjectModel(
-    studentId: json["StudentId"],
-    biology: json["Biology"],
-    chemistry: json["Chemistry"],
-    englishLanguage: json["English Language"],
-    islamiyat: json["Islamiyat"],
-    mathematics: json["Mathematics"],
-    pakistanStudies: json["Pakistan Studies"],
-    physics: json["Physics"],
-    urdu: json["Urdu"],
-  );
+  factory ResultSheetDynamicSubjectModel.fromJson(Map<String, dynamic> json) =>
+      ResultSheetDynamicSubjectModel(
+        studentId: json["StudentId"],
+        biology: json["Biology"],
+        chemistry: json["Chemistry"],
+        englishLanguage: json["English Language"],
+        islamiyat: json["Islamiyat"],
+        mathematics: json["Mathematics"],
+        pakistanStudies: json["Pakistan Studies"],
+        physics: json["Physics"],
+        urdu: json["Urdu"],
+      );
 
   Map<String, dynamic> toJson() => {
     "StudentId": studentId,
@@ -115,13 +125,14 @@ class ResultSheetFixDataModel {
     required this.percentage,
   });
 
-  factory ResultSheetFixDataModel.fromJson(Map<String, dynamic> json) => ResultSheetFixDataModel(
-    studentId: json["StudentId"],
-    fileNo: json["FileNo"],
-    obtainedMarks: json["ObtainedMarks"],
-    maxMarks: json["MaxMarks"],
-    percentage: json["Percentage"],
-  );
+  factory ResultSheetFixDataModel.fromJson(Map<String, dynamic> json) =>
+      ResultSheetFixDataModel(
+        studentId: json["StudentId"],
+        fileNo: json["FileNo"],
+        obtainedMarks: json["ObtainedMarks"],
+        maxMarks: json["MaxMarks"],
+        percentage: json["Percentage"],
+      );
 
   Map<String, dynamic> toJson() => {
     "StudentId": studentId,

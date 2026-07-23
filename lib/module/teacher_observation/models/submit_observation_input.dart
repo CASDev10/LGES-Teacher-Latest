@@ -1,4 +1,3 @@
-
 class SubmitObservationInput {
   int empId;
   String submitDate;
@@ -22,17 +21,20 @@ class SubmitObservationInput {
     required this.ucSchoolId,
   });
 
-  factory SubmitObservationInput.fromJson(Map<String, dynamic> json) => SubmitObservationInput(
-    empId: json["EmpId"],
-    submitDate: json["SubmitDate"],
-    levelIdFk: json["LevelIdFk"],
-    feedBack: json["FeedBack"],
-    areaRemarks: List<AreaRemark>.from(json["AreaRemarks"].map((x) => AreaRemark.fromJson(x))),
-    ucLoginUserId: json["UC_LoginUserId"],
-    ucUserFullName: json["UC_UserFullName"],
-    ucEntityId: json["UC_EntityId"],
-    ucSchoolId: json["UC_SchoolId"],
-  );
+  factory SubmitObservationInput.fromJson(Map<String, dynamic> json) =>
+      SubmitObservationInput(
+        empId: json["EmpId"],
+        submitDate: json["SubmitDate"],
+        levelIdFk: json["LevelIdFk"],
+        feedBack: json["FeedBack"],
+        areaRemarks: List<AreaRemark>.from(
+          json["AreaRemarks"].map((x) => AreaRemark.fromJson(x)),
+        ),
+        ucLoginUserId: json["UC_LoginUserId"],
+        ucUserFullName: json["UC_UserFullName"],
+        ucEntityId: json["UC_EntityId"],
+        ucSchoolId: json["UC_SchoolId"],
+      );
 
   Map<String, dynamic> toJson() => {
     "EmpId": empId,
@@ -51,18 +53,10 @@ class AreaRemark {
   int areaId;
   int remarksId;
 
-  AreaRemark({
-    required this.areaId,
-    required this.remarksId,
-  });
+  AreaRemark({required this.areaId, required this.remarksId});
 
-  factory AreaRemark.fromJson(Map<String, dynamic> json) => AreaRemark(
-    areaId: json["AreaId"],
-    remarksId: json["RemarksId"],
-  );
+  factory AreaRemark.fromJson(Map<String, dynamic> json) =>
+      AreaRemark(areaId: json["AreaId"], remarksId: json["RemarksId"]);
 
-  Map<String, dynamic> toJson() => {
-    "AreaId": areaId,
-    "RemarksId": remarksId,
-  };
+  Map<String, dynamic> toJson() => {"AreaId": areaId, "RemarksId": remarksId};
 }

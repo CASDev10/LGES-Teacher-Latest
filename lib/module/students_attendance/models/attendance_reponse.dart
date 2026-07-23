@@ -1,8 +1,10 @@
 import 'dart:convert';
 
-AttendanceResponseModel attendanceResponseModelFromJson(dynamic json) => AttendanceResponseModel.fromJson(json);
+AttendanceResponseModel attendanceResponseModelFromJson(dynamic json) =>
+    AttendanceResponseModel.fromJson(json);
 
-String attendanceResponseModelToJson(AttendanceResponseModel data) => json.encode(data.toJson());
+String attendanceResponseModelToJson(AttendanceResponseModel data) =>
+    json.encode(data.toJson());
 
 class AttendanceResponseModel {
   String result;
@@ -15,11 +17,14 @@ class AttendanceResponseModel {
     required this.data,
   });
 
-  factory AttendanceResponseModel.fromJson(Map<String, dynamic> json) => AttendanceResponseModel(
-    result: json["result"],
-    message: json["message"],
-    data: List<AttendanceModel>.from(json["data"].map((x) => AttendanceModel.fromJson(x))),
-  );
+  factory AttendanceResponseModel.fromJson(Map<String, dynamic> json) =>
+      AttendanceResponseModel(
+        result: json["result"],
+        message: json["message"],
+        data: List<AttendanceModel>.from(
+          json["data"].map((x) => AttendanceModel.fromJson(x)),
+        ),
+      );
 
   Map<String, dynamic> toJson() => {
     "result": result,
@@ -47,15 +52,16 @@ class AttendanceModel {
     required this.convertedPicture,
   });
 
-  factory AttendanceModel.fromJson(Map<String, dynamic> json) => AttendanceModel(
-    attendanceId: json["AttendanceId"],
-    studentId: json["StudentId"],
-    rollNumber: json["RollNumber"] ?? "",
-    studentName: json["StudentName"],
-    fatherName: json["FatherName"],
-    attendanceStatusIdFk: json["AttendanceStatusIdFk"],
-    convertedPicture: json["ConvertedPicture"],
-  );
+  factory AttendanceModel.fromJson(Map<String, dynamic> json) =>
+      AttendanceModel(
+        attendanceId: json["AttendanceId"],
+        studentId: json["StudentId"],
+        rollNumber: json["RollNumber"] ?? "",
+        studentName: json["StudentName"],
+        fatherName: json["FatherName"],
+        attendanceStatusIdFk: json["AttendanceStatusIdFk"],
+        convertedPicture: json["ConvertedPicture"],
+      );
 
   Map<String, dynamic> toJson() => {
     "AttendanceId": attendanceId,

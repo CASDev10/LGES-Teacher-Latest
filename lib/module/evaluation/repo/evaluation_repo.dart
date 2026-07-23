@@ -24,8 +24,10 @@ class EvaluationRepository {
       var response = await _networkService.post(
         Endpoints.getEvaluationRemarksList,
       );
-      EvaluationRemarksResponse evaluationRemarksList =
-          await compute(evaluationRemarksListFromJson, response);
+      EvaluationRemarksResponse evaluationRemarksList = await compute(
+        evaluationRemarksListFromJson,
+        response,
+      );
       return evaluationRemarksList;
     } on BaseFailure catch (_) {
       rethrow;
@@ -35,11 +37,13 @@ class EvaluationRepository {
     }
   }
 
-  Future<StudentEvaluationAreasResponse> getEvaluationAreas(StudentEvaluationAreasInput studentEvaluationAreasInput) async {
+  Future<StudentEvaluationAreasResponse> getEvaluationAreas(
+    StudentEvaluationAreasInput studentEvaluationAreasInput,
+  ) async {
     try {
       var response = await _networkService.post(
         Endpoints.getStudentEvaluationAreas,
-        data: studentEvaluationAreasInput.toJson()
+        data: studentEvaluationAreasInput.toJson(),
       );
       StudentEvaluationAreasResponse studentEvaluationAreasResponse =
           await compute(studentEvaluationAreasResponseFromJson, response);
@@ -52,14 +56,18 @@ class EvaluationRepository {
     }
   }
 
-  Future<BaseResponseModel> addEvaluationRemarks(AddEvaluationRemarksInput addEvaluationRemarksInput) async {
+  Future<BaseResponseModel> addEvaluationRemarks(
+    AddEvaluationRemarksInput addEvaluationRemarksInput,
+  ) async {
     try {
       var response = await _networkService.post(
         Endpoints.addEvaluationRemarks,
-        data: addEvaluationRemarksInput.toJson()
+        data: addEvaluationRemarksInput.toJson(),
       );
-      BaseResponseModel baseResponseModel =
-      await compute(baseResponseModelFromJson, response);
+      BaseResponseModel baseResponseModel = await compute(
+        baseResponseModelFromJson,
+        response,
+      );
       return baseResponseModel;
     } on BaseFailure catch (_) {
       rethrow;
@@ -69,14 +77,18 @@ class EvaluationRepository {
     }
   }
 
-  Future<BaseResponseModel> addEvaluationLogBook(AddEvaluationInput addEvaluationInput) async {
+  Future<BaseResponseModel> addEvaluationLogBook(
+    AddEvaluationInput addEvaluationInput,
+  ) async {
     try {
       var response = await _networkService.post(
         Endpoints.addEvaluationLogBook,
-        data: addEvaluationInput.toJson()
+        data: addEvaluationInput.toJson(),
       );
-      BaseResponseModel baseResponseModel =
-          await compute(baseResponseModelFromJson, response);
+      BaseResponseModel baseResponseModel = await compute(
+        baseResponseModelFromJson,
+        response,
+      );
       return baseResponseModel;
     } on BaseFailure catch (_) {
       rethrow;

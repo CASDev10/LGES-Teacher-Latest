@@ -4,9 +4,11 @@
 
 import 'dart:convert';
 
-EmployeeDetailResponse employeeDetailResponseFromJson(dynamic json) => EmployeeDetailResponse.fromJson(json);
+EmployeeDetailResponse employeeDetailResponseFromJson(dynamic json) =>
+    EmployeeDetailResponse.fromJson(json);
 
-String employeeDetailResponseToJson(EmployeeDetailResponse data) => json.encode(data.toJson());
+String employeeDetailResponseToJson(EmployeeDetailResponse data) =>
+    json.encode(data.toJson());
 
 class EmployeeDetailResponse {
   String result;
@@ -19,11 +21,14 @@ class EmployeeDetailResponse {
     required this.data,
   });
 
-  factory EmployeeDetailResponse.fromJson(Map<String, dynamic> json) => EmployeeDetailResponse(
-    result: json["result"],
-    message: json["message"],
-    data: List<EmployeeModel>.from(json["data"].map((x) => EmployeeModel.fromJson(x))),
-  );
+  factory EmployeeDetailResponse.fromJson(Map<String, dynamic> json) =>
+      EmployeeDetailResponse(
+        result: json["result"],
+        message: json["message"],
+        data: List<EmployeeModel>.from(
+          json["data"].map((x) => EmployeeModel.fromJson(x)),
+        ),
+      );
 
   Map<String, dynamic> toJson() => {
     "result": result,

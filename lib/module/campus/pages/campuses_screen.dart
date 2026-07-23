@@ -29,26 +29,30 @@ class _CampusesScreenState extends State<CampusesScreen> {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => UserSchoolsCubit(sl())
-        ..fetchUserSchools(UserSchoolsInput(
+        ..fetchUserSchools(
+          UserSchoolsInput(
             entityId: _authRepository.user.entityId.toString(),
-            userId: _authRepository.user.userId.toString())),
+            userId: _authRepository.user.userId.toString(),
+          ),
+        ),
       child: BaseScaffold(
         body: Container(
           width: double.infinity,
           decoration: const BoxDecoration(
             color: AppColors.whiteColor,
             borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(50), topRight: Radius.circular(50)),
+              topLeft: Radius.circular(50),
+              topRight: Radius.circular(50),
+            ),
           ),
           child: BlocBuilder<UserSchoolsCubit, UserSchoolsState>(
             builder: (context, state) {
               if (state.userSchoolsStatus == UserSchoolsStatus.loading) {
-                return Center(
-                  child: LoadingIndicator(),
-                );
+                return Center(child: LoadingIndicator());
               } else if (state.userSchoolsStatus == UserSchoolsStatus.success) {
                 return Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20) +
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 20) +
                       const EdgeInsets.only(top: 30),
                   child: Column(
                     children: [
@@ -56,28 +60,31 @@ class _CampusesScreenState extends State<CampusesScreen> {
                         hint: "Search Campus",
                         readOnly: false,
                         onValueChange: (String value) {
-                          context.read<UserSchoolsCubit>().filterSearchResults(value);
+                          context.read<UserSchoolsCubit>().filterSearchResults(
+                            value,
+                          );
                         },
                       ).hPadding(padding: 10),
-                      const SizedBox(
-                        height: 15,
-                      ),
+                      const SizedBox(height: 15),
                       Expanded(
-                          child: Container(
-                        decoration: const BoxDecoration(
+                        child: Container(
+                          decoration: const BoxDecoration(
                             color: AppColors.lightGreyColor,
                             borderRadius: BorderRadius.only(
                               topLeft: Radius.circular(15),
                               topRight: Radius.circular(15),
-                            )),
-                        child: Column(
-                          children: [
-                            Expanded(
-                              child: Container(
+                            ),
+                          ),
+                          child: Column(
+                            children: [
+                              Expanded(
+                                child: Container(
                                   child: state.userSchools.isNotEmpty
                                       ? ListView.separated(
                                           padding: const EdgeInsets.symmetric(
-                                              horizontal: 16, vertical: 12),
+                                            horizontal: 16,
+                                            vertical: 12,
+                                          ),
                                           itemCount: state.userSchools.length,
                                           physics: BouncingScrollPhysics(),
                                           itemBuilder: (context, index) {
@@ -90,22 +97,25 @@ class _CampusesScreenState extends State<CampusesScreen> {
                                                     .userSchools[index]
                                                     .schoolId;
                                                 _auth.saveUser(newUser);
-                                                NavRouter.pushAndRemoveUntil(context,
-                                                    HomeScreen());
+                                                NavRouter.pushAndRemoveUntil(
+                                                  context,
+                                                  HomeScreen(),
+                                                );
                                               },
                                               child: CampusesTile(
-                                                  campusName: state
-                                                      .userSchools[index]
-                                                      .schoolName),
+                                                campusName: state
+                                                    .userSchools[index]
+                                                    .schoolName,
+                                              ),
                                             );
                                           },
                                           separatorBuilder:
-                                              (BuildContext context,
-                                                  int index) {
-                                            return SizedBox(
-                                              height: 20,
-                                            );
-                                          },
+                                              (
+                                                BuildContext context,
+                                                int index,
+                                              ) {
+                                                return SizedBox(height: 20);
+                                              },
                                         )
                                       : Center(
                                           child: TextView(
@@ -113,31 +123,26 @@ class _CampusesScreenState extends State<CampusesScreen> {
                                             fontSize: 24,
                                             color: AppColors.greyColor,
                                           ),
-                                        )),
-                            ),
-                            SizedBox(
-                              height: 20,
-                            ),
-                          ],
+                                        ),
+                                ),
+                              ),
+                              SizedBox(height: 20),
+                            ],
+                          ),
                         ),
-                      ))
+                      ),
                     ],
                   ),
                 );
               } else if (state.userSchoolsStatus == UserSchoolsStatus.failure) {
-                return Center(
-                  child: Text(state.failure.message),
-                );
+                return Center(child: Text(state.failure.message));
               }
               return SizedBox();
             },
           ),
         ),
         hMargin: 0,
-        appBar: const CustomAppbar(
-          'Campuses List',
-          centerTitle: true,
-        ),
+        appBar: const CustomAppbar('Campuses List', centerTitle: true),
         backgroundColor: AppColors.primaryDark,
       ),
     );

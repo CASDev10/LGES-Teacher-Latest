@@ -1,14 +1,6 @@
-
-
-
 import '../../../../core/failures/base_failures/base_failure.dart';
 
-enum AddEvaluationStatus {
-  none,
-  loading,
-  success,
-  failure,
-}
+enum AddEvaluationStatus { none, loading, success, failure }
 
 class AddEvaluationState {
   final AddEvaluationStatus addEvaluationStatus;
@@ -21,14 +13,14 @@ class AddEvaluationState {
 
   factory AddEvaluationState.initial() {
     return AddEvaluationState(
-        addEvaluationStatus: AddEvaluationStatus.none,
-        failure: const BaseFailure()
+      addEvaluationStatus: AddEvaluationStatus.none,
+      failure: const BaseFailure(),
     );
   }
 
   AddEvaluationState copyWith({
     AddEvaluationStatus? addEvaluationStatus,
-    BaseFailure? failure
+    BaseFailure? failure,
   }) {
     return AddEvaluationState(
       addEvaluationStatus: addEvaluationStatus ?? this.addEvaluationStatus,

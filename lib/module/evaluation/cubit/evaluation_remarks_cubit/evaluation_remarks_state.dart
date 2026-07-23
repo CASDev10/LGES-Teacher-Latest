@@ -1,11 +1,6 @@
 part of 'evaluation_remarks_cubit.dart';
 
-enum EvaluationRemarksStatus {
-  none,
-  loading,
-  success,
-  failure,
-}
+enum EvaluationRemarksStatus { none, loading, success, failure }
 
 class EvaluationRemarksState {
   final EvaluationRemarksStatus evaluationRemarksStatus;
@@ -32,7 +27,8 @@ class EvaluationRemarksState {
     List<EvaluationRemarksModel>? evaluationRemarks,
   }) {
     return EvaluationRemarksState(
-      evaluationRemarksStatus: evaluationRemarksStatus ?? this.evaluationRemarksStatus,
+      evaluationRemarksStatus:
+          evaluationRemarksStatus ?? this.evaluationRemarksStatus,
       failure: failure ?? this.failure,
       evaluationRemarks: evaluationRemarks ?? this.evaluationRemarks,
     );

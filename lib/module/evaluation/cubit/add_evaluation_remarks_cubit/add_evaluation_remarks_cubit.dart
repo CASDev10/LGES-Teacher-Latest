@@ -11,31 +11,44 @@ import 'add_evaluation_remarks_state.dart';
 
 class AddEvaluationRemarksCubit extends Cubit<AddEvaluationRemarksState> {
   AddEvaluationRemarksCubit(this.evaluationRepository)
-      : super(AddEvaluationRemarksState.initial());
+    : super(AddEvaluationRemarksState.initial());
 
   EvaluationRepository evaluationRepository;
 
   Future addEvaluationRemarks(
-      AddEvaluationRemarksInput addEvaluationRemarksInput) async {
-    emit(state.copyWith(
-        addEvaluationRemarksStatus: AddEvaluationRemarksStatus.loading));
+    AddEvaluationRemarksInput addEvaluationRemarksInput,
+  ) async {
+    emit(
+      state.copyWith(
+        addEvaluationRemarksStatus: AddEvaluationRemarksStatus.loading,
+      ),
+    );
 
     try {
       BaseResponseModel responseModel = await evaluationRepository
           .addEvaluationRemarks(addEvaluationRemarksInput);
 
       if (responseModel.result == ApiResult.success) {
-        emit(state.copyWith(
-            addEvaluationRemarksStatus: AddEvaluationRemarksStatus.success));
+        emit(
+          state.copyWith(
+            addEvaluationRemarksStatus: AddEvaluationRemarksStatus.success,
+          ),
+        );
       } else {
-        emit(state.copyWith(
+        emit(
+          state.copyWith(
             addEvaluationRemarksStatus: AddEvaluationRemarksStatus.failure,
-            failure: HighPriorityException(responseModel.message)));
+            failure: HighPriorityException(responseModel.message),
+          ),
+        );
       }
     } on BaseFailure catch (e) {
-      emit(state.copyWith(
+      emit(
+        state.copyWith(
           addEvaluationRemarksStatus: AddEvaluationRemarksStatus.failure,
-          failure: HighPriorityException(e.message)));
+          failure: HighPriorityException(e.message),
+        ),
+      );
     } catch (_) {}
   }
 }

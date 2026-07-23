@@ -1,6 +1,3 @@
-
-
-
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lges_teacher_app/module/evaluation/models/evaluation_areas_response.dart';
 
@@ -13,31 +10,41 @@ import '../../repo/evaluation_repo.dart';
 import 'evaluation_areas_state.dart';
 
 class EvaluationAreasCubit extends Cubit<EvaluationAreasState> {
-  EvaluationAreasCubit(this.evaluationRepository) : super(EvaluationAreasState.initial());
+  EvaluationAreasCubit(this.evaluationRepository)
+    : super(EvaluationAreasState.initial());
 
   EvaluationRepository evaluationRepository;
-  Future fetchEvaluationAreas(StudentEvaluationAreasInput studentEvaluationAreasInput) async {
+  Future fetchEvaluationAreas(
+    StudentEvaluationAreasInput studentEvaluationAreasInput,
+  ) async {
     emit(state.copyWith(evaluationAreasStatus: EvaluationAreasStatus.loading));
 
     try {
-      StudentEvaluationAreasResponse responseModel =
-      await evaluationRepository.getEvaluationAreas(studentEvaluationAreasInput);
+      StudentEvaluationAreasResponse responseModel = await evaluationRepository
+          .getEvaluationAreas(studentEvaluationAreasInput);
 
       if (responseModel.result == ApiResult.success) {
-        emit(state.copyWith(
-          evaluationAreasStatus: EvaluationAreasStatus.success,
-          evaluationAreas: responseModel.data,
-        ));
+        emit(
+          state.copyWith(
+            evaluationAreasStatus: EvaluationAreasStatus.success,
+            evaluationAreas: responseModel.data,
+          ),
+        );
       } else {
-        emit(state.copyWith(
+        emit(
+          state.copyWith(
             evaluationAreasStatus: EvaluationAreasStatus.failure,
-            failure: HighPriorityException(responseModel.message)));
+            failure: HighPriorityException(responseModel.message),
+          ),
+        );
       }
     } on BaseFailure catch (e) {
-      emit(state.copyWith(
+      emit(
+        state.copyWith(
           evaluationAreasStatus: EvaluationAreasStatus.failure,
-          failure: HighPriorityException(e.message)));
+          failure: HighPriorityException(e.message),
+        ),
+      );
     } catch (_) {}
   }
-
 }

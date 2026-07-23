@@ -4,9 +4,11 @@
 
 import 'dart:convert';
 
-EvaluationRemarksResponse evaluationRemarksListFromJson(dynamic json) => EvaluationRemarksResponse.fromJson(json);
+EvaluationRemarksResponse evaluationRemarksListFromJson(dynamic json) =>
+    EvaluationRemarksResponse.fromJson(json);
 
-String evaluationRemarksListToJson(EvaluationRemarksResponse data) => json.encode(data.toJson());
+String evaluationRemarksListToJson(EvaluationRemarksResponse data) =>
+    json.encode(data.toJson());
 
 class EvaluationRemarksResponse {
   String result;
@@ -19,11 +21,14 @@ class EvaluationRemarksResponse {
     required this.data,
   });
 
-  factory EvaluationRemarksResponse.fromJson(Map<String, dynamic> json) => EvaluationRemarksResponse(
-    result: json["result"],
-    message: json["message"],
-    data: List<EvaluationRemarksModel>.from(json["data"].map((x) => EvaluationRemarksModel.fromJson(x))),
-  );
+  factory EvaluationRemarksResponse.fromJson(Map<String, dynamic> json) =>
+      EvaluationRemarksResponse(
+        result: json["result"],
+        message: json["message"],
+        data: List<EvaluationRemarksModel>.from(
+          json["data"].map((x) => EvaluationRemarksModel.fromJson(x)),
+        ),
+      );
 
   Map<String, dynamic> toJson() => {
     "result": result,
@@ -47,13 +52,14 @@ class EvaluationRemarksModel {
     required this.isDeleted,
   });
 
-  factory EvaluationRemarksModel.fromJson(Map<String, dynamic> json) => EvaluationRemarksModel(
-    evaluationRemarksId: json["EvaluationRemarksID"],
-    evaluationRemarks: json["EvaluationRemarks"],
-    evaluationAreaId: json["EvaluationAreaId"],
-    evaluationArea: json["EvaluationArea"],
-    isDeleted: json["isDeleted"],
-  );
+  factory EvaluationRemarksModel.fromJson(Map<String, dynamic> json) =>
+      EvaluationRemarksModel(
+        evaluationRemarksId: json["EvaluationRemarksID"],
+        evaluationRemarks: json["EvaluationRemarks"],
+        evaluationAreaId: json["EvaluationAreaId"],
+        evaluationArea: json["EvaluationArea"],
+        isDeleted: json["isDeleted"],
+      );
 
   Map<String, dynamic> toJson() => {
     "EvaluationRemarksID": evaluationRemarksId,

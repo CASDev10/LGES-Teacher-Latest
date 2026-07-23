@@ -53,7 +53,8 @@ class CloudMessagingService {
     debugPrint('CLICKED FROM BACKGROUND');
 
     /// from terminated state.
-    RemoteMessage? initialMessage = await FirebaseMessaging.instance.getInitialMessage();
+    RemoteMessage? initialMessage = await FirebaseMessaging.instance
+        .getInitialMessage();
 
     if (initialMessage != null) {
       _handleMessage(initialMessage);
@@ -90,11 +91,12 @@ class CloudMessagingService {
   }
 
   Future<void> _setForegroundNotificationsPresentationOptionsIOS() async {
-    await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
-      alert: true, // Required to display a heads up notification
-      badge: true,
-      sound: true,
-    );
+    await FirebaseMessaging.instance
+        .setForegroundNotificationPresentationOptions(
+          alert: true, // Required to display a heads up notification
+          badge: true,
+          sound: true,
+        );
   }
 
   Future<void> _setNotificationPermissionsIOS() async {

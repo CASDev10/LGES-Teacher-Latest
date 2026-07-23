@@ -1,13 +1,6 @@
-
-
 import '../../../../core/failures/base_failures/base_failure.dart';
 
-enum ForgetPasswordStatus {
-  none,
-  loading,
-  success,
-  failure,
-}
+enum ForgetPasswordStatus { none, loading, success, failure }
 
 class ForgetPasswordState {
   final ForgetPasswordStatus forgetPasswordStatus;
@@ -24,10 +17,10 @@ class ForgetPasswordState {
 
   factory ForgetPasswordState.initial() {
     return ForgetPasswordState(
-        forgetPasswordStatus: ForgetPasswordStatus.none,
-        isPasswordHidden: true,
-        isAutoValidate: false,
-        failure: const BaseFailure()
+      forgetPasswordStatus: ForgetPasswordStatus.none,
+      isPasswordHidden: true,
+      isAutoValidate: false,
+      failure: const BaseFailure(),
     );
   }
 
@@ -38,10 +31,10 @@ class ForgetPasswordState {
     BaseFailure? failure,
   }) {
     return ForgetPasswordState(
-        forgetPasswordStatus: forgetPasswordStatus ?? this.forgetPasswordStatus,
-        isPasswordHidden: isPasswordVisible ?? isPasswordHidden,
-        isAutoValidate: isAutoValidate ?? this.isAutoValidate,
-        failure: failure ?? this.failure
+      forgetPasswordStatus: forgetPasswordStatus ?? this.forgetPasswordStatus,
+      isPasswordHidden: isPasswordVisible ?? isPasswordHidden,
+      isAutoValidate: isAutoValidate ?? this.isAutoValidate,
+      failure: failure ?? this.failure,
     );
   }
 }

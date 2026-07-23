@@ -1,12 +1,6 @@
 import '../../model/apply_leave_model.dart';
 
-enum ApplyLeaveStatus {
-  initial,
-  fileSelected,
-  loading,
-  success,
-  error,
-}
+enum ApplyLeaveStatus { initial, fileSelected, loading, success, error }
 
 class ApplyLeaveState {
   final ApplyLeaveStatus status;

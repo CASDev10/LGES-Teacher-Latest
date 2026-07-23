@@ -9,32 +9,45 @@ import '../../repo/observation_repo.dart';
 
 class FetchObservationRemarksCubit extends Cubit<FetchObservationRemarksState> {
   FetchObservationRemarksCubit(this.repository)
-      : super(FetchObservationRemarksState.initial());
+    : super(FetchObservationRemarksState.initial());
   ObservationRepository repository;
 
   Future getObservationRemarks() async {
-    emit(state.copyWith(
-        fetchObservationRemarksStatus: FetchObservationRemarksStatus.loading));
+    emit(
+      state.copyWith(
+        fetchObservationRemarksStatus: FetchObservationRemarksStatus.loading,
+      ),
+    );
     try {
-      ObservationRemarksResponse observationRemarksResponse =
-          await repository.getObservationRemarks();
-      observationRemarksResponse.data.sort((a, b) => b.createdDate.compareTo(a.createdDate));
+      ObservationRemarksResponse observationRemarksResponse = await repository
+          .getObservationRemarks();
+      observationRemarksResponse.data.sort(
+        (a, b) => b.createdDate.compareTo(a.createdDate),
+      );
       if (observationRemarksResponse.result == ApiResult.success) {
-        emit(state.copyWith(
+        emit(
+          state.copyWith(
             fetchObservationRemarksStatus:
                 FetchObservationRemarksStatus.success,
-            remarks: observationRemarksResponse.data));
+            remarks: observationRemarksResponse.data,
+          ),
+        );
       } else {
-        emit(state.copyWith(
+        emit(
+          state.copyWith(
             fetchObservationRemarksStatus:
                 FetchObservationRemarksStatus.failure,
-            failure:
-                HighPriorityException(observationRemarksResponse.message)));
+            failure: HighPriorityException(observationRemarksResponse.message),
+          ),
+        );
       }
     } on BaseFailure catch (e) {
-      emit(state.copyWith(
+      emit(
+        state.copyWith(
           fetchObservationRemarksStatus: FetchObservationRemarksStatus.failure,
-          failure: HighPriorityException(e.message)));
+          failure: HighPriorityException(e.message),
+        ),
+      );
     } catch (_) {}
   }
 }

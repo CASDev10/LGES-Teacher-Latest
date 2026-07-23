@@ -1,4 +1,3 @@
-
 import 'dart:convert';
 
 class SubmitAttendanceInput {
@@ -14,12 +13,15 @@ class SubmitAttendanceInput {
     required this.attendanceList,
   });
 
-  factory SubmitAttendanceInput.fromJson(Map<String, dynamic> json) => SubmitAttendanceInput(
-    ucEntityId: json["UC_EntityId"],
-    ucLoginUserId: json["UC_LoginUserId"],
-    attendance: Attendance.fromJson(json["Attendance"]),
-    attendanceList: List<AttendanceListModel>.from(json["AttendanceList"].map((x) => AttendanceListModel.fromJson(x))),
-  );
+  factory SubmitAttendanceInput.fromJson(Map<String, dynamic> json) =>
+      SubmitAttendanceInput(
+        ucEntityId: json["UC_EntityId"],
+        ucLoginUserId: json["UC_LoginUserId"],
+        attendance: Attendance.fromJson(json["Attendance"]),
+        attendanceList: List<AttendanceListModel>.from(
+          json["AttendanceList"].map((x) => AttendanceListModel.fromJson(x)),
+        ),
+      );
 
   Map<String, dynamic> toJson() => {
     "UC_EntityId": ucEntityId,
@@ -66,10 +68,11 @@ class AttendanceListModel {
     required this.studentIdFk,
   });
 
-  factory AttendanceListModel.fromJson(Map<String, dynamic> json) => AttendanceListModel(
-    attendanceStatusIdFk: json["AttendanceStatusIdFk"],
-    studentIdFk: json["StudentIdFk"],
-  );
+  factory AttendanceListModel.fromJson(Map<String, dynamic> json) =>
+      AttendanceListModel(
+        attendanceStatusIdFk: json["AttendanceStatusIdFk"],
+        studentIdFk: json["StudentIdFk"],
+      );
 
   Map<String, dynamic> toJson() => {
     "AttendanceStatusIdFk": attendanceStatusIdFk,

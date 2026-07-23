@@ -9,69 +9,82 @@ import 'add_update_delete_level_state.dart';
 
 class AddUpdateDeleteLevelCubit extends Cubit<AddUpdateDeleteLevelState> {
   AddUpdateDeleteLevelCubit(this.repository)
-      : super(AddUpdateDeleteLevelState.initial());
+    : super(AddUpdateDeleteLevelState.initial());
 
   ObservationRepository repository;
 
-  Future updateObservationLevel(String level , String levelId) async {
-    emit(state.copyWith(
-        levelStatus: AddUpdateDeleteLevelStatus.loading));
+  Future updateObservationLevel(String level, String levelId) async {
+    emit(state.copyWith(levelStatus: AddUpdateDeleteLevelStatus.loading));
     try {
-      BaseResponseModel baseResponseModel =
-      await repository.updateObservationLevel(level,levelId);
+      BaseResponseModel baseResponseModel = await repository
+          .updateObservationLevel(level, levelId);
       if (baseResponseModel.result == ApiResult.success) {
-        emit(state.copyWith(
-            levelStatus: AddUpdateDeleteLevelStatus.success));
+        emit(state.copyWith(levelStatus: AddUpdateDeleteLevelStatus.success));
       } else {
-        emit(state.copyWith(
+        emit(
+          state.copyWith(
             levelStatus: AddUpdateDeleteLevelStatus.failure,
-            failure: HighPriorityException(baseResponseModel.message)));
+            failure: HighPriorityException(baseResponseModel.message),
+          ),
+        );
       }
     } on BaseFailure catch (e) {
-      emit(state.copyWith(
+      emit(
+        state.copyWith(
           levelStatus: AddUpdateDeleteLevelStatus.failure,
-          failure: HighPriorityException(e.message)));
+          failure: HighPriorityException(e.message),
+        ),
+      );
     } catch (_) {}
   }
-  Future addObservationLevel(String level ) async {
-    emit(state.copyWith(
-        levelStatus: AddUpdateDeleteLevelStatus.loading));
+
+  Future addObservationLevel(String level) async {
+    emit(state.copyWith(levelStatus: AddUpdateDeleteLevelStatus.loading));
     try {
-      BaseResponseModel baseResponseModel =
-      await repository.addObservationLevel(level);
+      BaseResponseModel baseResponseModel = await repository
+          .addObservationLevel(level);
       if (baseResponseModel.result == ApiResult.success) {
-        emit(state.copyWith(
-            levelStatus: AddUpdateDeleteLevelStatus.success));
+        emit(state.copyWith(levelStatus: AddUpdateDeleteLevelStatus.success));
       } else {
-        emit(state.copyWith(
+        emit(
+          state.copyWith(
             levelStatus: AddUpdateDeleteLevelStatus.failure,
-            failure: HighPriorityException(baseResponseModel.message)));
+            failure: HighPriorityException(baseResponseModel.message),
+          ),
+        );
       }
     } on BaseFailure catch (e) {
-      emit(state.copyWith(
+      emit(
+        state.copyWith(
           levelStatus: AddUpdateDeleteLevelStatus.failure,
-          failure: HighPriorityException(e.message)));
+          failure: HighPriorityException(e.message),
+        ),
+      );
     } catch (_) {}
   }
 
   Future deleteObservationLevel(String levelId) async {
-    emit(state.copyWith(
-        levelStatus: AddUpdateDeleteLevelStatus.loading));
+    emit(state.copyWith(levelStatus: AddUpdateDeleteLevelStatus.loading));
     try {
-      BaseResponseModel baseResponseModel =
-      await repository.deleteObservationLevel(levelId);
+      BaseResponseModel baseResponseModel = await repository
+          .deleteObservationLevel(levelId);
       if (baseResponseModel.result == ApiResult.success) {
-        emit(state.copyWith(
-            levelStatus: AddUpdateDeleteLevelStatus.success));
+        emit(state.copyWith(levelStatus: AddUpdateDeleteLevelStatus.success));
       } else {
-        emit(state.copyWith(
+        emit(
+          state.copyWith(
             levelStatus: AddUpdateDeleteLevelStatus.failure,
-            failure: HighPriorityException(baseResponseModel.message)));
+            failure: HighPriorityException(baseResponseModel.message),
+          ),
+        );
       }
     } on BaseFailure catch (e) {
-      emit(state.copyWith(
+      emit(
+        state.copyWith(
           levelStatus: AddUpdateDeleteLevelStatus.failure,
-          failure: HighPriorityException(e.message)));
+          failure: HighPriorityException(e.message),
+        ),
+      );
     } catch (_) {}
   }
 }

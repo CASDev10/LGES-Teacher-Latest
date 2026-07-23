@@ -6,11 +6,16 @@ extension ExtendedString on String {
   }
 
   String toCapitalize() {
-    return isEmpty ? '' : '${this[0].toUpperCase()}${substring(1).toLowerCase()}';
+    return isEmpty
+        ? ''
+        : '${this[0].toUpperCase()}${substring(1).toLowerCase()}';
   }
 
   String toCapitaliseEachWordFirstChar() {
-    return replaceAll(RegExp(' +'), ' ').split(' ').map((str) => str.toCapitalize).join(' ');
+    return replaceAll(
+      RegExp(' +'),
+      ' ',
+    ).split(' ').map((str) => str.toCapitalize).join(' ');
   }
 
   double toDouble() => double.parse(this);

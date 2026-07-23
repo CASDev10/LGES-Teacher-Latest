@@ -1,8 +1,10 @@
 import 'dart:convert';
 
-UserSchoolsModel userSchoolsModelFromJson(dynamic json) => UserSchoolsModel.fromJson(json);
+UserSchoolsModel userSchoolsModelFromJson(dynamic json) =>
+    UserSchoolsModel.fromJson(json);
 
-String userSchoolsModelToJson(UserSchoolsModel data) => json.encode(data.toJson());
+String userSchoolsModelToJson(UserSchoolsModel data) =>
+    json.encode(data.toJson());
 
 class UserSchoolsModel {
   String result;
@@ -15,11 +17,14 @@ class UserSchoolsModel {
     required this.data,
   });
 
-  factory UserSchoolsModel.fromJson(Map<String, dynamic> json) => UserSchoolsModel(
-    result: json["result"],
-    message: json["message"],
-    data: List<UserSchool>.from(json["data"].map((x) => UserSchool.fromJson(x))),
-  );
+  factory UserSchoolsModel.fromJson(Map<String, dynamic> json) =>
+      UserSchoolsModel(
+        result: json["result"],
+        message: json["message"],
+        data: List<UserSchool>.from(
+          json["data"].map((x) => UserSchool.fromJson(x)),
+        ),
+      );
 
   Map<String, dynamic> toJson() => {
     "result": result,

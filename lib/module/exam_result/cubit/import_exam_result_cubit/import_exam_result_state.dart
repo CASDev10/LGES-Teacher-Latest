@@ -1,11 +1,6 @@
 import '../../../../core/failures/base_failures/base_failure.dart';
 
-enum ImportExamResultStatus {
-  none,
-  loading,
-  success,
-  failure,
-}
+enum ImportExamResultStatus { none, loading, success, failure }
 
 class ImportExamResultState {
   final ImportExamResultStatus importExamResultStatus;
@@ -19,7 +14,7 @@ class ImportExamResultState {
   factory ImportExamResultState.initial() {
     return ImportExamResultState(
       importExamResultStatus: ImportExamResultStatus.none,
-      failure: const BaseFailure()
+      failure: const BaseFailure(),
     );
   }
 
@@ -28,9 +23,9 @@ class ImportExamResultState {
     BaseFailure? failure,
   }) {
     return ImportExamResultState(
-      importExamResultStatus: importExamResultStatus ?? this.importExamResultStatus,
-      failure: failure ?? this.failure
+      importExamResultStatus:
+          importExamResultStatus ?? this.importExamResultStatus,
+      failure: failure ?? this.failure,
     );
   }
 }
-

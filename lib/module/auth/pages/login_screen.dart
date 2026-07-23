@@ -97,22 +97,27 @@ class _LoginScreenState extends State<LoginScreen> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     const SizedBox(height: 90),
-                    const TextView('Login Account',
-                        textAlign: TextAlign.center,
-                        color: AppColors.primaryDark,
-                        fontSize: 30,
-                        fontWeight: FontWeight.w700),
+                    const TextView(
+                      'Login Account',
+                      textAlign: TextAlign.center,
+                      color: AppColors.primaryDark,
+                      fontSize: 30,
+                      fontWeight: FontWeight.w700,
+                    ),
                     const SizedBox(height: 14),
-                    const TextView('Hello, Welcome Back',
-                        fontSize: 14,
-                        fontWeight: FontWeight.w400,
-                        color: AppColors.grey4),
+                    const TextView(
+                      'Hello, Welcome Back',
+                      fontSize: 14,
+                      fontWeight: FontWeight.w400,
+                      color: AppColors.grey4,
+                    ),
                     const SizedBox(height: 14),
                     SizedBox(
                       height: 245,
                       width: 330,
                       child: SvgPicture.asset(
-                          "assets/images/svg/ic_login_screen.svg"),
+                        "assets/images/svg/ic_login_screen.svg",
+                      ),
                     ),
                     const SizedBox(height: 50),
                     CustomTextField(
@@ -166,11 +171,13 @@ class _LoginScreenState extends State<LoginScreen> {
                             children: [
                               Container(
                                 decoration: BoxDecoration(
-                                    shape: BoxShape.rectangle,
-                                    borderRadius: BorderRadius.circular(5),
-                                    border: Border.all(
-                                        color: AppColors.lightGreyColor),
-                                    color: AppColors.lightGreyColor),
+                                  shape: BoxShape.rectangle,
+                                  borderRadius: BorderRadius.circular(5),
+                                  border: Border.all(
+                                    color: AppColors.lightGreyColor,
+                                  ),
+                                  color: AppColors.lightGreyColor,
+                                ),
                                 child: Center(
                                   child: Icon(
                                     Icons.check,

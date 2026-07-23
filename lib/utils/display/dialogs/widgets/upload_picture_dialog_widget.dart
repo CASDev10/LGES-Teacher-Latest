@@ -2,18 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:lges_teacher_app/utils/utils.dart';
 
 class UploadPictureDialogWidget extends StatelessWidget {
-  const UploadPictureDialogWidget({
-    Key? key,
-  }) : super(key: key);
+  const UploadPictureDialogWidget({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10),
-      ),
-      //surfaceTintColor: context.colorScheme.background,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
 
+      //surfaceTintColor: context.colorScheme.background,
       content: SizedBox(
         width: MediaQuery.of(context).size.width,
         height: 150,
@@ -24,9 +20,7 @@ class UploadPictureDialogWidget extends StatelessWidget {
               children: [
                 Column(
                   children: [
-                    const SizedBox(
-                      height: 32,
-                    ),
+                    const SizedBox(height: 32),
                     const Text(
                       'Choose',
                       style: TextStyle(
@@ -34,9 +28,7 @@ class UploadPictureDialogWidget extends StatelessWidget {
                         fontWeight: FontWeight.w600,
                       ),
                     ),
-                    const SizedBox(
-                      height: 8,
-                    ),
+                    const SizedBox(height: 8),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
@@ -56,9 +48,7 @@ class UploadPictureDialogWidget extends StatelessWidget {
                             const Text('Camera'),
                           ],
                         ),
-                        const SizedBox(
-                          width: 6,
-                        ),
+                        const SizedBox(width: 6),
                         Column(
                           children: [
                             IconButton(

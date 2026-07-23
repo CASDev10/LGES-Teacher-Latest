@@ -10,33 +10,44 @@ import 'fetch_observation_areas_cubit.dart';
 
 part 'fetch_observation_areas_state.dart';
 
-class FetchObservationAreasCubit
-    extends Cubit<FetchObservationAreasState> {
+class FetchObservationAreasCubit extends Cubit<FetchObservationAreasState> {
   FetchObservationAreasCubit(this.repository)
-      : super(FetchObservationAreasState.initial());
+    : super(FetchObservationAreasState.initial());
 
   ObservationRepository repository;
 
   Future getObservationAreas() async {
-    emit(state.copyWith(
-        fetchObservationAreasStatus: FetchObservationAreasStatus.loading));
+    emit(
+      state.copyWith(
+        fetchObservationAreasStatus: FetchObservationAreasStatus.loading,
+      ),
+    );
     try {
-      ObservationAreasResponse observationAreasResponse =
-          await repository.getObservationAreas();
+      ObservationAreasResponse observationAreasResponse = await repository
+          .getObservationAreas();
 
       if (observationAreasResponse.result == ApiResult.success) {
-        emit(state.copyWith(
+        emit(
+          state.copyWith(
             fetchObservationAreasStatus: FetchObservationAreasStatus.success,
-            observationModel: observationAreasResponse.data));
+            observationModel: observationAreasResponse.data,
+          ),
+        );
       } else {
-        emit(state.copyWith(
+        emit(
+          state.copyWith(
             fetchObservationAreasStatus: FetchObservationAreasStatus.failure,
-            failure: HighPriorityException(observationAreasResponse.message)));
+            failure: HighPriorityException(observationAreasResponse.message),
+          ),
+        );
       }
     } on BaseFailure catch (e) {
-      emit(state.copyWith(
+      emit(
+        state.copyWith(
           fetchObservationAreasStatus: FetchObservationAreasStatus.failure,
-          failure: HighPriorityException(e.message)));
+          failure: HighPriorityException(e.message),
+        ),
+      );
     } catch (_) {}
   }
 }

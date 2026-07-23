@@ -2,12 +2,7 @@ import 'package:lges_teacher_app/module/exam_result/models/exam_class_response.d
 
 import '../../../../core/failures/base_failures/base_failure.dart';
 
-enum ExamClassesStatus {
-  none,
-  loading,
-  success,
-  failure,
-}
+enum ExamClassesStatus { none, loading, success, failure }
 
 class ExamClassesState {
   final ExamClassesStatus examClassesStatus;
@@ -40,4 +35,3 @@ class ExamClassesState {
     );
   }
 }
-

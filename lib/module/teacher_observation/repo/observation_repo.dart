@@ -24,15 +24,17 @@ class ObservationRepository {
     try {
       Map<String, dynamic> input = {
         "UC_LoginUserId": _authRepository.user.userId,
-        "Level": level
+        "Level": level,
       };
       var response = await _networkService.post(
         Endpoints.addObservationLevel,
         data: input,
       );
 
-      BaseResponseModel baseResponseModel =
-          await compute(baseResponseModelFromJson, response);
+      BaseResponseModel baseResponseModel = await compute(
+        baseResponseModelFromJson,
+        response,
+      );
       return baseResponseModel;
     } on BaseFailure catch (_) {
       rethrow;
@@ -43,20 +45,24 @@ class ObservationRepository {
   }
 
   Future<BaseResponseModel> updateObservationLevel(
-      String level, String levelId) async {
+    String level,
+    String levelId,
+  ) async {
     try {
       Map<String, dynamic> input = {
         "LevelId": levelId,
         "UC_LoginUserId": _authRepository.user.userId,
-        "Level": level
+        "Level": level,
       };
       var response = await _networkService.post(
         Endpoints.updateObservationLevel,
         data: input,
       );
 
-      BaseResponseModel baseResponseModel =
-          await compute(baseResponseModelFromJson, response);
+      BaseResponseModel baseResponseModel = await compute(
+        baseResponseModelFromJson,
+        response,
+      );
       return baseResponseModel;
     } on BaseFailure catch (_) {
       rethrow;
@@ -70,15 +76,17 @@ class ObservationRepository {
     try {
       Map<String, dynamic> input = {
         "LevelId": levelId,
-        "UC_LoginUserId": _authRepository.user.userId
+        "UC_LoginUserId": _authRepository.user.userId,
       };
       var response = await _networkService.post(
         Endpoints.deleteObservationLevel,
         data: input,
       );
 
-      BaseResponseModel baseResponseModel =
-          await compute(baseResponseModelFromJson, response);
+      BaseResponseModel baseResponseModel = await compute(
+        baseResponseModelFromJson,
+        response,
+      );
       return baseResponseModel;
     } on BaseFailure catch (_) {
       rethrow;
@@ -94,8 +102,10 @@ class ObservationRepository {
         Endpoints.getObservationLevelList,
       );
 
-      ObservationLevelsResponse observationLevelsResponse =
-          await compute(observationLevelsResponseFromJson, response);
+      ObservationLevelsResponse observationLevelsResponse = await compute(
+        observationLevelsResponseFromJson,
+        response,
+      );
       return observationLevelsResponse;
     } on BaseFailure catch (_) {
       rethrow;
@@ -107,12 +117,12 @@ class ObservationRepository {
 
   Future<ObservationAreasResponse> getObservationAreas() async {
     try {
-      var response = await _networkService.get(
-        Endpoints.getObservationAreas,
-      );
+      var response = await _networkService.get(Endpoints.getObservationAreas);
 
-      ObservationAreasResponse observationAreasResponse =
-          await compute(observationAreasResponseFromJson, response);
+      ObservationAreasResponse observationAreasResponse = await compute(
+        observationAreasResponseFromJson,
+        response,
+      );
       return observationAreasResponse;
     } on BaseFailure catch (_) {
       rethrow;
@@ -128,8 +138,10 @@ class ObservationRepository {
         Endpoints.getObservationAreaRemarksList,
       );
 
-      ObservationRemarksResponse observationRemarksResponse =
-          await compute(observationRemarksResponseFromJson, response);
+      ObservationRemarksResponse observationRemarksResponse = await compute(
+        observationRemarksResponseFromJson,
+        response,
+      );
       return observationRemarksResponse;
     } on BaseFailure catch (_) {
       rethrow;
@@ -140,20 +152,24 @@ class ObservationRepository {
   }
 
   Future<BaseResponseModel> addObservationRemarks(
-      String remarks, String areaId) async {
+    String remarks,
+    String areaId,
+  ) async {
     try {
       Map<String, dynamic> input = {
         "UC_LoginUserId": _authRepository.user.userId,
         "AreaId": areaId,
-        "Remarks": remarks
+        "Remarks": remarks,
       };
       var response = await _networkService.post(
         Endpoints.addObservationAreaRemarks,
         data: input,
       );
 
-      BaseResponseModel baseResponseModel =
-          await compute(baseResponseModelFromJson, response);
+      BaseResponseModel baseResponseModel = await compute(
+        baseResponseModelFromJson,
+        response,
+      );
       return baseResponseModel;
     } on BaseFailure catch (_) {
       rethrow;
@@ -174,8 +190,10 @@ class ObservationRepository {
         data: input,
       );
 
-      BaseResponseModel baseResponseModel =
-          await compute(baseResponseModelFromJson, response);
+      BaseResponseModel baseResponseModel = await compute(
+        baseResponseModelFromJson,
+        response,
+      );
       return baseResponseModel;
     } on BaseFailure catch (_) {
       rethrow;
@@ -186,7 +204,10 @@ class ObservationRepository {
   }
 
   Future<BaseResponseModel> updateObservationRemarks(
-      String remarksId, String remarks, String areaId) async {
+    String remarksId,
+    String remarks,
+    String areaId,
+  ) async {
     try {
       Map<String, dynamic> input = {
         "UC_LoginUserId": _authRepository.user.userId,
@@ -199,8 +220,10 @@ class ObservationRepository {
         data: input,
       );
 
-      BaseResponseModel baseResponseModel =
-          await compute(baseResponseModelFromJson, response);
+      BaseResponseModel baseResponseModel = await compute(
+        baseResponseModelFromJson,
+        response,
+      );
       return baseResponseModel;
     } on BaseFailure catch (_) {
       rethrow;
@@ -213,11 +236,15 @@ class ObservationRepository {
   Future<EmployeeDetailResponse> getEmployeeDetail(String empId) async {
     try {
       Map<String, dynamic> input = {"EmpId": empId};
-      var response =
-          await _networkService.post(Endpoints.getEmployeeById, data: input);
+      var response = await _networkService.post(
+        Endpoints.getEmployeeById,
+        data: input,
+      );
 
-      EmployeeDetailResponse employeeDetailResponse =
-          await compute(employeeDetailResponseFromJson, response);
+      EmployeeDetailResponse employeeDetailResponse = await compute(
+        employeeDetailResponseFromJson,
+        response,
+      );
       return employeeDetailResponse;
     } on BaseFailure catch (_) {
       rethrow;
@@ -227,14 +254,19 @@ class ObservationRepository {
     }
   }
 
-  Future<BaseResponseModel> submitTeacherObservation(SubmitObservationInput input) async {
+  Future<BaseResponseModel> submitTeacherObservation(
+    SubmitObservationInput input,
+  ) async {
     try {
+      var response = await _networkService.post(
+        Endpoints.saveTeacherObservation,
+        data: input.toJson(),
+      );
 
-      var response =
-          await _networkService.post(Endpoints.saveTeacherObservation, data: input.toJson());
-
-      BaseResponseModel baseResponseModel =
-          await compute(baseResponseModelFromJson, response);
+      BaseResponseModel baseResponseModel = await compute(
+        baseResponseModelFromJson,
+        response,
+      );
       return baseResponseModel;
     } on BaseFailure catch (_) {
       rethrow;
@@ -244,7 +276,10 @@ class ObservationRepository {
     }
   }
 
-  Future<ObservationReportResponse> getObservationReport(String startDate, String endDate) async {
+  Future<ObservationReportResponse> getObservationReport(
+    String startDate,
+    String endDate,
+  ) async {
     try {
       Map<String, dynamic> input = {
         "UC_SchoolId": _authRepository.user.schoolId,
@@ -255,8 +290,10 @@ class ObservationRepository {
         Endpoints.getObservationReport,
         data: input,
       );
-      ObservationReportResponse observationReportResponse =
-          await compute(observationReportResponseFromJson, response);
+      ObservationReportResponse observationReportResponse = await compute(
+        observationReportResponseFromJson,
+        response,
+      );
       return observationReportResponse;
     } on BaseFailure catch (_) {
       rethrow;

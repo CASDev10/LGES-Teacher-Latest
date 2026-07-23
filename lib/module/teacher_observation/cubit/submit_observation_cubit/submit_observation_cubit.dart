@@ -12,28 +12,38 @@ part 'submit_observation_state.dart';
 
 class SubmitObservationCubit extends Cubit<SubmitObservationState> {
   SubmitObservationCubit(this.repository)
-      : super(SubmitObservationState.initial());
+    : super(SubmitObservationState.initial());
 
   ObservationRepository repository;
 
   Future submitTeacherObservation(SubmitObservationInput input) async {
-    emit(state.copyWith(
-        submitObservationStatus: SubmitObservationStatus.loading));
+    emit(
+      state.copyWith(submitObservationStatus: SubmitObservationStatus.loading),
+    );
     try {
-      BaseResponseModel baseResponseModel =
-          await repository.submitTeacherObservation(input);
+      BaseResponseModel baseResponseModel = await repository
+          .submitTeacherObservation(input);
       if (baseResponseModel.result == ApiResult.success) {
-        emit(state.copyWith(
-            submitObservationStatus: SubmitObservationStatus.success));
+        emit(
+          state.copyWith(
+            submitObservationStatus: SubmitObservationStatus.success,
+          ),
+        );
       } else {
-        emit(state.copyWith(
+        emit(
+          state.copyWith(
             submitObservationStatus: SubmitObservationStatus.failure,
-            failure: HighPriorityException(baseResponseModel.message)));
+            failure: HighPriorityException(baseResponseModel.message),
+          ),
+        );
       }
     } on BaseFailure catch (e) {
-      emit(state.copyWith(
+      emit(
+        state.copyWith(
           submitObservationStatus: SubmitObservationStatus.failure,
-          failure: HighPriorityException(e.message)));
+          failure: HighPriorityException(e.message),
+        ),
+      );
     } catch (_) {}
   }
 }

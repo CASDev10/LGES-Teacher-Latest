@@ -4,9 +4,11 @@
 
 import 'dart:convert';
 
-SubjectsResponseModel subjectsResponseModelFromJson(dynamic json) => SubjectsResponseModel.fromJson(json);
+SubjectsResponseModel subjectsResponseModelFromJson(dynamic json) =>
+    SubjectsResponseModel.fromJson(json);
 
-String subjectsResponseModelToJson(SubjectsResponseModel data) => json.encode(data.toJson());
+String subjectsResponseModelToJson(SubjectsResponseModel data) =>
+    json.encode(data.toJson());
 
 class SubjectsResponseModel {
   String result;
@@ -19,11 +21,14 @@ class SubjectsResponseModel {
     required this.data,
   });
 
-  factory SubjectsResponseModel.fromJson(Map<String, dynamic> json) => SubjectsResponseModel(
-    result: json["result"],
-    message: json["message"],
-    data: List<SubjectModel>.from(json["data"].map((x) => SubjectModel.fromJson(x))),
-  );
+  factory SubjectsResponseModel.fromJson(Map<String, dynamic> json) =>
+      SubjectsResponseModel(
+        result: json["result"],
+        message: json["message"],
+        data: List<SubjectModel>.from(
+          json["data"].map((x) => SubjectModel.fromJson(x)),
+        ),
+      );
 
   Map<String, dynamic> toJson() => {
     "result": result,
@@ -36,10 +41,7 @@ class SubjectModel {
   int subjectId;
   String subjectName;
 
-  SubjectModel({
-    required this.subjectId,
-    required this.subjectName,
-  });
+  SubjectModel({required this.subjectId, required this.subjectName});
 
   factory SubjectModel.fromJson(Map<String, dynamic> json) => SubjectModel(
     subjectId: json["SubjectId"],

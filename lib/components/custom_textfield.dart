@@ -28,7 +28,7 @@ class CustomTextField extends StatelessWidget {
     this.hasTitle = true,
     this.maxLines = 1,
     this.hintColor = AppColors.grey,
-    this.maxLength
+    this.maxLength,
   });
 
   final Color fillColor;
@@ -64,7 +64,11 @@ class CustomTextField extends StatelessWidget {
         TextFormField(
           controller: controller,
           readOnly: readOnly,
-          style: TextStyle(fontSize: fontSize, color: AppColors.primaryDark,fontWeight: fontWeight,),
+          style: TextStyle(
+            fontSize: fontSize,
+            color: AppColors.primaryDark,
+            fontWeight: fontWeight,
+          ),
           keyboardType: inputType,
           validator: onValidate,
           onSaved: onSaved,
@@ -93,23 +97,27 @@ class CustomTextField extends StatelessWidget {
             hintText: hintText,
             counterText: "",
             hintStyle: TextStyle(color: hintColor),
-            prefixIcon: Padding(child: prefixIcon, padding: EdgeInsets.only(left: 16),),
+            prefixIcon: Padding(
+              child: prefixIcon,
+              padding: EdgeInsets.only(left: 16),
+            ),
             suffixIcon: Padding(
               padding: EdgeInsets.only(right: 16),
               child: suffixWidget,
             ),
-            prefixIconConstraints: const BoxConstraints(maxHeight: 44, maxWidth: 44),
-            suffixIconConstraints:
-              const BoxConstraints(maxHeight: 50, maxWidth: 50),
-            contentPadding: EdgeInsets.symmetric( vertical: 16, horizontal: 16),
-            constraints: BoxConstraints(
-              minHeight: 50,
-            )
+            prefixIconConstraints: const BoxConstraints(
+              maxHeight: 44,
+              maxWidth: 44,
+            ),
+            suffixIconConstraints: const BoxConstraints(
+              maxHeight: 50,
+              maxWidth: 50,
+            ),
+            contentPadding: EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+            constraints: BoxConstraints(minHeight: 50),
           ),
         ),
-        SizedBox(
-          height: bottomMargin,
-        ),
+        SizedBox(height: bottomMargin),
       ],
     );
   }

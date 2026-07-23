@@ -1,8 +1,6 @@
 import 'package:logger/logger.dart';
 
-var logger = (dynamic type) => Logger(
-      printer: CustomPrinter(type.toString()),
-    );
+var logger = (dynamic type) => Logger(printer: CustomPrinter(type.toString()));
 
 class CustomPrinter extends LogPrinter {
   final String className;

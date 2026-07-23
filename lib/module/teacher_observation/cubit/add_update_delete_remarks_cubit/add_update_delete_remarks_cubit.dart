@@ -10,68 +10,92 @@ part 'add_update_delete_remarks_state.dart';
 
 class AddUpdateDeleteRemarksCubit extends Cubit<AddUpdateDeleteRemarksState> {
   AddUpdateDeleteRemarksCubit(this.repository)
-      : super(AddUpdateDeleteRemarksState.initial());
+    : super(AddUpdateDeleteRemarksState.initial());
 
   ObservationRepository repository;
 
   Future addObservationRemarks(String remarks, String areaId) async {
     emit(state.copyWith(remarksStatus: AddUpdateDeleteRemarksStatus.loading));
     try {
-      BaseResponseModel baseResponseModel =
-          await repository.addObservationRemarks(remarks, areaId);
+      BaseResponseModel baseResponseModel = await repository
+          .addObservationRemarks(remarks, areaId);
       if (baseResponseModel.result == ApiResult.success) {
-        emit(state.copyWith(
-            remarksStatus: AddUpdateDeleteRemarksStatus.success));
+        emit(
+          state.copyWith(remarksStatus: AddUpdateDeleteRemarksStatus.success),
+        );
       } else {
-        emit(state.copyWith(
+        emit(
+          state.copyWith(
             remarksStatus: AddUpdateDeleteRemarksStatus.failure,
-            failure: HighPriorityException(baseResponseModel.message)));
+            failure: HighPriorityException(baseResponseModel.message),
+          ),
+        );
       }
     } on BaseFailure catch (e) {
-      emit(state.copyWith(
+      emit(
+        state.copyWith(
           remarksStatus: AddUpdateDeleteRemarksStatus.failure,
-          failure: HighPriorityException(e.message)));
+          failure: HighPriorityException(e.message),
+        ),
+      );
     } catch (_) {}
   }
 
   Future updateObservationRemarks(
-      String remarks, String areaId, String remarksId) async {
+    String remarks,
+    String areaId,
+    String remarksId,
+  ) async {
     emit(state.copyWith(remarksStatus: AddUpdateDeleteRemarksStatus.loading));
     try {
-      BaseResponseModel baseResponseModel =
-          await repository.updateObservationRemarks(remarksId, remarks, areaId);
+      BaseResponseModel baseResponseModel = await repository
+          .updateObservationRemarks(remarksId, remarks, areaId);
       if (baseResponseModel.result == ApiResult.success) {
-        emit(state.copyWith(
-            remarksStatus: AddUpdateDeleteRemarksStatus.success));
+        emit(
+          state.copyWith(remarksStatus: AddUpdateDeleteRemarksStatus.success),
+        );
       } else {
-        emit(state.copyWith(
+        emit(
+          state.copyWith(
             remarksStatus: AddUpdateDeleteRemarksStatus.failure,
-            failure: HighPriorityException(baseResponseModel.message)));
+            failure: HighPriorityException(baseResponseModel.message),
+          ),
+        );
       }
     } on BaseFailure catch (e) {
-      emit(state.copyWith(
+      emit(
+        state.copyWith(
           remarksStatus: AddUpdateDeleteRemarksStatus.failure,
-          failure: HighPriorityException(e.message)));
+          failure: HighPriorityException(e.message),
+        ),
+      );
     } catch (_) {}
   }
 
   Future deleteObservationRemarks(String remarksId) async {
     emit(state.copyWith(remarksStatus: AddUpdateDeleteRemarksStatus.loading));
     try {
-      BaseResponseModel baseResponseModel =
-          await repository.deleteObservationRemarks(remarksId);
+      BaseResponseModel baseResponseModel = await repository
+          .deleteObservationRemarks(remarksId);
       if (baseResponseModel.result == ApiResult.success) {
-        emit(state.copyWith(
-            remarksStatus: AddUpdateDeleteRemarksStatus.success));
+        emit(
+          state.copyWith(remarksStatus: AddUpdateDeleteRemarksStatus.success),
+        );
       } else {
-        emit(state.copyWith(
+        emit(
+          state.copyWith(
             remarksStatus: AddUpdateDeleteRemarksStatus.failure,
-            failure: HighPriorityException(baseResponseModel.message)));
+            failure: HighPriorityException(baseResponseModel.message),
+          ),
+        );
       }
     } on BaseFailure catch (e) {
-      emit(state.copyWith(
+      emit(
+        state.copyWith(
           remarksStatus: AddUpdateDeleteRemarksStatus.failure,
-          failure: HighPriorityException(e.message)));
+          failure: HighPriorityException(e.message),
+        ),
+      );
     } catch (_) {}
   }
 }

@@ -12,11 +12,13 @@ import 'splash_cubit.dart';
 class SplashaScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-      statusBarColor: AppColors.whiteColor,
-      statusBarIconBrightness: Brightness.dark, // For Android (dark icons)
-      statusBarBrightness: Brightness.dark,
-    ));
+    SystemChrome.setSystemUIOverlayStyle(
+      const SystemUiOverlayStyle(
+        statusBarColor: AppColors.whiteColor,
+        statusBarIconBrightness: Brightness.dark, // For Android (dark icons)
+        statusBarBrightness: Brightness.dark,
+      ),
+    );
     return BlocProvider(
       create: (context) => SplashCubit()..init(),
       child: BlocListener<SplashCubit, SplashState>(
@@ -33,12 +35,11 @@ class SplashaScreen extends StatelessWidget {
             child: Center(
               child: Container(
                 decoration: const BoxDecoration(
-                    image: DecorationImage(
-                  image: AssetImage(
-                    "assets/images/png/bg_splash.png",
+                  image: DecorationImage(
+                    image: AssetImage("assets/images/png/bg_splash.png"),
+                    fit: BoxFit.fill,
                   ),
-                  fit: BoxFit.fill,
-                )),
+                ),
               ),
             ),
           ),

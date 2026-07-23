@@ -1,40 +1,37 @@
 part of 'observation_report_cubit.dart';
 
+enum ObservationReportStatus { none, loading, success, failure }
 
-
-enum ObservationReportStatus{
-  none,
-  loading,
-  success,
-  failure,
-}
 class ObservationReportState {
   final ObservationReportStatus observationReportStatus;
   final BaseFailure failure;
   final List<ObservationReportModel> observationReportList;
 
-  ObservationReportState({required this.observationReportStatus, required this.failure, required this.observationReportList});
+  ObservationReportState({
+    required this.observationReportStatus,
+    required this.failure,
+    required this.observationReportList,
+  });
 
-
-  factory ObservationReportState.initial(){
+  factory ObservationReportState.initial() {
     return ObservationReportState(
-        observationReportStatus: ObservationReportStatus.none,
-        failure: const BaseFailure(), observationReportList: []);
+      observationReportStatus: ObservationReportStatus.none,
+      failure: const BaseFailure(),
+      observationReportList: [],
+    );
   }
-
 
   ObservationReportState copyWith({
     ObservationReportStatus? observationReportStatus,
     BaseFailure? failure,
-    List<ObservationReportModel>? observationReportList
-
+    List<ObservationReportModel>? observationReportList,
   }) {
     return ObservationReportState(
-      observationReportStatus: observationReportStatus ?? this.observationReportStatus,
+      observationReportStatus:
+          observationReportStatus ?? this.observationReportStatus,
       failure: failure ?? this.failure,
-      observationReportList: observationReportList ?? this.observationReportList,
+      observationReportList:
+          observationReportList ?? this.observationReportList,
     );
   }
-
-
 }

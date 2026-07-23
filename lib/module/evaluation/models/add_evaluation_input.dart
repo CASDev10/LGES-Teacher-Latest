@@ -4,9 +4,11 @@
 
 import 'dart:convert';
 
-AddEvaluationInput addEvaluationInputFromJson(String str) => AddEvaluationInput.fromJson(json.decode(str));
+AddEvaluationInput addEvaluationInputFromJson(String str) =>
+    AddEvaluationInput.fromJson(json.decode(str));
 
-String addEvaluationInputToJson(AddEvaluationInput data) => json.encode(data.toJson());
+String addEvaluationInputToJson(AddEvaluationInput data) =>
+    json.encode(data.toJson());
 
 class AddEvaluationInput {
   String ucEntityId;
@@ -29,16 +31,25 @@ class AddEvaluationInput {
     required this.evaluationLogBookDetail2,
   });
 
-  factory AddEvaluationInput.fromJson(Map<String, dynamic> json) => AddEvaluationInput(
-    ucEntityId: json["UC_EntityId"],
-    ucLoginUserId: json["UC_LoginUserId"],
-    ucSchoolId: json["UC_SchoolId"],
-    studentIdfK: json["StudentIdfK"],
-    evaluationDate: json["EvaluationDate"],
-    remarks: json["Remarks"],
-    evaluationLogBookDetail1: List<EvaluationLogBookDetail1>.from(json["EvaluationLogBookDetail1"].map((x) => EvaluationLogBookDetail1.fromJson(x))),
-    evaluationLogBookDetail2: List<EvaluationLogBookDetail2>.from(json["EvaluationLogBookDetail2"].map((x) => EvaluationLogBookDetail2.fromJson(x))),
-  );
+  factory AddEvaluationInput.fromJson(Map<String, dynamic> json) =>
+      AddEvaluationInput(
+        ucEntityId: json["UC_EntityId"],
+        ucLoginUserId: json["UC_LoginUserId"],
+        ucSchoolId: json["UC_SchoolId"],
+        studentIdfK: json["StudentIdfK"],
+        evaluationDate: json["EvaluationDate"],
+        remarks: json["Remarks"],
+        evaluationLogBookDetail1: List<EvaluationLogBookDetail1>.from(
+          json["EvaluationLogBookDetail1"].map(
+            (x) => EvaluationLogBookDetail1.fromJson(x),
+          ),
+        ),
+        evaluationLogBookDetail2: List<EvaluationLogBookDetail2>.from(
+          json["EvaluationLogBookDetail2"].map(
+            (x) => EvaluationLogBookDetail2.fromJson(x),
+          ),
+        ),
+      );
 
   Map<String, dynamic> toJson() => {
     "UC_EntityId": ucEntityId,
@@ -47,8 +58,12 @@ class AddEvaluationInput {
     "StudentIdfK": studentIdfK,
     "EvaluationDate": evaluationDate,
     "Remarks": remarks,
-    "EvaluationLogBookDetail1": List<dynamic>.from(evaluationLogBookDetail1.map((x) => x.toJson())),
-    "EvaluationLogBookDetail2": List<dynamic>.from(evaluationLogBookDetail2.map((x) => x.toJson())),
+    "EvaluationLogBookDetail1": List<dynamic>.from(
+      evaluationLogBookDetail1.map((x) => x.toJson()),
+    ),
+    "EvaluationLogBookDetail2": List<dynamic>.from(
+      evaluationLogBookDetail2.map((x) => x.toJson()),
+    ),
   };
 }
 
@@ -61,10 +76,11 @@ class EvaluationLogBookDetail1 {
     required this.marksPercent,
   });
 
-  factory EvaluationLogBookDetail1.fromJson(Map<String, dynamic> json) => EvaluationLogBookDetail1(
-    subjectId: json["SubjectId"],
-    marksPercent: json["MarksPercent"],
-  );
+  factory EvaluationLogBookDetail1.fromJson(Map<String, dynamic> json) =>
+      EvaluationLogBookDetail1(
+        subjectId: json["SubjectId"],
+        marksPercent: json["MarksPercent"],
+      );
 
   Map<String, dynamic> toJson() => {
     "SubjectId": subjectId,
@@ -81,10 +97,11 @@ class EvaluationLogBookDetail2 {
     required this.evaluationRemarksId,
   });
 
-  factory EvaluationLogBookDetail2.fromJson(Map<String, dynamic> json) => EvaluationLogBookDetail2(
-    evaluationAreaId: json["EvaluationAreaId"],
-    evaluationRemarksId: json["EvaluationRemarksId"],
-  );
+  factory EvaluationLogBookDetail2.fromJson(Map<String, dynamic> json) =>
+      EvaluationLogBookDetail2(
+        evaluationAreaId: json["EvaluationAreaId"],
+        evaluationRemarksId: json["EvaluationRemarksId"],
+      );
 
   Map<String, dynamic> toJson() => {
     "EvaluationAreaId": evaluationAreaId,

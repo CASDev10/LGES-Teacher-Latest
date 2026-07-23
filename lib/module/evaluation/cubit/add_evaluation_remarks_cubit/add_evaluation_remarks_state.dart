@@ -1,11 +1,6 @@
 import '../../../../core/failures/base_failures/base_failure.dart';
 
-enum AddEvaluationRemarksStatus {
-  none,
-  loading,
-  success,
-  failure,
-}
+enum AddEvaluationRemarksStatus { none, loading, success, failure }
 
 class AddEvaluationRemarksState {
   final AddEvaluationRemarksStatus addEvaluationRemarksStatus;
@@ -19,16 +14,17 @@ class AddEvaluationRemarksState {
   factory AddEvaluationRemarksState.initial() {
     return AddEvaluationRemarksState(
       addEvaluationRemarksStatus: AddEvaluationRemarksStatus.none,
-      failure: const BaseFailure()
+      failure: const BaseFailure(),
     );
   }
 
   AddEvaluationRemarksState copyWith({
     AddEvaluationRemarksStatus? addEvaluationRemarksStatus,
-    BaseFailure? failure
+    BaseFailure? failure,
   }) {
     return AddEvaluationRemarksState(
-      addEvaluationRemarksStatus: addEvaluationRemarksStatus ?? this.addEvaluationRemarksStatus,
+      addEvaluationRemarksStatus:
+          addEvaluationRemarksStatus ?? this.addEvaluationRemarksStatus,
       failure: failure ?? this.failure,
     );
   }

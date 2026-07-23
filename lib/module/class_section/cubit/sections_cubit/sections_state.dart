@@ -1,11 +1,6 @@
 part of 'sections_cubit.dart';
 
-enum SectionsStatus {
-  none,
-  loading,
-  success,
-  failure,
-}
+enum SectionsStatus { none, loading, success, failure }
 
 class SectionsState {
   final SectionsStatus sectionsStatus;

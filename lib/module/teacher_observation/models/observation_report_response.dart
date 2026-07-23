@@ -4,9 +4,11 @@
 
 import 'dart:convert';
 
-ObservationReportResponse observationReportResponseFromJson(dynamic json) => ObservationReportResponse.fromJson(json);
+ObservationReportResponse observationReportResponseFromJson(dynamic json) =>
+    ObservationReportResponse.fromJson(json);
 
-String observationReportResponseToJson(ObservationReportResponse data) => json.encode(data.toJson());
+String observationReportResponseToJson(ObservationReportResponse data) =>
+    json.encode(data.toJson());
 
 class ObservationReportResponse {
   String result;
@@ -19,11 +21,14 @@ class ObservationReportResponse {
     required this.data,
   });
 
-  factory ObservationReportResponse.fromJson(Map<String, dynamic> json) => ObservationReportResponse(
-    result: json["result"],
-    message: json["message"],
-    data: List<ObservationReportModel>.from(json["data"].map((x) => ObservationReportModel.fromJson(x))),
-  );
+  factory ObservationReportResponse.fromJson(Map<String, dynamic> json) =>
+      ObservationReportResponse(
+        result: json["result"],
+        message: json["message"],
+        data: List<ObservationReportModel>.from(
+          json["data"].map((x) => ObservationReportModel.fromJson(x)),
+        ),
+      );
 
   Map<String, dynamic> toJson() => {
     "result": result,
@@ -63,21 +68,24 @@ class ObservationReportModel {
     required this.supportProvidedToLrLs,
   });
 
-  factory ObservationReportModel.fromJson(Map<String, dynamic> json) => ObservationReportModel(
-    srNo: json["SrNo"],
-    submitDate: json["SubmitDate"],
-    level: json["Level"],
-    headName: json["HeadName"],
-    teacherName: json["TeacherName"],
-    feedBack: json["FeedBack"],
-    communicationSkills: json["Communication Skills"],
-    contributionInWholeSchoolProgrammes: json["Contribution in Whole School Programmes"],
-    dutiesPerformedModBreakDisciplineEtc: json["Duties Performed (MOD,BREAK,DISCIPLINE etc)"],
-    notebookChecking: json["Notebook Checking"],
-    punctuality: json["Punctuality"],
-    qualityOfTeaching: json["Quality of Teaching"],
-    supportProvidedToLrLs: json["Support Provided to LRLs "],
-  );
+  factory ObservationReportModel.fromJson(Map<String, dynamic> json) =>
+      ObservationReportModel(
+        srNo: json["SrNo"],
+        submitDate: json["SubmitDate"],
+        level: json["Level"],
+        headName: json["HeadName"],
+        teacherName: json["TeacherName"],
+        feedBack: json["FeedBack"],
+        communicationSkills: json["Communication Skills"],
+        contributionInWholeSchoolProgrammes:
+            json["Contribution in Whole School Programmes"],
+        dutiesPerformedModBreakDisciplineEtc:
+            json["Duties Performed (MOD,BREAK,DISCIPLINE etc)"],
+        notebookChecking: json["Notebook Checking"],
+        punctuality: json["Punctuality"],
+        qualityOfTeaching: json["Quality of Teaching"],
+        supportProvidedToLrLs: json["Support Provided to LRLs "],
+      );
 
   Map<String, dynamic> toJson() => {
     "SrNo": srNo,
@@ -87,8 +95,10 @@ class ObservationReportModel {
     "TeacherName": teacherName,
     "FeedBack": feedBack,
     "Communication Skills": communicationSkills,
-    "Contribution in Whole School Programmes": contributionInWholeSchoolProgrammes,
-    "Duties Performed (MOD,BREAK,DISCIPLINE etc)": dutiesPerformedModBreakDisciplineEtc,
+    "Contribution in Whole School Programmes":
+        contributionInWholeSchoolProgrammes,
+    "Duties Performed (MOD,BREAK,DISCIPLINE etc)":
+        dutiesPerformedModBreakDisciplineEtc,
     "Notebook Checking": notebookChecking,
     "Punctuality": punctuality,
     "Quality of Teaching": qualityOfTeaching,

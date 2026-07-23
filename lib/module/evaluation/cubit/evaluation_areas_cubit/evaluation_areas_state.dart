@@ -3,12 +3,7 @@ import 'package:lges_teacher_app/module/evaluation/models/student_evaluation_are
 import '../../../../core/failures/base_failures/base_failure.dart';
 import '../../models/evaluation_areas_response.dart';
 
-enum EvaluationAreasStatus {
-  none,
-  loading,
-  success,
-  failure,
-}
+enum EvaluationAreasStatus { none, loading, success, failure }
 
 class EvaluationAreasState {
   final EvaluationAreasStatus evaluationAreasStatus;
@@ -32,10 +27,11 @@ class EvaluationAreasState {
   EvaluationAreasState copyWith({
     EvaluationAreasStatus? evaluationAreasStatus,
     BaseFailure? failure,
-  StudentEvaluationAreaModel? evaluationAreas,
+    StudentEvaluationAreaModel? evaluationAreas,
   }) {
     return EvaluationAreasState(
-      evaluationAreasStatus: evaluationAreasStatus ?? this.evaluationAreasStatus,
+      evaluationAreasStatus:
+          evaluationAreasStatus ?? this.evaluationAreasStatus,
       failure: failure ?? this.failure,
       evaluationAreas: evaluationAreas ?? this.evaluationAreas,
     );

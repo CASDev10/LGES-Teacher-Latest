@@ -28,11 +28,11 @@ class ApplyLeaveModel {
       );
 
   Map<String, dynamic> toJson() => {
-        "Result": result,
-        "Message": message,
-        "MessageCode": messageCode,
-        "Data": applyLeaveResponse.toJson(),
-      };
+    "Result": result,
+    "Message": message,
+    "MessageCode": messageCode,
+    "Data": applyLeaveResponse.toJson(),
+  };
 }
 
 class ApplyLeaveResponse {

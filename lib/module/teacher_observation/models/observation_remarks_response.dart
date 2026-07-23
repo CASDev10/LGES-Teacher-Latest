@@ -4,9 +4,11 @@
 
 import 'dart:convert';
 
-ObservationRemarksResponse observationRemarksResponseFromJson(dynamic json) => ObservationRemarksResponse.fromJson(json);
+ObservationRemarksResponse observationRemarksResponseFromJson(dynamic json) =>
+    ObservationRemarksResponse.fromJson(json);
 
-String observationRemarksResponseToJson(ObservationRemarksResponse data) => json.encode(data.toJson());
+String observationRemarksResponseToJson(ObservationRemarksResponse data) =>
+    json.encode(data.toJson());
 
 class ObservationRemarksResponse {
   String result;
@@ -19,11 +21,14 @@ class ObservationRemarksResponse {
     required this.data,
   });
 
-  factory ObservationRemarksResponse.fromJson(Map<String, dynamic> json) => ObservationRemarksResponse(
-    result: json["result"],
-    message: json["message"],
-    data: List<ObservationRemarksModel>.from(json["data"].map((x) => ObservationRemarksModel.fromJson(x))),
-  );
+  factory ObservationRemarksResponse.fromJson(Map<String, dynamic> json) =>
+      ObservationRemarksResponse(
+        result: json["result"],
+        message: json["message"],
+        data: List<ObservationRemarksModel>.from(
+          json["data"].map((x) => ObservationRemarksModel.fromJson(x)),
+        ),
+      );
 
   Map<String, dynamic> toJson() => {
     "result": result,
@@ -59,19 +64,22 @@ class ObservationRemarksModel {
     required this.areaName,
   });
 
-  factory ObservationRemarksModel.fromJson(Map<String, dynamic> json) => ObservationRemarksModel(
-    remarksId: json["RemarksId"],
-    remarks: json["Remarks"],
-    areaIdFk: json["AreaIdFk"],
-    isDeleted: json["IsDeleted"],
-    createdBy: json["CreatedBy"],
-    createdDate: DateTime.parse(json["CreatedDate"]),
-    modifiedBy: json["ModifiedBy"],
-    modifiedDate: json["ModifiedDate"] == null ? null : DateTime.parse(json["ModifiedDate"]),
-    deletedBy: json["DeletedBy"],
-    deletedDate: json["DeletedDate"],
-    areaName: json["AreaName"],
-  );
+  factory ObservationRemarksModel.fromJson(Map<String, dynamic> json) =>
+      ObservationRemarksModel(
+        remarksId: json["RemarksId"],
+        remarks: json["Remarks"],
+        areaIdFk: json["AreaIdFk"],
+        isDeleted: json["IsDeleted"],
+        createdBy: json["CreatedBy"],
+        createdDate: DateTime.parse(json["CreatedDate"]),
+        modifiedBy: json["ModifiedBy"],
+        modifiedDate: json["ModifiedDate"] == null
+            ? null
+            : DateTime.parse(json["ModifiedDate"]),
+        deletedBy: json["DeletedBy"],
+        deletedDate: json["DeletedDate"],
+        areaName: json["AreaName"],
+      );
 
   Map<String, dynamic> toJson() => {
     "RemarksId": remarksId,

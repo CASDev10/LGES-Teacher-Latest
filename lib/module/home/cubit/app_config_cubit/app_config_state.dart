@@ -1,29 +1,17 @@
-
-
-
-
 import '../../../../core/failures/base_failures/base_failure.dart';
 
-enum AppConfigStatus {
-  none,
-  loading,
-  success,
-  failure,
-}
+enum AppConfigStatus { none, loading, success, failure }
 
 class AppConfigState {
   final AppConfigStatus appConfigStatus;
   final BaseFailure failure;
 
-  AppConfigState({
-    required this.appConfigStatus,
-    required this.failure,
-  });
+  AppConfigState({required this.appConfigStatus, required this.failure});
 
   factory AppConfigState.initial() {
     return AppConfigState(
       appConfigStatus: AppConfigStatus.none,
-      failure: const BaseFailure()
+      failure: const BaseFailure(),
     );
   }
 
@@ -33,7 +21,7 @@ class AppConfigState {
   }) {
     return AppConfigState(
       appConfigStatus: appConfigStatus ?? this.appConfigStatus,
-      failure: failure ?? this.failure
+      failure: failure ?? this.failure,
     );
   }
 }

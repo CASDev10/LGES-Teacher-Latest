@@ -4,38 +4,48 @@ import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 class LocalNotificationsService {
-  final FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+  final FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin =
+      FlutterLocalNotificationsPlugin();
 
   ///create channel
   AndroidNotificationChannel channel = const AndroidNotificationChannel(
     'lofty_channel', // id
     'Lofty Channel', // title
-    description: 'This channel is used for important notifications.', // description
+    description:
+        'This channel is used for important notifications.', // description
     importance: Importance.high,
   );
 
   Future<void> initialize() async {
     _initSetting();
     await _flutterLocalNotificationsPlugin
-        .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
+        .resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin
+        >()
         ?.createNotificationChannel(channel);
   }
 
   /* ===================================== Show notification ===================================== */
-  void showNotification(RemoteMessage remoteMessage, AndroidNotification? android) async {
+  void showNotification(
+    RemoteMessage remoteMessage,
+    AndroidNotification? android,
+  ) async {
     RemoteNotification? notification = remoteMessage.notification;
     print('LOCAL NOTIFICATION :: $notification');
 
     if (notification != null && android != null) {
-      AndroidNotificationDetails androidNotificationDetails = AndroidNotificationDetails(
-        channel.id,
-        channel.name,
-        channelDescription: channel.description,
-        importance: Importance.max,
-        priority: Priority.high,
-        ticker: 'ticker',
+      AndroidNotificationDetails androidNotificationDetails =
+          AndroidNotificationDetails(
+            channel.id,
+            channel.name,
+            channelDescription: channel.description,
+            importance: Importance.max,
+            priority: Priority.high,
+            ticker: 'ticker',
+          );
+      NotificationDetails notificationDetails = NotificationDetails(
+        android: androidNotificationDetails,
       );
-      NotificationDetails notificationDetails = NotificationDetails(android: androidNotificationDetails);
       await _flutterLocalNotificationsPlugin.show(
         notification.hashCode,
         notification.title,
@@ -54,33 +64,39 @@ class LocalNotificationsService {
   /* ============================= Initialize Settings for android and ios ============================= */
   void _initSetting() async {
     /// init plugin ...
-    FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+    FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+        FlutterLocalNotificationsPlugin();
 
     /// android
-    const AndroidInitializationSettings initializationSettingsAndroid = AndroidInitializationSettings('app_icon');
+    const AndroidInitializationSettings initializationSettingsAndroid =
+        AndroidInitializationSettings('app_icon');
 
     /// darwin/IOS
-    const DarwinInitializationSettings initializationSettingsDarwin = DarwinInitializationSettings(
-      defaultPresentSound: true,
-      requestSoundPermission: true,
-      requestBadgePermission: true,
-      requestAlertPermission: true,
-      // onDidReceiveLocalNotification: onDidReceiveLocalNotification,
-    );
+    const DarwinInitializationSettings initializationSettingsDarwin =
+        DarwinInitializationSettings(
+          defaultPresentSound: true,
+          requestSoundPermission: true,
+          requestBadgePermission: true,
+          requestAlertPermission: true,
+          // onDidReceiveLocalNotification: onDidReceiveLocalNotification,
+        );
 
     /// InitializationSettings for Android/IOS
-    const InitializationSettings initializationSettings = InitializationSettings(
-      android: initializationSettingsAndroid,
-      iOS: initializationSettingsDarwin,
-    );
+    const InitializationSettings initializationSettings =
+        InitializationSettings(
+          android: initializationSettingsAndroid,
+          iOS: initializationSettingsDarwin,
+        );
     await flutterLocalNotificationsPlugin.initialize(
       initializationSettings,
       onDidReceiveNotificationResponse: onDidReceiveNotificationResponse,
     );
   }
 
-/* ===================================== On select notification ===================================== */
-  void onDidReceiveNotificationResponse(NotificationResponse notificationResponse) async {
+  /* ===================================== On select notification ===================================== */
+  void onDidReceiveNotificationResponse(
+    NotificationResponse notificationResponse,
+  ) async {
     print('onDidReceiveNotificationResponse called');
     final String? payload = notificationResponse.payload;
     if (notificationResponse.payload != null) {
