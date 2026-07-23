@@ -1,3 +1,4 @@
+import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -19,6 +20,7 @@ import 'package:lges_teacher_app/module/exam_result/pages/exam_result_screen.dar
 import 'package:lges_teacher_app/module/home/cubit/app_config_cubit/app_config_cubit.dart';
 import 'package:lges_teacher_app/module/home/cubit/app_config_cubit/app_config_state.dart';
 import 'package:lges_teacher_app/module/home/cubit/dashboard_state_cubit/dashboard_state_cubit.dart';
+import 'package:lges_teacher_app/module/home/cubit/dashboard_state_cubit/dashboard_state_state.dart';
 import 'package:lges_teacher_app/module/leaves/pages/leaves_screen.dart';
 import 'package:lges_teacher_app/utils/display/dialogs/dialog_utils.dart';
 import 'package:lges_teacher_app/utils/extensions/extended_string.dart';
@@ -178,7 +180,10 @@ class _HomeScreenState extends State<HomeScreen> {
     return MultiBlocProvider(
       providers: [
         BlocProvider(create: (context) => AppConfigCubit(sl())..getAppConfig()),
-        BlocProvider(create: (context) => DashboardStateCubit(sl())..fetchDashboardStats()),
+        BlocProvider(
+          create: (context) => DashboardStateCubit(sl())..fetchDashboardStats(),
+          lazy: false,
+        ),
       ],
       child: BaseScaffold(
         hMargin: 0,
@@ -191,16 +196,20 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: Column(
                   children: [
                     Container(
-                      height: 370,
-                      padding: EdgeInsets.only(top: 30),
+                      
+                      padding: EdgeInsets.only(
+                        top: MediaQuery.of(context).padding.top + 10,
+                        bottom: 20,
+                      ),
                       width: double.infinity,
                       decoration: const BoxDecoration(
-                        image: DecorationImage(
-                          fit: BoxFit.cover,
-                          image: AssetImage(
-                            "assets/images/png/bg_home_top_view.png",
-                          ),
-                        ),
+                        color: AppColors.primaryDark,
+                        // image: DecorationImage(
+                        //   fit: BoxFit.cover,
+                        //   image: AssetImage(
+                        //     "assets/images/png/bg_home_top_view.png",
+                        //   ),
+                        // ),
                       ),
                       child: Padding(
                         padding: const EdgeInsets.all(20),
@@ -259,14 +268,61 @@ class _HomeScreenState extends State<HomeScreen> {
                                 ),
                               ],
                             ),
-                            SizedBox(height: 15),
-                            Align(
-                              alignment: Alignment.center,
-                              child: Image.asset(
-                                height: 150,
-                                "assets/images/png/app_logo.png",
-                                width: 150,
-                              ),
+                            const SizedBox(height: 10),
+                            BlocBuilder<DashboardStateCubit, DashboardStateState>(
+                              builder: (context, dashboardState) {
+                                if (dashboardState.dashboardStateStatus == DashboardStateStatus.loading) {
+                                  return const SizedBox(
+                                    height: 160,
+                                    child: Center(
+                                      child: CircularProgressIndicator(
+                                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                      ),
+                                    ),
+                                  );
+                                } else if (dashboardState.dashboardStateStatus == DashboardStateStatus.failure) {
+                                  return SizedBox(
+                                    height: 160,
+                                    child: Center(
+                                      child: Text(
+                                        dashboardState.failure.message,
+                                        style: const TextStyle(color: Colors.white, fontSize: 13),
+                                      ),
+                                    ),
+                                  );
+                                } else if (dashboardState.dashboardStateStatus == DashboardStateStatus.success && dashboardState.dashboardStats != null) {
+                                  final stats = dashboardState.dashboardStats!;
+                                  final studentStat = stats.studentAttendanceStatList != null && stats.studentAttendanceStatList!.isNotEmpty
+                                      ? stats.studentAttendanceStatList!.first
+                                      : null;
+                                  final teacherStat = stats.employeeAtteandanceStatList != null && stats.employeeAtteandanceStatList!.isNotEmpty
+                                      ? stats.employeeAtteandanceStatList!.first
+                                      : null;
+
+                                  return Row(
+                                    children: [
+                                      Expanded(
+                                        child: AttendanceChartCard(
+                                          title: "Students",
+                                          present: studentStat?.presentCount ?? 0,
+                                          absent: studentStat?.absentCount ?? 0,
+                                          leave: studentStat?.leaveCount ?? 0,
+                                        ),
+                                      ),
+                                      const SizedBox(width: 12),
+                                      Expanded(
+                                        child: AttendanceChartCard(
+                                          title: "Teachers",
+                                          present: teacherStat?.presentCount ?? 0,
+                                          absent: teacherStat?.absentCount ?? 0,
+                                          leave: teacherStat?.leaveCount ?? 0,
+                                        ),
+                                      ),
+                                    ],
+                                  );
+                                }
+                                return const SizedBox(height: 160);
+                              },
                             ),
                           ],
                         ),
@@ -276,37 +332,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       padding: const EdgeInsets.symmetric(horizontal: 20),
                       child: Column(
                         children: [
-                          Row(
-                            children: [
-                              Expanded(
-                                child: TextView(
-                                  "Our services".toUpperCase(),
-                                  color: AppColors.primaryDark,
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w700,
-                                ),
-                              ),
-                              Expanded(
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  children: [
-                                    TextView(
-                                      "see all".toUpperCase(),
-                                      textAlign: TextAlign.end,
-                                      color: AppColors.darkGreyColor,
-                                      fontSize: 10,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                    const SizedBox(width: 5),
-                                    SvgPicture.asset(
-                                      "assets/images/svg/ic_forward_arrow.svg",
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                          Row(
+                         Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Expanded(
@@ -668,6 +694,212 @@ class HomeTabCard extends StatelessWidget {
                   fontWeight: FontWeight.w700,
                   letterSpacing: 1,
                 ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class AttendanceChartCard extends StatelessWidget {
+  final String title;
+  final int present;
+  final int absent;
+  final int leave;
+
+  const AttendanceChartCard({
+    Key? key,
+    required this.title,
+    required this.present,
+    required this.absent,
+    required this.leave,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final int total = present + absent + leave;
+
+    final double maxVal = [present, absent, leave].reduce((a, b) => a > b ? a : b).toDouble();
+    final double maxY = maxVal > 0 ? maxVal * 1.3 : 10.0;
+
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.08),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            title,
+            style: const TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.w700,
+              color: AppColors.primaryDark,
+            ),
+          ),
+          const SizedBox(height: 2),
+          Text(
+            "Total: $total",
+            style: const TextStyle(
+              fontSize: 10,
+              color: AppColors.darkGreyColor,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          const SizedBox(height: 16),
+          SizedBox(
+            height: 110,
+            child: BarChart(
+              BarChartData(
+                alignment: BarChartAlignment.spaceAround,
+                maxY: maxY,
+                barTouchData: BarTouchData(
+                  enabled: true,
+                  touchTooltipData: BarTouchTooltipData(
+                    getTooltipColor: (group) => AppColors.primaryDark,
+                    getTooltipItem: (group, groupIndex, rod, rodIndex) {
+                      return BarTooltipItem(
+                        rod.toY.toInt().toString(),
+                        const TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 11,
+                        ),
+                      );
+                    },
+                  ),
+                ),
+                titlesData: FlTitlesData(
+                  show: true,
+                  bottomTitles: AxisTitles(
+                    sideTitles: SideTitles(
+                      showTitles: true,
+                      getTitlesWidget: (double value, TitleMeta meta) {
+                        String text = '';
+                        switch (value.toInt()) {
+                          case 0:
+                            text = 'P';
+                            break;
+                          case 1:
+                            text = 'A';
+                            break;
+                          case 2:
+                            text = 'L';
+                            break;
+                        }
+                        return SideTitleWidget(
+                          meta: meta,
+                          space: 4,
+                          child: Text(
+                            text,
+                            style: const TextStyle(
+                              color: AppColors.primaryDark,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 10,
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                  leftTitles: AxisTitles(
+                    sideTitles: SideTitles(
+                      showTitles: true,
+                      reservedSize: 22,
+                      getTitlesWidget: (value, meta) {
+                        return Padding(
+                          padding: const EdgeInsets.only(right: 4),
+                          child: Text(
+                            value.toInt().toString(),
+                            style: const TextStyle(
+                              color: AppColors.greyColor,
+                              fontSize: 8,
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                  topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                  rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                ),
+                gridData: FlGridData(
+                  show: true,
+                  drawHorizontalLine: true,
+                  drawVerticalLine: false,
+                  horizontalInterval: (maxY / 4).clamp(1, double.infinity),
+                  verticalInterval: 1,
+                  getDrawingHorizontalLine: (value) {
+                    return FlLine(
+                      color: Colors.grey.withOpacity(0.3),
+                      strokeWidth: 1,
+                      dashArray: [4, 4],
+                    );
+                  },
+                  getDrawingVerticalLine: (value) {
+                    return FlLine(
+                      color: Colors.grey.withOpacity(0.3),
+                      strokeWidth: 1,
+                      dashArray: [4, 4],
+                    );
+                  },
+                ),
+                borderData: FlBorderData(
+                  show: true,
+                  border: Border(
+                    left: BorderSide(color: AppColors.greyColor.withOpacity(0.5), width: 1),
+                    bottom: BorderSide(color: AppColors.greyColor.withOpacity(0.5), width: 1),
+                    top: BorderSide.none,
+                    right: BorderSide.none,
+                  ),
+                ),
+                barGroups: [
+                  BarChartGroupData(
+                    x: 0,
+                    barRods: [
+                      BarChartRodData(
+                        toY: present.toDouble(),
+                        color: const Color(0xFF2ECC71),
+                        width: 12,
+                        borderRadius: const BorderRadius.vertical(top: Radius.circular(4)),
+                      ),
+                    ],
+                  ),
+                  BarChartGroupData(
+                    x: 1,
+                    barRods: [
+                      BarChartRodData(
+                        toY: absent.toDouble(),
+                        color: const Color(0xFFE74C3C),
+                        width: 12,
+                        borderRadius: const BorderRadius.vertical(top: Radius.circular(4)),
+                      ),
+                    ],
+                  ),
+                  BarChartGroupData(
+                    x: 2,
+                    barRods: [
+                      BarChartRodData(
+                        toY: leave.toDouble(),
+                        color: const Color(0xFFF39C12),
+                        width: 12,
+                        borderRadius: const BorderRadius.vertical(top: Radius.circular(4)),
+                      ),
+                    ],
+                  ),
+                ],
               ),
             ),
           ),

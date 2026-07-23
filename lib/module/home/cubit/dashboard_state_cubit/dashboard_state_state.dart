@@ -1,4 +1,5 @@
 import 'package:lges_teacher_app/core/failures/base_failures/base_failure.dart';
+import 'package:lges_teacher_app/module/home/models/dashboard_stats_model.dart';
 
 enum DashboardStateStatus {
   none,
@@ -9,27 +10,32 @@ enum DashboardStateStatus {
 
 class DashboardStateState {
   final DashboardStateStatus dashboardStateStatus;
+  final DashboardStatsModel? dashboardStats;
   final BaseFailure failure;
 
   DashboardStateState({
     required this.dashboardStateStatus,
+    this.dashboardStats,
     required this.failure,
   });
 
   factory DashboardStateState.initial() {
     return DashboardStateState(
       dashboardStateStatus: DashboardStateStatus.none,
-      failure: const BaseFailure()
+      dashboardStats: null,
+      failure: const BaseFailure(),
     );
   }
 
   DashboardStateState copyWith({
     DashboardStateStatus? dashboardStateStatus,
+    DashboardStatsModel? dashboardStats,
     BaseFailure? failure,
   }) {
     return DashboardStateState(
       dashboardStateStatus: dashboardStateStatus ?? this.dashboardStateStatus,
-      failure: failure ?? this.failure
+      dashboardStats: dashboardStats ?? this.dashboardStats,
+      failure: failure ?? this.failure,
     );
   }
 }

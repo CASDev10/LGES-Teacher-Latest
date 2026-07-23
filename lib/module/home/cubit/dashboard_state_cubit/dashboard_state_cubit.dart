@@ -20,6 +20,7 @@ class DashboardStateCubit extends Cubit<DashboardStateState> {
       if (response.result == ApiResult.success) {
         emit(state.copyWith(
           dashboardStateStatus: DashboardStateStatus.success,
+          dashboardStats: response,
         ));
       } else {
         emit(state.copyWith(
