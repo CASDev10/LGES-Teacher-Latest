@@ -280,17 +280,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                       ),
                                     ),
                                   );
-                                } else if (dashboardState.dashboardStateStatus == DashboardStateStatus.failure) {
-                                  return SizedBox(
-                                    height: 160,
-                                    child: Center(
-                                      child: Text(
-                                        dashboardState.failure.message,
-                                        style: const TextStyle(color: Colors.white, fontSize: 13),
-                                      ),
-                                    ),
-                                  );
-                                } else if (dashboardState.dashboardStateStatus == DashboardStateStatus.success && dashboardState.dashboardStats != null) {
+                                }
+
+                                if (dashboardState.dashboardStateStatus == DashboardStateStatus.success && dashboardState.dashboardStats != null) {
                                   final stats = dashboardState.dashboardStats!;
                                   final studentStat = stats.studentAttendanceStatList != null && stats.studentAttendanceStatList!.isNotEmpty
                                       ? stats.studentAttendanceStatList!.first
@@ -299,16 +291,35 @@ class _HomeScreenState extends State<HomeScreen> {
                                       ? stats.employeeAtteandanceStatList!.first
                                       : null;
 
-                                  return TodayStatsCard(
-                                    studentPresent: studentStat?.presentCount ?? 0,
-                                    studentAbsent: studentStat?.absentCount ?? 0,
-                                    studentLeave: studentStat?.leaveCount ?? 0,
-                                    teacherPresent: teacherStat?.presentCount ?? 0,
-                                    teacherAbsent: teacherStat?.absentCount ?? 0,
-                                    teacherLeave: teacherStat?.leaveCount ?? 0,
-                                  );
+                                  if (studentStat != null || teacherStat != null) {
+                                    return TodayStatsCard(
+                                      studentPresent: studentStat?.presentCount ?? 0,
+                                      studentAbsent: studentStat?.absentCount ?? 0,
+                                      studentLeave: studentStat?.leaveCount ?? 0,
+                                      teacherPresent: teacherStat?.presentCount ?? 0,
+                                      teacherAbsent: teacherStat?.absentCount ?? 0,
+                                      teacherLeave: teacherStat?.leaveCount ?? 0,
+                                      studentTotal:studentStat?.totalStudent??0 ,
+                                      teacherTotal: teacherStat?.totalEmployees??0,
+                                      totalDiaries: dashboardState.dashboardStats?.diaryStatList?.first.diariesSent??0,
+                                    );
+                                  }
                                 }
-                                return const SizedBox(height: 160);
+
+                                // Fallback UI (Logo) when data is null, empty, or failed
+                                return Column(
+                                  children: [
+                                    const SizedBox(height: 15),
+                                    Align(
+                                      alignment: Alignment.center,
+                                      child: Image.asset(
+                                        "assets/images/png/app_logo.png",
+                                        height: 150,
+                                        width: 150,
+                                      ),
+                                    ),
+                                  ],
+                                );
                               },
                             ),
                           ],
@@ -697,6 +708,9 @@ class TodayStatsCard extends StatelessWidget {
   final int teacherPresent;
   final int teacherAbsent;
   final int teacherLeave;
+  final int studentTotal;
+  final int teacherTotal;
+  final int totalDiaries;
 
   const TodayStatsCard({
     Key? key,
@@ -706,6 +720,9 @@ class TodayStatsCard extends StatelessWidget {
     required this.teacherPresent,
     required this.teacherAbsent,
     required this.teacherLeave,
+    required this.studentTotal,
+    required this.teacherTotal,
+    required this.totalDiaries,
   }) : super(key: key);
 
   @override
@@ -770,7 +787,17 @@ class TodayStatsCard extends StatelessWidget {
                   ],
                 ),
               ),
-            ],
+            const SizedBox(width: 10),
+             Text(
+                      "Total Diaries: ${totalDiaries??0}",
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w800,
+                        color: AppColors.primaryDark,
+                        letterSpacing: 0.2,
+                      ),
+                    ),
+             ],
           ),
           const SizedBox(height: 8),
           // Subtle Divider
@@ -789,6 +816,7 @@ class TodayStatsCard extends StatelessWidget {
                   present: studentPresent,
                   absent: studentAbsent,
                   leave: studentLeave,
+                  total: studentTotal,
                 ),
               ),
               Container(
@@ -803,6 +831,7 @@ class TodayStatsCard extends StatelessWidget {
                   present: teacherPresent,
                   absent: teacherAbsent,
                   leave: teacherLeave,
+                  total: teacherTotal,
                 ),
               ),
             ],
@@ -854,12 +883,12 @@ class TodayStatsCard extends StatelessWidget {
       ],
     );
   }
-}
-class MiniBarChart extends StatelessWidget {
+}class MiniBarChart extends StatelessWidget {
   final String title;
   final int present;
   final int absent;
   final int leave;
+  final int total;
 
   const MiniBarChart({
     Key? key,
@@ -867,11 +896,11 @@ class MiniBarChart extends StatelessWidget {
     required this.present,
     required this.absent,
     required this.leave,
+    required this.total,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final int total = present + absent + leave;
     final double maxVal = [present, absent, leave].reduce((a, b) => a > b ? a : b).toDouble();
     final double maxY = maxVal > 0 ? maxVal * 1.3 : 10.0;
 
@@ -903,14 +932,16 @@ class MiniBarChart extends StatelessWidget {
               alignment: BarChartAlignment.spaceAround,
               maxY: maxY,
               barTouchData: BarTouchData(
-                enabled: true,
+                enabled: false,
                 touchTooltipData: BarTouchTooltipData(
-                  getTooltipColor: (group) => AppColors.primaryDark,
+                  getTooltipColor: (group) => Colors.transparent,
+                  tooltipPadding: EdgeInsets.zero,
+                  tooltipMargin: 4,
                   getTooltipItem: (group, groupIndex, rod, rodIndex) {
                     return BarTooltipItem(
                       rod.toY.toInt().toString(),
                       const TextStyle(
-                        color: Colors.white,
+                        color: AppColors.primaryDark,
                         fontWeight: FontWeight.bold,
                         fontSize: 9,
                       ),
@@ -1001,6 +1032,7 @@ class MiniBarChart extends StatelessWidget {
               barGroups: [
                 BarChartGroupData(
                   x: 0,
+                  showingTooltipIndicators: [0],
                   barRods: [
                     BarChartRodData(
                       toY: present.toDouble(),
@@ -1016,6 +1048,7 @@ class MiniBarChart extends StatelessWidget {
                 ),
                 BarChartGroupData(
                   x: 1,
+                  showingTooltipIndicators: [0],
                   barRods: [
                     BarChartRodData(
                       toY: absent.toDouble(),
@@ -1031,6 +1064,7 @@ class MiniBarChart extends StatelessWidget {
                 ),
                 BarChartGroupData(
                   x: 2,
+                  showingTooltipIndicators: [0],
                   barRods: [
                     BarChartRodData(
                       toY: leave.toDouble(),
