@@ -1,6 +1,7 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:intl/intl.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -195,11 +196,10 @@ class _HomeScreenState extends State<HomeScreen> {
               return SingleChildScrollView(
                 child: Column(
                   children: [
-                    Container(
-                      
+                    Container( 
                       padding: EdgeInsets.only(
                         top: MediaQuery.of(context).padding.top + 10,
-                        bottom: 20,
+                        bottom: 8,
                       ),
                       width: double.infinity,
                       decoration: const BoxDecoration(
@@ -299,26 +299,13 @@ class _HomeScreenState extends State<HomeScreen> {
                                       ? stats.employeeAtteandanceStatList!.first
                                       : null;
 
-                                  return Row(
-                                    children: [
-                                      Expanded(
-                                        child: AttendanceChartCard(
-                                          title: "Students",
-                                          present: studentStat?.presentCount ?? 0,
-                                          absent: studentStat?.absentCount ?? 0,
-                                          leave: studentStat?.leaveCount ?? 0,
-                                        ),
-                                      ),
-                                      const SizedBox(width: 12),
-                                      Expanded(
-                                        child: AttendanceChartCard(
-                                          title: "Teachers",
-                                          present: teacherStat?.presentCount ?? 0,
-                                          absent: teacherStat?.absentCount ?? 0,
-                                          leave: teacherStat?.leaveCount ?? 0,
-                                        ),
-                                      ),
-                                    ],
+                                  return TodayStatsCard(
+                                    studentPresent: studentStat?.presentCount ?? 0,
+                                    studentAbsent: studentStat?.absentCount ?? 0,
+                                    studentLeave: studentStat?.leaveCount ?? 0,
+                                    teacherPresent: teacherStat?.presentCount ?? 0,
+                                    teacherAbsent: teacherStat?.absentCount ?? 0,
+                                    teacherLeave: teacherStat?.leaveCount ?? 0,
                                   );
                                 }
                                 return const SizedBox(height: 160);
@@ -703,13 +690,178 @@ class HomeTabCard extends StatelessWidget {
   }
 }
 
-class AttendanceChartCard extends StatelessWidget {
+class TodayStatsCard extends StatelessWidget {
+  final int studentPresent;
+  final int studentAbsent;
+  final int studentLeave;
+  final int teacherPresent;
+  final int teacherAbsent;
+  final int teacherLeave;
+
+  const TodayStatsCard({
+    Key? key,
+    required this.studentPresent,
+    required this.studentAbsent,
+    required this.studentLeave,
+    required this.teacherPresent,
+    required this.teacherAbsent,
+    required this.teacherLeave,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final String formattedDate = DateFormat('EEEE, MMMM d, y').format(DateTime.now());
+
+    return Container(
+      padding: const EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.08),
+            blurRadius: 16,
+            offset: const Offset(0, 6),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // Header row with Icon, Title and Date
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: AppColors.primaryLight.withOpacity(0.1),
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(
+                  Icons.analytics_rounded,
+                  color: AppColors.primaryLight,
+                  size: 20,
+                ),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      "Today's Stats",
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w800,
+                        color: AppColors.primaryDark,
+                        letterSpacing: 0.2,
+                      ),
+                    ),
+                    const SizedBox(height: 1),
+                    Text(
+                      formattedDate,
+                      style: const TextStyle(
+                        fontSize: 10,
+                        color: AppColors.darkGreyColor,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          // Subtle Divider
+          Container(
+            height: 1,
+            color: AppColors.lightGreyColor,
+          ),
+          const SizedBox(height: 12),
+          // Side-by-side Charts with a vertical divider
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: MiniBarChart(
+                  title: "Students Attendance Stats",
+                  present: studentPresent,
+                  absent: studentAbsent,
+                  leave: studentLeave,
+                ),
+              ),
+              Container(
+                width: 1,
+                height: 130,
+                color: AppColors.lightGreyColor,
+                margin: const EdgeInsets.symmetric(horizontal: 10),
+              ),
+              Expanded(
+                child: MiniBarChart(
+                  title: "Teachers Attendance Stats",
+                  present: teacherPresent,
+                  absent: teacherAbsent,
+                  leave: teacherLeave,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          // Divider before Legend
+          Container(
+            height: 1,
+            color: AppColors.lightGreyColor,
+          ),
+          const SizedBox(height: 8),
+          // Shared Legend at the bottom
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              _buildLegendItem(const Color(0xFF2ECC71), "Present"),
+              const SizedBox(width: 16),
+              _buildLegendItem(const Color(0xFFE74C3C), "Absent"),
+              const SizedBox(width: 16),
+              _buildLegendItem(const Color(0xFFF39C12), "Leave"),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildLegendItem(Color color, String text) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Container(
+          width: 7,
+          height: 7,
+          decoration: BoxDecoration(
+            color: color,
+            shape: BoxShape.circle,
+          ),
+        ),
+        const SizedBox(width: 4),
+        Text(
+          text,
+          style: const TextStyle(
+            fontSize: 9,
+            fontWeight: FontWeight.w600,
+            color: AppColors.darkGreyColor,
+          ),
+        ),
+      ],
+    );
+  }
+}
+class MiniBarChart extends StatelessWidget {
   final String title;
   final int present;
   final int absent;
   final int leave;
 
-  const AttendanceChartCard({
+  const MiniBarChart({
     Key? key,
     required this.title,
     required this.present,
@@ -720,191 +872,183 @@ class AttendanceChartCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final int total = present + absent + leave;
-
     final double maxVal = [present, absent, leave].reduce((a, b) => a > b ? a : b).toDouble();
     final double maxY = maxVal > 0 ? maxVal * 1.3 : 10.0;
 
-    return Container(
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.08),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Text(
+          title,
+          style: const TextStyle(
+            fontSize: 10,
+            fontWeight: FontWeight.w700,
+            color: AppColors.primaryDark,
           ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            title,
-            style: const TextStyle(
-              fontSize: 13,
-              fontWeight: FontWeight.w700,
-              color: AppColors.primaryDark,
-            ),
+        ),
+        const SizedBox(height: 2),
+        Text(
+          "Total: $total",
+          style: const TextStyle(
+            fontSize: 9,
+            color: AppColors.greyColor,
+            fontWeight: FontWeight.bold,
           ),
-          const SizedBox(height: 2),
-          Text(
-            "Total: $total",
-            style: const TextStyle(
-              fontSize: 10,
-              color: AppColors.darkGreyColor,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-          const SizedBox(height: 16),
-          SizedBox(
-            height: 110,
-            child: BarChart(
-              BarChartData(
-                alignment: BarChartAlignment.spaceAround,
-                maxY: maxY,
-                barTouchData: BarTouchData(
-                  enabled: true,
-                  touchTooltipData: BarTouchTooltipData(
-                    getTooltipColor: (group) => AppColors.primaryDark,
-                    getTooltipItem: (group, groupIndex, rod, rodIndex) {
-                      return BarTooltipItem(
-                        rod.toY.toInt().toString(),
-                        const TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 11,
+        ),
+        const SizedBox(height: 12),
+        SizedBox(
+          height: 100,
+          child: BarChart(
+            BarChartData(
+              alignment: BarChartAlignment.spaceAround,
+              maxY: maxY,
+              barTouchData: BarTouchData(
+                enabled: true,
+                touchTooltipData: BarTouchTooltipData(
+                  getTooltipColor: (group) => AppColors.primaryDark,
+                  getTooltipItem: (group, groupIndex, rod, rodIndex) {
+                    return BarTooltipItem(
+                      rod.toY.toInt().toString(),
+                      const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 9,
+                      ),
+                    );
+                  },
+                ),
+              ),
+              titlesData: FlTitlesData(
+                show: true,
+                bottomTitles: AxisTitles(
+                  sideTitles: SideTitles(
+                    showTitles: true,
+                    getTitlesWidget: (double value, TitleMeta meta) {
+                      String text = '';
+                      switch (value.toInt()) {
+                        case 0:
+                          text = 'P';
+                          break;
+                        case 1:
+                          text = 'A';
+                          break;
+                        case 2:
+                          text = 'L';
+                          break;
+                      }
+                      return SideTitleWidget(
+                        meta: meta,
+                        space: 4,
+                        child: Text(
+                          text,
+                          style: const TextStyle(
+                            color: AppColors.primaryDark,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 9,
+                          ),
                         ),
                       );
                     },
                   ),
                 ),
-                titlesData: FlTitlesData(
-                  show: true,
-                  bottomTitles: AxisTitles(
-                    sideTitles: SideTitles(
-                      showTitles: true,
-                      getTitlesWidget: (double value, TitleMeta meta) {
-                        String text = '';
-                        switch (value.toInt()) {
-                          case 0:
-                            text = 'P';
-                            break;
-                          case 1:
-                            text = 'A';
-                            break;
-                          case 2:
-                            text = 'L';
-                            break;
-                        }
-                        return SideTitleWidget(
-                          meta: meta,
-                          space: 4,
-                          child: Text(
-                            text,
-                            style: const TextStyle(
-                              color: AppColors.primaryDark,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 10,
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                  leftTitles: AxisTitles(
-                    sideTitles: SideTitles(
-                      showTitles: true,
-                      reservedSize: 22,
-                      getTitlesWidget: (value, meta) {
-                        return Padding(
-                          padding: const EdgeInsets.only(right: 4),
-                          child: Text(
-                            value.toInt().toString(),
-                            style: const TextStyle(
-                              color: AppColors.greyColor,
-                              fontSize: 8,
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                  topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                  rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                ),
-                gridData: FlGridData(
-                  show: true,
-                  drawHorizontalLine: true,
-                  drawVerticalLine: false,
-                  horizontalInterval: (maxY / 4).clamp(1, double.infinity),
-                  verticalInterval: 1,
-                  getDrawingHorizontalLine: (value) {
-                    return FlLine(
-                      color: Colors.grey.withOpacity(0.3),
-                      strokeWidth: 1,
-                      dashArray: [4, 4],
-                    );
-                  },
-                  getDrawingVerticalLine: (value) {
-                    return FlLine(
-                      color: Colors.grey.withOpacity(0.3),
-                      strokeWidth: 1,
-                      dashArray: [4, 4],
-                    );
-                  },
-                ),
-                borderData: FlBorderData(
-                  show: true,
-                  border: Border(
-                    left: BorderSide(color: AppColors.greyColor.withOpacity(0.5), width: 1),
-                    bottom: BorderSide(color: AppColors.greyColor.withOpacity(0.5), width: 1),
-                    top: BorderSide.none,
-                    right: BorderSide.none,
+                leftTitles: AxisTitles(
+                  sideTitles: SideTitles(
+                    showTitles: true,
+                    reservedSize: 18,
+                    getTitlesWidget: (value, meta) {
+                      return Text(
+                        value.toInt().toString(),
+                        style: const TextStyle(
+                          color: AppColors.greyColor,
+                          fontSize: 8,
+                        ),
+                      );
+                    },
                   ),
                 ),
-                barGroups: [
-                  BarChartGroupData(
-                    x: 0,
-                    barRods: [
-                      BarChartRodData(
-                        toY: present.toDouble(),
-                        color: const Color(0xFF2ECC71),
-                        width: 12,
-                        borderRadius: const BorderRadius.vertical(top: Radius.circular(4)),
-                      ),
-                    ],
-                  ),
-                  BarChartGroupData(
-                    x: 1,
-                    barRods: [
-                      BarChartRodData(
-                        toY: absent.toDouble(),
-                        color: const Color(0xFFE74C3C),
-                        width: 12,
-                        borderRadius: const BorderRadius.vertical(top: Radius.circular(4)),
-                      ),
-                    ],
-                  ),
-                  BarChartGroupData(
-                    x: 2,
-                    barRods: [
-                      BarChartRodData(
-                        toY: leave.toDouble(),
-                        color: const Color(0xFFF39C12),
-                        width: 12,
-                        borderRadius: const BorderRadius.vertical(top: Radius.circular(4)),
-                      ),
-                    ],
-                  ),
-                ],
+                topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
               ),
+              gridData: FlGridData(
+                show: true,
+                drawHorizontalLine: true,
+                drawVerticalLine: false,
+                horizontalInterval: (maxY / 4).clamp(1, double.infinity),
+                getDrawingHorizontalLine: (value) {
+                  return FlLine(
+                    color: Colors.grey.withOpacity(0.3),
+                    strokeWidth: 1,
+                    dashArray: [4, 4],
+                  );
+                },
+                getDrawingVerticalLine: (value) {
+                  return FlLine(
+                    color: Colors.grey.withOpacity(0.3),
+                    strokeWidth: 1,
+                    dashArray: [4, 4],
+                  );
+                },
+              ),
+              borderData: FlBorderData(
+                show: true,
+                border: Border(
+                  left: BorderSide(color: AppColors.greyColor.withOpacity(0.5), width: 1),
+                  bottom: BorderSide(color: AppColors.greyColor.withOpacity(0.5), width: 1),
+                  top: BorderSide.none,
+                  right: BorderSide.none,
+                ),
+              ),
+              barGroups: [
+                BarChartGroupData(
+                  x: 0,
+                  barRods: [
+                    BarChartRodData(
+                      toY: present.toDouble(),
+                      gradient: const LinearGradient(
+                        colors: [Color(0xFF2ECC71), Color(0xFF27AE60)],
+                        begin: Alignment.bottomCenter,
+                        end: Alignment.topCenter,
+                      ),
+                      width: 10,
+                      borderRadius: const BorderRadius.vertical(top: Radius.circular(3)),
+                    ),
+                  ],
+                ),
+                BarChartGroupData(
+                  x: 1,
+                  barRods: [
+                    BarChartRodData(
+                      toY: absent.toDouble(),
+                      gradient: const LinearGradient(
+                        colors: [Color(0xFFE74C3C), Color(0xFFC0392B)],
+                        begin: Alignment.bottomCenter,
+                        end: Alignment.topCenter,
+                      ),
+                      width: 10,
+                      borderRadius: const BorderRadius.vertical(top: Radius.circular(3)),
+                    ),
+                  ],
+                ),
+                BarChartGroupData(
+                  x: 2,
+                  barRods: [
+                    BarChartRodData(
+                      toY: leave.toDouble(),
+                      gradient: const LinearGradient(
+                        colors: [Color(0xFFF39C12), Color(0xFFD35400)],
+                        begin: Alignment.bottomCenter,
+                        end: Alignment.topCenter,
+                      ),
+                      width: 10,
+                      borderRadius: const BorderRadius.vertical(top: Radius.circular(3)),
+                    ),
+                  ],
+                ),
+              ],
             ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }
