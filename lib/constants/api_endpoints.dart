@@ -52,4 +52,5 @@ class Endpoints {
   static const String getEvaluationGroups = '/GetEvaluationGroups';
   static const String getEvaluationTypes = '/GetEvaluationTypes';
   static const String getEvaluation = '/GetEvaluation';
+  static const String getDashboardStats = '/GetDashboardStats';
 }

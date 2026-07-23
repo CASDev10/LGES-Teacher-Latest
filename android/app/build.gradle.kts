@@ -10,7 +10,7 @@ plugins {
 
 android {
     namespace = "com.cas.lgesTeacherApp"
-    compileSdk = 35
+    compileSdk = 36
     ndkVersion = "27.0.12077973"
 
     compileOptions {
@@ -29,14 +29,14 @@ android {
     defaultConfig {
         applicationId = "com.cas.lgesTeacherApp"
         minSdk = flutter.minSdkVersion
-        targetSdk = flutter.targetSdkVersion
-        versionCode = 11
-        versionName = "1.0.11"
+        targetSdk = 36
+        versionCode = 12
+        versionName = "1.0.12"
     }
 
     signingConfigs {
         create("release") {
-            storeFile = file("E:/lges_teacher_app/android/keystore/lges_keystore.jks")
+            storeFile = file("E:/LGES-Teacher-Latest/app_secret/lges_keystore.jks")
             storePassword = "lges!@#123"
             keyAlias = "lges"
             keyPassword = "lges!@#123"

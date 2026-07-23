@@ -2,7 +2,7 @@
 
 
 
-import '../../../core/failures/base_failures/base_failure.dart';
+import '../../../../core/failures/base_failures/base_failure.dart';
 
 enum AppConfigStatus {
   none,

@@ -1,10 +1,10 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lges_teacher_app/module/home/repo/home_repo.dart';
 
-import '../../../core/api_result.dart';
-import '../../../core/failures/base_failures/base_failure.dart';
-import '../../../core/failures/high_priority_failure.dart';
-import '../models/app_config_reponse.dart';
+import '../../../../core/api_result.dart';
+import '../../../../core/failures/base_failures/base_failure.dart';
+import '../../../../core/failures/high_priority_failure.dart';
+import '../../models/app_config_reponse.dart';
 import 'app_config_state.dart';
 
 class AppConfigCubit extends Cubit<AppConfigState> {

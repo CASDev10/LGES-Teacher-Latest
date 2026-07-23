@@ -16,8 +16,9 @@ import 'package:lges_teacher_app/module/daily_diary/pages/daily_diary_screen.dar
 import 'package:lges_teacher_app/module/evaluation/models/student_evaluation_areas_input.dart';
 import 'package:lges_teacher_app/module/evaluation/pages/student_evaluation_screen.dart';
 import 'package:lges_teacher_app/module/exam_result/pages/exam_result_screen.dart';
-import 'package:lges_teacher_app/module/home/app_config_cubit/app_config_cubit.dart';
-import 'package:lges_teacher_app/module/home/app_config_cubit/app_config_state.dart';
+import 'package:lges_teacher_app/module/home/cubit/app_config_cubit/app_config_cubit.dart';
+import 'package:lges_teacher_app/module/home/cubit/app_config_cubit/app_config_state.dart';
+import 'package:lges_teacher_app/module/home/cubit/dashboard_state_cubit/dashboard_state_cubit.dart';
 import 'package:lges_teacher_app/module/leaves/pages/leaves_screen.dart';
 import 'package:lges_teacher_app/utils/display/dialogs/dialog_utils.dart';
 import 'package:lges_teacher_app/utils/extensions/extended_string.dart';
@@ -177,6 +178,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return MultiBlocProvider(
       providers: [
         BlocProvider(create: (context) => AppConfigCubit(sl())..getAppConfig()),
+        BlocProvider(create: (context) => DashboardStateCubit(sl())..fetchDashboardStats()),
       ],
       child: BaseScaffold(
         hMargin: 0,

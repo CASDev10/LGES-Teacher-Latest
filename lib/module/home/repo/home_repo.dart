@@ -5,6 +5,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:lges_teacher_app/module/file_sharing/models/get_students_response.dart';
 import 'package:lges_teacher_app/module/home/models/app_config_reponse.dart';
+import 'package:lges_teacher_app/module/home/models/dashboard_stats_model.dart';
 
 import '../../../constants/api_endpoints.dart';
 import '../../../constants/keys.dart';
@@ -148,6 +149,29 @@ class HomeRepository {
 
       GetStudentsResponse getStudentsResponse = await compute(
         getStudentsResponseFromJson,
+        response,
+      );
+      return getStudentsResponse;
+    } on BaseFailure catch (_) {
+      rethrow;
+    } on TypeError catch (e) {
+      log('TYPE error stackTrace :: ${e.stackTrace}');
+      rethrow;
+    }
+  }
+
+   Future<DashboardStatsModel> getDashboardStats(
+  ) async {
+    try {
+      var response = await _networkService.post(
+        Endpoints.getDashboardStats,
+        data: {
+          "UC_LoginUserId": _authRepository.user.userId
+        },
+      );
+
+      DashboardStatsModel getStudentsResponse = await compute(
+        dashboardStatsModelFromJson,
         response,
       );
       return getStudentsResponse;
