@@ -785,7 +785,7 @@ class TodayStatsCard extends StatelessWidget {
             children: [
               Expanded(
                 child: MiniBarChart(
-                  title: "Students Attendance Stats",
+                  title: "Student Attendance Stats",
                   present: studentPresent,
                   absent: studentAbsent,
                   leave: studentLeave,
@@ -799,7 +799,7 @@ class TodayStatsCard extends StatelessWidget {
               ),
               Expanded(
                 child: MiniBarChart(
-                  title: "Teachers Attendance Stats",
+                  title: "Staff Attendance Stats",
                   present: teacherPresent,
                   absent: teacherAbsent,
                   leave: teacherLeave,
