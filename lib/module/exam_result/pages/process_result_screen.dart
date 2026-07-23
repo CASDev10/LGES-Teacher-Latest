@@ -16,27 +16,25 @@ class ProcessResultScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BaseScaffold(
-      appBar: const CustomAppbar(
-        'Process Result',
-        centerTitle: true,
-      ),
+      appBar: const CustomAppbar('Process Result', centerTitle: true),
       body: Container(
         width: double.infinity,
         decoration: const BoxDecoration(
           color: AppColors.whiteColor,
           borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(50), topRight: Radius.circular(50)),
+            topLeft: Radius.circular(50),
+            topRight: Radius.circular(50),
+          ),
         ),
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20) +
+          padding:
+              const EdgeInsets.symmetric(horizontal: 20) +
               const EdgeInsets.symmetric(vertical: 30),
           child: Stack(
             children: [
               Column(
                 children: [
-                  const SizedBox(
-                    height: 10,
-                  ),
+                  const SizedBox(height: 10),
                   CustomDropDown(
                     allPadding: 0,
                     horizontalPadding: 15,
@@ -48,9 +46,7 @@ class ProcessResultScreen extends StatelessWidget {
                     items: [],
                     onSelect: (String value) {},
                   ),
-                  const SizedBox(
-                    height: 16,
-                  ),
+                  const SizedBox(height: 16),
                   CustomDropDown(
                     allPadding: 0,
                     horizontalPadding: 15,
@@ -62,9 +58,7 @@ class ProcessResultScreen extends StatelessWidget {
                     items: [],
                     onSelect: (String value) {},
                   ),
-                  const SizedBox(
-                    height: 16,
-                  ),
+                  const SizedBox(height: 16),
                   CustomDropDown(
                     allPadding: 0,
                     horizontalPadding: 15,
@@ -76,9 +70,7 @@ class ProcessResultScreen extends StatelessWidget {
                     items: [],
                     onSelect: (String value) {},
                   ),
-                  const SizedBox(
-                    height: 20,
-                  ),
+                  const SizedBox(height: 20),
                   CustomDropDown(
                     allPadding: 0,
                     horizontalPadding: 15,
@@ -90,9 +82,7 @@ class ProcessResultScreen extends StatelessWidget {
                     items: [],
                     onSelect: (String value) {},
                   ),
-                  const SizedBox(
-                    height: 20,
-                  ),
+                  const SizedBox(height: 20),
                 ],
               ),
               Positioned(

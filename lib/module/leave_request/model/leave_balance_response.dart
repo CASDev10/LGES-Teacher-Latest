@@ -25,15 +25,16 @@ class LeaveBalanceResponse {
         message: json["Message"],
         messageCode: json["MessageCode"],
         data: List<LeaveBalanceList>.from(
-            json["Data"].map((x) => LeaveBalanceList.fromJson(x))),
+          json["Data"].map((x) => LeaveBalanceList.fromJson(x)),
+        ),
       );
 
   Map<String, dynamic> toJson() => {
-        "Result": result,
-        "Message": message,
-        "MessageCode": messageCode,
-        "Data": List<dynamic>.from(data.map((x) => x.toJson())),
-      };
+    "Result": result,
+    "Message": message,
+    "MessageCode": messageCode,
+    "Data": List<dynamic>.from(data.map((x) => x.toJson())),
+  };
 }
 
 class LeaveBalanceList {
@@ -79,16 +80,16 @@ class LeaveBalanceList {
       );
 
   Map<String, dynamic> toJson() => {
-        "EmpLeaveBalanceID": empLeaveBalanceId,
-        "LeaveTypeId": leaveTypeId,
-        "EmpId": empId,
-        "Balance": balance,
-        "AllowLeavePerMonth": allowLeavePerMonth,
-        "LeaveTypeName": leaveTypeName,
-        "ValidFromDate": validFromDate,
-        "ValidToDate": validToDate,
-        "CanTakeLeave": canTakeLeave,
-        "IsValidLeaveBalance": isValidLeaveBalance,
-        "IsCalenderExists": isCalenderExists,
-      };
+    "EmpLeaveBalanceID": empLeaveBalanceId,
+    "LeaveTypeId": leaveTypeId,
+    "EmpId": empId,
+    "Balance": balance,
+    "AllowLeavePerMonth": allowLeavePerMonth,
+    "LeaveTypeName": leaveTypeName,
+    "ValidFromDate": validFromDate,
+    "ValidToDate": validToDate,
+    "CanTakeLeave": canTakeLeave,
+    "IsValidLeaveBalance": isValidLeaveBalance,
+    "IsCalenderExists": isCalenderExists,
+  };
 }

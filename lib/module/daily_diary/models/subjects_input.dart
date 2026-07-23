@@ -1,6 +1,3 @@
-
-
-
 class SubjectsInput {
   String ucEntityId;
   String ucSchoolId;
@@ -12,16 +9,15 @@ class SubjectsInput {
     required this.classIdFk,
   });
 
-  factory SubjectsInput.fromJson(Map<String, dynamic> json) =>
-      SubjectsInput(
-        ucEntityId: json["UC_EntityId"],
-        ucSchoolId: json["UC_SchoolId"],
-        classIdFk: json["ClassIdFk"],
-      );
+  factory SubjectsInput.fromJson(Map<String, dynamic> json) => SubjectsInput(
+    ucEntityId: json["UC_EntityId"],
+    ucSchoolId: json["UC_SchoolId"],
+    classIdFk: json["ClassIdFk"],
+  );
 
   Map<String, dynamic> toJson() => {
-        "UC_EntityId": ucEntityId,
-        "UC_SchoolId": ucSchoolId,
-        "ClassIdFk": classIdFk,
-      };
+    "UC_EntityId": ucEntityId,
+    "UC_SchoolId": ucSchoolId,
+    "ClassIdFk": classIdFk,
+  };
 }

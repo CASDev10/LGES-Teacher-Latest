@@ -12,9 +12,9 @@ class NavRouter {
     bool bottomToTop = false,
   }) {
     return Navigator.push(
-        context,
-        CupertinoPageRoute(
-            fullscreenDialog: bottomToTop, builder: (_) => route));
+      context,
+      CupertinoPageRoute(fullscreenDialog: bottomToTop, builder: (_) => route),
+    );
   }
 
   /// Push Replacement
@@ -24,9 +24,12 @@ class NavRouter {
     bool bottomToTop = false,
   }) {
     return Navigator.pushReplacement(
-        context,
-        CupertinoPageRoute(
-            fullscreenDialog: bottomToTop, builder: (context) => route));
+      context,
+      CupertinoPageRoute(
+        fullscreenDialog: bottomToTop,
+        builder: (context) => route,
+      ),
+    );
   }
 
   /// Pop
@@ -37,11 +40,10 @@ class NavRouter {
   /// Push and remove until
   static Future pushAndRemoveUntil(BuildContext context, Widget route) {
     return Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(
-          builder: (_) => route,
-        ),
-        (Route<dynamic> route) => false);
+      context,
+      MaterialPageRoute(builder: (_) => route),
+      (Route<dynamic> route) => false,
+    );
   }
 
   static Future openRouteFromDrawer(BuildContext context, Widget route) async {
@@ -50,14 +52,11 @@ class NavRouter {
   }
 
   static Future<dynamic> to(Widget page, {arguments}) async =>
-      navigationKey.currentState?.push(MaterialPageRoute(
-        builder: (_) => page,
-      ));
+      navigationKey.currentState?.push(MaterialPageRoute(builder: (_) => page));
 
   static Future<dynamic> toAndRemoveUntil(Widget page, {arguments}) async =>
       navigationKey.currentState?.pushAndRemoveUntil(
-          MaterialPageRoute(
-            builder: (_) => page,
-          ),
-          (Route<dynamic> page) => false);
+        MaterialPageRoute(builder: (_) => page),
+        (Route<dynamic> page) => false,
+      );
 }

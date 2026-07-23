@@ -1,6 +1,3 @@
-
-
-
 class AttendanceInput {
   String? sectionIdFk;
   String? classIdFk;
@@ -9,13 +6,14 @@ class AttendanceInput {
   String? uCSchoolId;
   String? uCEntityId;
 
-  AttendanceInput(
-      {this.sectionIdFk,
-        this.classIdFk,
-        this.attendanceDate,
-        this.isOnRollStudents,
-        this.uCSchoolId,
-        this.uCEntityId});
+  AttendanceInput({
+    this.sectionIdFk,
+    this.classIdFk,
+    this.attendanceDate,
+    this.isOnRollStudents,
+    this.uCSchoolId,
+    this.uCEntityId,
+  });
 
   AttendanceInput.fromJson(Map<String, dynamic> json) {
     sectionIdFk = json['SectionIdFk'];

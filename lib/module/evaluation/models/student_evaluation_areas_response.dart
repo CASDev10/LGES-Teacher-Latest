@@ -1,8 +1,12 @@
 import 'dart:convert';
 
-StudentEvaluationAreasResponse studentEvaluationAreasResponseFromJson(dynamic json) => StudentEvaluationAreasResponse.fromJson(json);
+StudentEvaluationAreasResponse studentEvaluationAreasResponseFromJson(
+  dynamic json,
+) => StudentEvaluationAreasResponse.fromJson(json);
 
-String studentEvaluationAreasResponseToJson(StudentEvaluationAreasResponse data) => json.encode(data.toJson());
+String studentEvaluationAreasResponseToJson(
+  StudentEvaluationAreasResponse data,
+) => json.encode(data.toJson());
 
 class StudentEvaluationAreasResponse {
   String result;
@@ -15,11 +19,12 @@ class StudentEvaluationAreasResponse {
     required this.data,
   });
 
-  factory StudentEvaluationAreasResponse.fromJson(Map<String, dynamic> json) => StudentEvaluationAreasResponse(
-    result: json["result"],
-    message: json["message"],
-    data: StudentEvaluationAreaModel.fromJson(json["data"]),
-  );
+  factory StudentEvaluationAreasResponse.fromJson(Map<String, dynamic> json) =>
+      StudentEvaluationAreasResponse(
+        result: json["result"],
+        message: json["message"],
+        data: StudentEvaluationAreaModel.fromJson(json["data"]),
+      );
 
   Map<String, dynamic> toJson() => {
     "result": result,
@@ -37,10 +42,15 @@ class StudentEvaluationAreaModel {
     required this.classSubject,
   });
 
-  factory StudentEvaluationAreaModel.fromJson(Map<String, dynamic> json) => StudentEvaluationAreaModel(
-    evaluationArea: List<EvaluationArea>.from(json["EvaluationArea"].map((x) => EvaluationArea.fromJson(x))),
-    classSubject: List<ClassSubject>.from(json["ClassSubject"].map((x) => ClassSubject.fromJson(x))),
-  );
+  factory StudentEvaluationAreaModel.fromJson(Map<String, dynamic> json) =>
+      StudentEvaluationAreaModel(
+        evaluationArea: List<EvaluationArea>.from(
+          json["EvaluationArea"].map((x) => EvaluationArea.fromJson(x)),
+        ),
+        classSubject: List<ClassSubject>.from(
+          json["ClassSubject"].map((x) => ClassSubject.fromJson(x)),
+        ),
+      );
 
   Map<String, dynamic> toJson() => {
     "EvaluationArea": List<dynamic>.from(evaluationArea.map((x) => x.toJson())),

@@ -4,9 +4,11 @@
 
 import 'dart:convert';
 
-EvaluationAreasResponse evaluationAreasResponseFromJson(dynamic json) => EvaluationAreasResponse.fromJson(json);
+EvaluationAreasResponse evaluationAreasResponseFromJson(dynamic json) =>
+    EvaluationAreasResponse.fromJson(json);
 
-String evaluationAreasResponseToJson(EvaluationAreasResponse data) => json.encode(data.toJson());
+String evaluationAreasResponseToJson(EvaluationAreasResponse data) =>
+    json.encode(data.toJson());
 
 class EvaluationAreasResponse {
   String result;
@@ -19,11 +21,14 @@ class EvaluationAreasResponse {
     required this.data,
   });
 
-  factory EvaluationAreasResponse.fromJson(Map<String, dynamic> json) => EvaluationAreasResponse(
-    result: json["result"],
-    message: json["message"],
-    data: List<EvaluationAreaModel>.from(json["data"].map((x) => EvaluationAreaModel.fromJson(x))),
-  );
+  factory EvaluationAreasResponse.fromJson(Map<String, dynamic> json) =>
+      EvaluationAreasResponse(
+        result: json["result"],
+        message: json["message"],
+        data: List<EvaluationAreaModel>.from(
+          json["data"].map((x) => EvaluationAreaModel.fromJson(x)),
+        ),
+      );
 
   Map<String, dynamic> toJson() => {
     "result": result,
@@ -36,18 +41,10 @@ class EvaluationAreaModel {
   int id;
   String name;
 
-  EvaluationAreaModel({
-    required this.id,
-    required this.name,
-  });
+  EvaluationAreaModel({required this.id, required this.name});
 
-  factory EvaluationAreaModel.fromJson(Map<String, dynamic> json) => EvaluationAreaModel(
-    id: json["ID"],
-    name: json["Name"],
-  );
+  factory EvaluationAreaModel.fromJson(Map<String, dynamic> json) =>
+      EvaluationAreaModel(id: json["ID"], name: json["Name"]);
 
-  Map<String, dynamic> toJson() => {
-    "ID": id,
-    "Name": name,
-  };
+  Map<String, dynamic> toJson() => {"ID": id, "Name": name};
 }

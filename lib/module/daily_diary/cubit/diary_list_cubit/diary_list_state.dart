@@ -1,29 +1,24 @@
-
-
-
 import '../../../../core/failures/base_failures/base_failure.dart';
 import '../../models/diary_list_response.dart';
 
-enum DiaryListStatus {
-  none,
-  loading,
-  success,
-  failure,
-}
+enum DiaryListStatus { none, loading, success, failure }
 
-class DiaryListState{
+class DiaryListState {
   final DiaryListStatus diaryListStatus;
   final BaseFailure failure;
   final List<DiaryModel> diaryList;
 
-  DiaryListState({required
-    this.diaryListStatus,required this.failure, required this.diaryList});
+  DiaryListState({
+    required this.diaryListStatus,
+    required this.failure,
+    required this.diaryList,
+  });
 
-  factory DiaryListState.initial(){
+  factory DiaryListState.initial() {
     return DiaryListState(
-      diaryListStatus:  DiaryListStatus.none,
+      diaryListStatus: DiaryListStatus.none,
       failure: const BaseFailure(),
-      diaryList: []
+      diaryList: [],
     );
   }
   DiaryListState copyWith({

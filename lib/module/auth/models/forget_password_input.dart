@@ -15,11 +15,12 @@ class ForgetPasswordInput {
     required this.userMobile,
   });
 
-  factory ForgetPasswordInput.fromJson(Map<String, dynamic> json) => ForgetPasswordInput(
-    userId: json["UserId"],
-    password: json["Password"],
-    userMobile: json["UserMobile"],
-  );
+  factory ForgetPasswordInput.fromJson(Map<String, dynamic> json) =>
+      ForgetPasswordInput(
+        userId: json["UserId"],
+        password: json["Password"],
+        userMobile: json["UserMobile"],
+      );
 
   Map<String, dynamic> toJson() => {
     "UserId": userId,

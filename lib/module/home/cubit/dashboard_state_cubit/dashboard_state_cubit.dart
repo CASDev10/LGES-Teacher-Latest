@@ -18,19 +18,29 @@ class DashboardStateCubit extends Cubit<DashboardStateState> {
     try {
       DashboardStatsModel response = await _repository.getDashboardStats();
       if (response.result == ApiResult.success) {
-        emit(state.copyWith(
-          dashboardStateStatus: DashboardStateStatus.success,
-          dashboardStats: response,
-        ));
+        emit(
+          state.copyWith(
+            dashboardStateStatus: DashboardStateStatus.success,
+            dashboardStats: response,
+          ),
+        );
       } else {
-        emit(state.copyWith(
+        emit(
+          state.copyWith(
             dashboardStateStatus: DashboardStateStatus.failure,
-            failure: HighPriorityException(response.message??"Something went wrong")));
+            failure: HighPriorityException(
+              response.message ?? "Something went wrong",
+            ),
+          ),
+        );
       }
     } on BaseFailure catch (e) {
-      emit(state.copyWith(
+      emit(
+        state.copyWith(
           dashboardStateStatus: DashboardStateStatus.failure,
-          failure: HighPriorityException(e.message)));
+          failure: HighPriorityException(e.message),
+        ),
+      );
     } catch (_) {}
   }
 }

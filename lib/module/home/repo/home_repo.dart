@@ -160,14 +160,11 @@ class HomeRepository {
     }
   }
 
-   Future<DashboardStatsModel> getDashboardStats(
-  ) async {
+  Future<DashboardStatsModel> getDashboardStats() async {
     try {
       var response = await _networkService.post(
         Endpoints.getDashboardStats,
-        data: {
-          "UC_LoginUserId": _authRepository.user.userId
-        },
+        data: {"UC_LoginUserId": _authRepository.user.userId},
       );
 
       DashboardStatsModel getStudentsResponse = await compute(

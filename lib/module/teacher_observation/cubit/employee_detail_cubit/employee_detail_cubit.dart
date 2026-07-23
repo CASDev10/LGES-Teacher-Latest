@@ -14,32 +14,41 @@ class EmployeeDetailCubit extends Cubit<EmployeeDetailState> {
   ObservationRepository repository;
 
   Future getEmployeeDetail(String empId) async {
-    try{
-      emit(state.copyWith(
-        employeeDetailStatus: EmployeeDetailStatus.loading,
-      ));
-      EmployeeDetailResponse employeeDetailResponse =
-      await repository.getEmployeeDetail(empId);
+    try {
+      emit(state.copyWith(employeeDetailStatus: EmployeeDetailStatus.loading));
+      EmployeeDetailResponse employeeDetailResponse = await repository
+          .getEmployeeDetail(empId);
       if (employeeDetailResponse.result == ApiResult.success) {
-        if(employeeDetailResponse.data.isNotEmpty){
-          emit(state.copyWith(
-            employeeDetailStatus: EmployeeDetailStatus.success,
-            employeeModel: employeeDetailResponse.data.first,
-          ));
-        }else{
-          emit(state.copyWith(
+        if (employeeDetailResponse.data.isNotEmpty) {
+          emit(
+            state.copyWith(
+              employeeDetailStatus: EmployeeDetailStatus.success,
+              employeeModel: employeeDetailResponse.data.first,
+            ),
+          );
+        } else {
+          emit(
+            state.copyWith(
               employeeDetailStatus: EmployeeDetailStatus.failure,
-              failure: HighPriorityException("Employee data not found")));
+              failure: HighPriorityException("Employee data not found"),
+            ),
+          );
         }
       } else {
-        emit(state.copyWith(
+        emit(
+          state.copyWith(
             employeeDetailStatus: EmployeeDetailStatus.failure,
-            failure: HighPriorityException(employeeDetailResponse.message)));
+            failure: HighPriorityException(employeeDetailResponse.message),
+          ),
+        );
       }
-    }on BaseFailure catch (e) {
-      emit(state.copyWith(
+    } on BaseFailure catch (e) {
+      emit(
+        state.copyWith(
           employeeDetailStatus: EmployeeDetailStatus.failure,
-          failure: HighPriorityException(e.message)));
+          failure: HighPriorityException(e.message),
+        ),
+      );
     } catch (_) {}
   }
 }

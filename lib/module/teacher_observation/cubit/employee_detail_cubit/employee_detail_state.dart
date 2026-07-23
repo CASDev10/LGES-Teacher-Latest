@@ -1,21 +1,17 @@
 part of 'employee_detail_cubit.dart';
 
-
-enum EmployeeDetailStatus{
-  none,
-  loading,
-  success,
-  failure,
-}
+enum EmployeeDetailStatus { none, loading, success, failure }
 
 class EmployeeDetailState {
   final EmployeeDetailStatus employeeDetailStatus;
   final BaseFailure failure;
   final EmployeeModel? employeeModel;
 
-  EmployeeDetailState({required this.employeeDetailStatus, required this.failure, required this.employeeModel});
-
-
+  EmployeeDetailState({
+    required this.employeeDetailStatus,
+    required this.failure,
+    required this.employeeModel,
+  });
 
   factory EmployeeDetailState.initial() {
     return EmployeeDetailState(
@@ -24,9 +20,6 @@ class EmployeeDetailState {
       employeeModel: null,
     );
   }
-
-
-
 
   EmployeeDetailState copyWith({
     EmployeeDetailStatus? employeeDetailStatus,

@@ -4,9 +4,11 @@
 
 import 'dart:convert';
 
-ExamClassResponse examClassResponseFromJson(dynamic json) => ExamClassResponse.fromJson(json);
+ExamClassResponse examClassResponseFromJson(dynamic json) =>
+    ExamClassResponse.fromJson(json);
 
-String examClassResponseToJson(ExamClassResponse data) => json.encode(data.toJson());
+String examClassResponseToJson(ExamClassResponse data) =>
+    json.encode(data.toJson());
 
 class ExamClassResponse {
   String result;
@@ -19,11 +21,14 @@ class ExamClassResponse {
     required this.data,
   });
 
-  factory ExamClassResponse.fromJson(Map<String, dynamic> json) => ExamClassResponse(
-    result: json["result"],
-    message: json["message"],
-    data: List<ExamClassModel>.from(json["data"].map((x) => ExamClassModel.fromJson(x))),
-  );
+  factory ExamClassResponse.fromJson(Map<String, dynamic> json) =>
+      ExamClassResponse(
+        result: json["result"],
+        message: json["message"],
+        data: List<ExamClassModel>.from(
+          json["data"].map((x) => ExamClassModel.fromJson(x)),
+        ),
+      );
 
   Map<String, dynamic> toJson() => {
     "result": result,
@@ -36,18 +41,10 @@ class ExamClassModel {
   int classId;
   String className;
 
-  ExamClassModel({
-    required this.classId,
-    required this.className,
-  });
+  ExamClassModel({required this.classId, required this.className});
 
-  factory ExamClassModel.fromJson(Map<String, dynamic> json) => ExamClassModel(
-    classId: json["ClassId"],
-    className: json["ClassName"],
-  );
+  factory ExamClassModel.fromJson(Map<String, dynamic> json) =>
+      ExamClassModel(classId: json["ClassId"], className: json["ClassName"]);
 
-  Map<String, dynamic> toJson() => {
-    "ClassId": classId,
-    "ClassName": className,
-  };
+  Map<String, dynamic> toJson() => {"ClassId": classId, "ClassName": className};
 }

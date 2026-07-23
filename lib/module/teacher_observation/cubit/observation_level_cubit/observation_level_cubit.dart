@@ -10,29 +10,39 @@ import '../../repo/observation_repo.dart';
 part 'observation_level_state.dart';
 
 class ObservationLevelCubit extends Cubit<ObservationLevelState> {
-  ObservationLevelCubit(this.repository) : super(ObservationLevelState.initial());
+  ObservationLevelCubit(this.repository)
+    : super(ObservationLevelState.initial());
   ObservationRepository repository;
 
   Future getObservationLevels() async {
-    try{
-
-      ObservationLevelsResponse observationLevelsResponse =
-      await repository.getObservationLevels();
-      observationLevelsResponse.data.sort((a, b) => b.createdDate.compareTo(a.createdDate));
+    try {
+      ObservationLevelsResponse observationLevelsResponse = await repository
+          .getObservationLevels();
+      observationLevelsResponse.data.sort(
+        (a, b) => b.createdDate.compareTo(a.createdDate),
+      );
       if (observationLevelsResponse.result == ApiResult.success) {
-        emit(state.copyWith(
-          observationLevelStatus: ObservationLevelStatus.success,
-          levels: observationLevelsResponse.data,
-        ));
+        emit(
+          state.copyWith(
+            observationLevelStatus: ObservationLevelStatus.success,
+            levels: observationLevelsResponse.data,
+          ),
+        );
       } else {
-        emit(state.copyWith(
+        emit(
+          state.copyWith(
             observationLevelStatus: ObservationLevelStatus.failure,
-            failure: HighPriorityException(observationLevelsResponse.message)));
+            failure: HighPriorityException(observationLevelsResponse.message),
+          ),
+        );
       }
-    }on BaseFailure catch (e) {
-      emit(state.copyWith(
+    } on BaseFailure catch (e) {
+      emit(
+        state.copyWith(
           observationLevelStatus: ObservationLevelStatus.failure,
-          failure: HighPriorityException(e.message)));
+          failure: HighPriorityException(e.message),
+        ),
+      );
     } catch (_) {}
   }
 }

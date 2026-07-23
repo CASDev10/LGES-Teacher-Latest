@@ -41,7 +41,9 @@ class ValidationUtils {
 
   /// Form validation for confirm password field.
   static String? validateConfirmPassword(
-      String? confirmPassword, String password) {
+    String? confirmPassword,
+    String password,
+  ) {
     if (confirmPassword == null || confirmPassword.isEmpty) {
       return 'Password is required';
     } else if (confirmPassword != password) {

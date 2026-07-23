@@ -28,19 +28,17 @@ class BaseFailure implements Exception {
           return ServerFailure(dioException.response?.data['message']);
       }
     }
-
     /// Exception on socket/no internet
-    else if (dioException.type == DioExceptionType.unknown && dioException.error is SocketException) {
+    else if (dioException.type == DioExceptionType.unknown &&
+        dioException.error is SocketException) {
       return NoInternetFailure();
     }
-
     /// Exceptions on timeout
     else if (dioException.type == DioExceptionType.connectionTimeout ||
         dioException.type == DioExceptionType.sendTimeout ||
         dioException.type == DioExceptionType.receiveTimeout) {
       return ConnectionFailure('Connection timeout, Please try again');
     }
-
     /// Exception default case
     else {
       return LowPriorityException();

@@ -4,26 +4,25 @@
 
 import 'dart:convert';
 
-BaseResponseModel baseResponseModelFromJson(dynamic json) => BaseResponseModel.fromJson(json);
+BaseResponseModel baseResponseModelFromJson(dynamic json) =>
+    BaseResponseModel.fromJson(json);
 
-String baseResponseModelToJson(BaseResponseModel data) => json.encode(data.toJson());
+String baseResponseModelToJson(BaseResponseModel data) =>
+    json.encode(data.toJson());
 
 class BaseResponseModel {
   String result;
   String message;
   Data? data;
 
-  BaseResponseModel({
-    required this.result,
-    required this.message,
-    this.data,
-  });
+  BaseResponseModel({required this.result, required this.message, this.data});
 
-  factory BaseResponseModel.fromJson(Map<String, dynamic> json) => BaseResponseModel(
-    result: json["result"],
-    message: json["message"],
-    data: json["data"] != null ? Data.fromJson(json["data"]) : null,
-  );
+  factory BaseResponseModel.fromJson(Map<String, dynamic> json) =>
+      BaseResponseModel(
+        result: json["result"],
+        message: json["message"],
+        data: json["data"] != null ? Data.fromJson(json["data"]) : null,
+      );
 
   Map<String, dynamic> toJson() => {
     "result": result,
@@ -35,9 +34,7 @@ class BaseResponseModel {
 class Data {
   Data();
 
-  factory Data.fromJson(Map<String, dynamic> json) => Data(
-  );
+  factory Data.fromJson(Map<String, dynamic> json) => Data();
 
-  Map<String, dynamic> toJson() => {
-  };
+  Map<String, dynamic> toJson() => {};
 }

@@ -30,21 +30,26 @@ class ForgetPasswordCubit extends Cubit<ForgetPasswordState> {
   Future forgetPassword(ForgetPasswordInput input) async {
     emit(state.copyWith(forgetPasswordStatus: ForgetPasswordStatus.loading));
     try {
-      BaseResponseModel response =
-          await _repository.forgetPassword(input);
+      BaseResponseModel response = await _repository.forgetPassword(input);
       if (response.result == ApiResult.success) {
-        emit(state.copyWith(
-          forgetPasswordStatus: ForgetPasswordStatus.success,
-        ));
+        emit(
+          state.copyWith(forgetPasswordStatus: ForgetPasswordStatus.success),
+        );
       } else {
-        emit(state.copyWith(
+        emit(
+          state.copyWith(
             forgetPasswordStatus: ForgetPasswordStatus.failure,
-            failure: HighPriorityException(response.message)));
+            failure: HighPriorityException(response.message),
+          ),
+        );
       }
     } on BaseFailure catch (e) {
-      emit(state.copyWith(
+      emit(
+        state.copyWith(
           forgetPasswordStatus: ForgetPasswordStatus.failure,
-          failure: HighPriorityException(e.message)));
+          failure: HighPriorityException(e.message),
+        ),
+      );
     } catch (_) {}
   }
 }

@@ -12,30 +12,38 @@ part 'submit_attendance_state.dart';
 
 class SubmitAttendanceCubit extends Cubit<SubmitAttendanceState> {
   SubmitAttendanceCubit(this._repository)
-      : super(SubmitAttendanceState.initial());
+    : super(SubmitAttendanceState.initial());
 
   AttendanceRepository _repository;
 
   Future submitAttendance(SubmitAttendanceInput input) async {
     emit(
-        state.copyWith(submitAttendanceStatus: SubmitAttendanceStatus.loading));
+      state.copyWith(submitAttendanceStatus: SubmitAttendanceStatus.loading),
+    );
 
     try {
-      BaseResponseModel response =
-          await _repository.submitAttendance(input);
+      BaseResponseModel response = await _repository.submitAttendance(input);
       if (response.result == ApiResult.success) {
-        emit(state.copyWith(
-          submitAttendanceStatus: SubmitAttendanceStatus.success,
-        ));
+        emit(
+          state.copyWith(
+            submitAttendanceStatus: SubmitAttendanceStatus.success,
+          ),
+        );
       } else {
-        emit(state.copyWith(
+        emit(
+          state.copyWith(
             submitAttendanceStatus: SubmitAttendanceStatus.failure,
-            failure: HighPriorityException(response.message)));
+            failure: HighPriorityException(response.message),
+          ),
+        );
       }
     } on BaseFailure catch (e) {
-      emit(state.copyWith(
+      emit(
+        state.copyWith(
           submitAttendanceStatus: SubmitAttendanceStatus.failure,
-          failure: HighPriorityException(e.message)));
+          failure: HighPriorityException(e.message),
+        ),
+      );
     } catch (_) {}
   }
 }

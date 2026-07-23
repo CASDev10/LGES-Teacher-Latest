@@ -1,30 +1,30 @@
 part of 'add_update_delete_remarks_cubit.dart';
 
-enum AddUpdateDeleteRemarksStatus {
-  none,
-  loading,
-  success,
-  failure,
-}
+enum AddUpdateDeleteRemarksStatus { none, loading, success, failure }
 
-class AddUpdateDeleteRemarksState{
+class AddUpdateDeleteRemarksState {
   final AddUpdateDeleteRemarksStatus remarksStatus;
   final BaseFailure failure;
   final BaseResponseModel? baseResponseModel;
 
-  AddUpdateDeleteRemarksState({required this.remarksStatus, required this.failure, required this.baseResponseModel});
+  AddUpdateDeleteRemarksState({
+    required this.remarksStatus,
+    required this.failure,
+    required this.baseResponseModel,
+  });
 
-  factory AddUpdateDeleteRemarksState.initial(){
+  factory AddUpdateDeleteRemarksState.initial() {
     return AddUpdateDeleteRemarksState(
-        remarksStatus: AddUpdateDeleteRemarksStatus.none,
-        failure: const BaseFailure(), baseResponseModel: null);
+      remarksStatus: AddUpdateDeleteRemarksStatus.none,
+      failure: const BaseFailure(),
+      baseResponseModel: null,
+    );
   }
 
   AddUpdateDeleteRemarksState copyWith({
     AddUpdateDeleteRemarksStatus? remarksStatus,
     BaseFailure? failure,
-    BaseResponseModel? baseResponseModel
-
+    BaseResponseModel? baseResponseModel,
   }) {
     return AddUpdateDeleteRemarksState(
       remarksStatus: remarksStatus ?? this.remarksStatus,
@@ -32,5 +32,4 @@ class AddUpdateDeleteRemarksState{
       baseResponseModel: baseResponseModel ?? this.baseResponseModel,
     );
   }
-
 }

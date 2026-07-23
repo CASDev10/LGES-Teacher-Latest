@@ -3,37 +3,32 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-
 class ConfirmationDialogWidget extends StatelessWidget {
   const ConfirmationDialogWidget({
     Key? key,
     required this.title,
     required this.content,
-    this.onPressYes
+    this.onPressYes,
   }) : super(key: key);
   final String title;
   final String content;
 
   final Function()? onPressYes;
 
-
   @override
   Widget build(BuildContext context) {
-
     return Platform.isAndroid
         ? AlertDialog(
             title: Text(title),
             content: Text(content),
             actions: [
               TextButton(
-                  onPressed: () {
-                    Navigator.pop(context, false);
-                  },
-                  child: const Text('No')),
-              TextButton(
-                onPressed: onPressYes,
-                child: const Text('Yes'),
+                onPressed: () {
+                  Navigator.pop(context, false);
+                },
+                child: const Text('No'),
               ),
+              TextButton(onPressed: onPressYes, child: const Text('Yes')),
             ],
           )
         : CupertinoAlertDialog(

@@ -6,10 +6,12 @@ import 'widgets/upload_picture_dialog_widget.dart';
 
 class DialogUtils {
   // T is always up-to the call side and T is extending the bool, so it is type safe to boolean variables
-  static Future<T> confirmationDialog<T extends bool>(
-      {required BuildContext context,
-      required String title,
-      required String content,required Function()? onPressYes}) async {
+  static Future<T> confirmationDialog<T extends bool>({
+    required BuildContext context,
+    required String title,
+    required String content,
+    required Function()? onPressYes,
+  }) async {
     Object? obj = await showGeneralDialog(
       context: context,
       barrierDismissible: true,
@@ -33,7 +35,8 @@ class DialogUtils {
   }
 
   static Future<T> uploadPictureDialog<T extends String>(
-      BuildContext context) async {
+    BuildContext context,
+  ) async {
     Object? obj = await showGeneralDialog(
       context: context,
       barrierDismissible: true,

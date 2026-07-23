@@ -2,10 +2,7 @@ class RelieverListElement {
   int relieverId;
   String relieverName;
 
-  RelieverListElement({
-    required this.relieverId,
-    required this.relieverName,
-  });
+  RelieverListElement({required this.relieverId, required this.relieverName});
 
   factory RelieverListElement.fromJson(Map<String, dynamic> json) =>
       RelieverListElement(
@@ -14,7 +11,7 @@ class RelieverListElement {
       );
 
   Map<String, dynamic> toJson() => {
-        "RelieverId": relieverId,
-        "RelieverName": relieverName,
-      };
+    "RelieverId": relieverId,
+    "RelieverName": relieverName,
+  };
 }

@@ -1,11 +1,6 @@
 part of 'submit_attendance_cubit.dart';
 
-enum SubmitAttendanceStatus {
-  none,
-  loading,
-  success,
-  failure,
-}
+enum SubmitAttendanceStatus { none, loading, success, failure }
 
 class SubmitAttendanceState {
   final SubmitAttendanceStatus submitAttendanceStatus;
@@ -28,7 +23,8 @@ class SubmitAttendanceState {
     BaseFailure? failure,
   }) {
     return SubmitAttendanceState(
-      submitAttendanceStatus: submitAttendanceStatus ?? this.submitAttendanceStatus,
+      submitAttendanceStatus:
+          submitAttendanceStatus ?? this.submitAttendanceStatus,
       failure: failure ?? this.failure,
     );
   }

@@ -3,10 +3,8 @@ import 'package:flutter/material.dart';
 import '../../../../constants/app_colors.dart';
 
 class BuildDotIndicators extends StatelessWidget {
-  const BuildDotIndicators({
-    Key? key,
-    required this.selectedIndex,
-  }) : super(key: key);
+  const BuildDotIndicators({Key? key, required this.selectedIndex})
+    : super(key: key);
   final int selectedIndex;
 
   @override
@@ -15,9 +13,7 @@ class BuildDotIndicators extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: List.generate(
         3,
-        (index) => DotIndicator(
-          isActive: selectedIndex == index,
-        ),
+        (index) => DotIndicator(isActive: selectedIndex == index),
       ),
     );
   }

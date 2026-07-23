@@ -17,23 +17,30 @@ class ClassesCubit extends Cubit<ClassesState> {
     emit(state.copyWith(classesStatus: ClassesStatus.loading));
 
     try {
-      ClassesModel classesModel =
-      await _repository.getClasses(schoolId);
+      ClassesModel classesModel = await _repository.getClasses(schoolId);
 
       if (classesModel.result == ApiResult.success) {
-        emit(state.copyWith(
-          classesStatus: ClassesStatus.success,
-          classes: classesModel.data,
-        ));
+        emit(
+          state.copyWith(
+            classesStatus: ClassesStatus.success,
+            classes: classesModel.data,
+          ),
+        );
       } else {
-        emit(state.copyWith(
+        emit(
+          state.copyWith(
             classesStatus: ClassesStatus.failure,
-            failure: HighPriorityException(classesModel.message)));
+            failure: HighPriorityException(classesModel.message),
+          ),
+        );
       }
     } on BaseFailure catch (e) {
-      emit(state.copyWith(
+      emit(
+        state.copyWith(
           classesStatus: ClassesStatus.failure,
-          failure: HighPriorityException(e.message)));
+          failure: HighPriorityException(e.message),
+        ),
+      );
     } catch (_) {}
   }
 }

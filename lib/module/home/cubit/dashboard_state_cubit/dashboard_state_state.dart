@@ -1,12 +1,7 @@
 import 'package:lges_teacher_app/core/failures/base_failures/base_failure.dart';
 import 'package:lges_teacher_app/module/home/models/dashboard_stats_model.dart';
 
-enum DashboardStateStatus {
-  none,
-  loading,
-  success,
-  failure,
-}
+enum DashboardStateStatus { none, loading, success, failure }
 
 class DashboardStateState {
   final DashboardStateStatus dashboardStateStatus;

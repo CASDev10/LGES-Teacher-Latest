@@ -73,17 +73,20 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     const SizedBox(height: 90),
-                    const TextView('Forget Password',
-                        textAlign: TextAlign.center,
-                        color: AppColors.primaryDark,
-                        fontSize: 30,
-                        fontWeight: FontWeight.w700),
+                    const TextView(
+                      'Forget Password',
+                      textAlign: TextAlign.center,
+                      color: AppColors.primaryDark,
+                      fontSize: 30,
+                      fontWeight: FontWeight.w700,
+                    ),
                     const SizedBox(height: 14),
                     SizedBox(
                       height: 245,
                       width: 330,
                       child: SvgPicture.asset(
-                          "assets/images/svg/ic_login_screen.svg"),
+                        "assets/images/svg/ic_login_screen.svg",
+                      ),
                     ),
                     const SizedBox(height: 50),
                     CustomTextField(

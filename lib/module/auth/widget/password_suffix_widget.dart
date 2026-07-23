@@ -4,9 +4,11 @@ import 'package:flutter_svg/flutter_svg.dart';
 import '../../../constants/app_colors.dart';
 
 class PasswordSuffixWidget extends StatelessWidget {
-  const PasswordSuffixWidget(
-      {Key? key, required this.isPasswordVisible, required this.onTap})
-      : super(key: key);
+  const PasswordSuffixWidget({
+    Key? key,
+    required this.isPasswordVisible,
+    required this.onTap,
+  }) : super(key: key);
   final bool isPasswordVisible;
   final VoidCallback onTap;
 

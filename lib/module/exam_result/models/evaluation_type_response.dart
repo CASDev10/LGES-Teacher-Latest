@@ -21,41 +21,35 @@ class EvaluationTypeResponse {
     String? result,
     String? message,
     List<EvaluationTypeModel>? data,
-  }) =>
-      EvaluationTypeResponse(
-        result: result ?? this.result,
-        message: message ?? this.message,
-        data: data ?? this.data,
-      );
+  }) => EvaluationTypeResponse(
+    result: result ?? this.result,
+    message: message ?? this.message,
+    data: data ?? this.data,
+  );
 
   factory EvaluationTypeResponse.fromJson(Map<String, dynamic> json) =>
       EvaluationTypeResponse(
         result: json["result"],
         message: json["message"],
         data: List<EvaluationTypeModel>.from(
-            json["data"].map((x) => EvaluationTypeModel.fromJson(x))),
+          json["data"].map((x) => EvaluationTypeModel.fromJson(x)),
+        ),
       );
 
   Map<String, dynamic> toJson() => {
-        "result": result,
-        "message": message,
-        "data": List<dynamic>.from(data.map((x) => x.toJson())),
-      };
+    "result": result,
+    "message": message,
+    "data": List<dynamic>.from(data.map((x) => x.toJson())),
+  };
 }
 
 class EvaluationTypeModel {
   int evaluationTypeId;
   String name;
 
-  EvaluationTypeModel({
-    required this.evaluationTypeId,
-    required this.name,
-  });
+  EvaluationTypeModel({required this.evaluationTypeId, required this.name});
 
-  EvaluationTypeModel copyWith({
-    int? evaluationTypeId,
-    String? name,
-  }) =>
+  EvaluationTypeModel copyWith({int? evaluationTypeId, String? name}) =>
       EvaluationTypeModel(
         evaluationTypeId: evaluationTypeId ?? this.evaluationTypeId,
         name: name ?? this.name,
@@ -68,7 +62,7 @@ class EvaluationTypeModel {
       );
 
   Map<String, dynamic> toJson() => {
-        "EvaluationTypeId": evaluationTypeId,
-        "Name": name,
-      };
+    "EvaluationTypeId": evaluationTypeId,
+    "Name": name,
+  };
 }

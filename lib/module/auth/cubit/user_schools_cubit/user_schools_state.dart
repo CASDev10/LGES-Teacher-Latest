@@ -1,11 +1,6 @@
 part of 'user_schools_cubit.dart';
 
-enum UserSchoolsStatus {
-  none,
-  loading,
-  success,
-  failure,
-}
+enum UserSchoolsStatus { none, loading, success, failure }
 
 class UserSchoolsState {
   final UserSchoolsStatus userSchoolsStatus;

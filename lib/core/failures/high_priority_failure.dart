@@ -1,4 +1,3 @@
-
 import 'failures.dart';
 
 class HighPriorityException extends BaseFailure {

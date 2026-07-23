@@ -196,7 +196,7 @@ class _HomeScreenState extends State<HomeScreen> {
               return SingleChildScrollView(
                 child: Column(
                   children: [
-                    Container( 
+                    Container(
                       padding: EdgeInsets.only(
                         top: MediaQuery.of(context).padding.top + 10,
                         bottom: 8,
@@ -269,39 +269,72 @@ class _HomeScreenState extends State<HomeScreen> {
                               ],
                             ),
                             const SizedBox(height: 10),
-                            BlocBuilder<DashboardStateCubit, DashboardStateState>(
+                            BlocBuilder<
+                              DashboardStateCubit,
+                              DashboardStateState
+                            >(
                               builder: (context, dashboardState) {
-                                if (dashboardState.dashboardStateStatus == DashboardStateStatus.loading) {
+                                if (dashboardState.dashboardStateStatus ==
+                                    DashboardStateStatus.loading) {
                                   return const SizedBox(
                                     height: 160,
                                     child: Center(
                                       child: CircularProgressIndicator(
-                                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                        valueColor:
+                                            AlwaysStoppedAnimation<Color>(
+                                              Colors.white,
+                                            ),
                                       ),
                                     ),
                                   );
                                 }
 
-                                if (dashboardState.dashboardStateStatus == DashboardStateStatus.success && dashboardState.dashboardStats != null) {
+                                if (dashboardState.dashboardStateStatus ==
+                                        DashboardStateStatus.success &&
+                                    dashboardState.dashboardStats != null) {
                                   final stats = dashboardState.dashboardStats!;
-                                  final studentStat = stats.studentAttendanceStatList != null && stats.studentAttendanceStatList!.isNotEmpty
+                                  final studentStat =
+                                      stats.studentAttendanceStatList != null &&
+                                          stats
+                                              .studentAttendanceStatList!
+                                              .isNotEmpty
                                       ? stats.studentAttendanceStatList!.first
                                       : null;
-                                  final teacherStat = stats.employeeAtteandanceStatList != null && stats.employeeAtteandanceStatList!.isNotEmpty
+                                  final teacherStat =
+                                      stats.employeeAtteandanceStatList !=
+                                              null &&
+                                          stats
+                                              .employeeAtteandanceStatList!
+                                              .isNotEmpty
                                       ? stats.employeeAtteandanceStatList!.first
                                       : null;
 
-                                  if (studentStat != null || teacherStat != null) {
+                                  if (studentStat != null ||
+                                      teacherStat != null) {
                                     return TodayStatsCard(
-                                      studentPresent: studentStat?.presentCount ?? 0,
-                                      studentAbsent: studentStat?.absentCount ?? 0,
-                                      studentLeave: studentStat?.leaveCount ?? 0,
-                                      teacherPresent: teacherStat?.presentCount ?? 0,
-                                      teacherAbsent: teacherStat?.absentCount ?? 0,
-                                      teacherLeave: teacherStat?.leaveCount ?? 0,
-                                      studentTotal:studentStat?.totalStudent??0 ,
-                                      teacherTotal: teacherStat?.totalEmployees??0,
-                                      totalDiaries: dashboardState.dashboardStats?.diaryStatList?.first.diariesSent??0,
+                                      studentPresent:
+                                          studentStat?.presentCount ?? 0,
+                                      studentAbsent:
+                                          studentStat?.absentCount ?? 0,
+                                      studentLeave:
+                                          studentStat?.leaveCount ?? 0,
+                                      teacherPresent:
+                                          teacherStat?.presentCount ?? 0,
+                                      teacherAbsent:
+                                          teacherStat?.absentCount ?? 0,
+                                      teacherLeave:
+                                          teacherStat?.leaveCount ?? 0,
+                                      studentTotal:
+                                          studentStat?.totalStudent ?? 0,
+                                      teacherTotal:
+                                          teacherStat?.totalEmployees ?? 0,
+                                      totalDiaries:
+                                          dashboardState
+                                              .dashboardStats
+                                              ?.diaryStatList
+                                              ?.first
+                                              .diariesSent ??
+                                          0,
                                     );
                                   }
                                 }
@@ -330,7 +363,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       padding: const EdgeInsets.symmetric(horizontal: 20),
                       child: Column(
                         children: [
-                         Row(
+                          Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Expanded(
@@ -727,7 +760,9 @@ class TodayStatsCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final String formattedDate = DateFormat('EEEE, MMMM d, y').format(DateTime.now());
+    final String formattedDate = DateFormat(
+      'EEEE, MMMM d, y',
+    ).format(DateTime.now());
 
     return Container(
       padding: const EdgeInsets.all(10),
@@ -787,24 +822,21 @@ class TodayStatsCard extends StatelessWidget {
                   ],
                 ),
               ),
-            const SizedBox(width: 10),
-             Text(
-                      "Total Diaries: ${totalDiaries??0}",
-                      style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w800,
-                        color: AppColors.primaryDark,
-                        letterSpacing: 0.2,
-                      ),
-                    ),
-             ],
+              const SizedBox(width: 10),
+              Text(
+                "Total Diaries: ${totalDiaries ?? 0}",
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w800,
+                  color: AppColors.primaryDark,
+                  letterSpacing: 0.2,
+                ),
+              ),
+            ],
           ),
           const SizedBox(height: 8),
           // Subtle Divider
-          Container(
-            height: 1,
-            color: AppColors.lightGreyColor,
-          ),
+          Container(height: 1, color: AppColors.lightGreyColor),
           const SizedBox(height: 12),
           // Side-by-side Charts with a vertical divider
           Row(
@@ -838,10 +870,7 @@ class TodayStatsCard extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           // Divider before Legend
-          Container(
-            height: 1,
-            color: AppColors.lightGreyColor,
-          ),
+          Container(height: 1, color: AppColors.lightGreyColor),
           const SizedBox(height: 8),
           // Shared Legend at the bottom
           Row(
@@ -866,10 +895,7 @@ class TodayStatsCard extends StatelessWidget {
         Container(
           width: 7,
           height: 7,
-          decoration: BoxDecoration(
-            color: color,
-            shape: BoxShape.circle,
-          ),
+          decoration: BoxDecoration(color: color, shape: BoxShape.circle),
         ),
         const SizedBox(width: 4),
         Text(
@@ -883,7 +909,9 @@ class TodayStatsCard extends StatelessWidget {
       ],
     );
   }
-}class MiniBarChart extends StatelessWidget {
+}
+
+class MiniBarChart extends StatelessWidget {
   final String title;
   final int present;
   final int absent;
@@ -901,7 +929,11 @@ class TodayStatsCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final double maxVal = [present, absent, leave].reduce((a, b) => a > b ? a : b).toDouble();
+    final double maxVal = [
+      present,
+      absent,
+      leave,
+    ].reduce((a, b) => a > b ? a : b).toDouble();
     final double maxY = maxVal > 0 ? maxVal * 1.3 : 10.0;
 
     return Column(
@@ -997,8 +1029,12 @@ class TodayStatsCard extends StatelessWidget {
                     },
                   ),
                 ),
-                topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                topTitles: const AxisTitles(
+                  sideTitles: SideTitles(showTitles: false),
+                ),
+                rightTitles: const AxisTitles(
+                  sideTitles: SideTitles(showTitles: false),
+                ),
               ),
               gridData: FlGridData(
                 show: true,
@@ -1023,8 +1059,14 @@ class TodayStatsCard extends StatelessWidget {
               borderData: FlBorderData(
                 show: true,
                 border: Border(
-                  left: BorderSide(color: AppColors.greyColor.withOpacity(0.5), width: 1),
-                  bottom: BorderSide(color: AppColors.greyColor.withOpacity(0.5), width: 1),
+                  left: BorderSide(
+                    color: AppColors.greyColor.withOpacity(0.5),
+                    width: 1,
+                  ),
+                  bottom: BorderSide(
+                    color: AppColors.greyColor.withOpacity(0.5),
+                    width: 1,
+                  ),
                   top: BorderSide.none,
                   right: BorderSide.none,
                 ),
@@ -1042,7 +1084,9 @@ class TodayStatsCard extends StatelessWidget {
                         end: Alignment.topCenter,
                       ),
                       width: 10,
-                      borderRadius: const BorderRadius.vertical(top: Radius.circular(3)),
+                      borderRadius: const BorderRadius.vertical(
+                        top: Radius.circular(3),
+                      ),
                     ),
                   ],
                 ),
@@ -1058,7 +1102,9 @@ class TodayStatsCard extends StatelessWidget {
                         end: Alignment.topCenter,
                       ),
                       width: 10,
-                      borderRadius: const BorderRadius.vertical(top: Radius.circular(3)),
+                      borderRadius: const BorderRadius.vertical(
+                        top: Radius.circular(3),
+                      ),
                     ),
                   ],
                 ),
@@ -1074,7 +1120,9 @@ class TodayStatsCard extends StatelessWidget {
                         end: Alignment.topCenter,
                       ),
                       width: 10,
-                      borderRadius: const BorderRadius.vertical(top: Radius.circular(3)),
+                      borderRadius: const BorderRadius.vertical(
+                        top: Radius.circular(3),
+                      ),
                     ),
                   ],
                 ),

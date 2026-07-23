@@ -1,11 +1,6 @@
 part of 'login_cubit.dart';
 
-enum LoginStatus {
-  none,
-  submitting,
-  success,
-  failure,
-}
+enum LoginStatus { none, submitting, success, failure }
 
 class LoginState {
   final LoginStatus loginStatus;

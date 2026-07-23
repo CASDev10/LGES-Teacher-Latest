@@ -10,7 +10,11 @@ class ObservationLevelTile extends StatefulWidget {
   final ObservationLevelModel observationLevelModel;
   final void Function(bool value)? onButtonPressYes;
 
-  const ObservationLevelTile({super.key, required this.observationLevelModel, this.onButtonPressYes});
+  const ObservationLevelTile({
+    super.key,
+    required this.observationLevelModel,
+    this.onButtonPressYes,
+  });
 
   @override
   State<ObservationLevelTile> createState() => _ObservationLevelTileState();
@@ -32,7 +36,7 @@ class _ObservationLevelTileState extends State<ObservationLevelTile> {
             blurRadius: 8,
             spreadRadius: .5,
             offset: Offset(0.0, 0.0),
-          )
+          ),
         ],
       ),
       child: Column(
@@ -43,7 +47,9 @@ class _ObservationLevelTileState extends State<ObservationLevelTile> {
             decoration: BoxDecoration(
               color: AppColors.lightGreyColor,
               borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(15), topRight: Radius.circular(15)),
+                topLeft: Radius.circular(15),
+                topRight: Radius.circular(15),
+              ),
             ),
             child: TextView(
               'Level',
@@ -83,9 +89,7 @@ class _ObservationLevelTileState extends State<ObservationLevelTile> {
                   ),
                   padding: EdgeInsets.symmetric(vertical: 8),
                 ),
-                SizedBox(
-                  width: 10,
-                ),
+                SizedBox(width: 10),
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 8),
                   child: CustomButton(
@@ -108,5 +112,4 @@ class _ObservationLevelTileState extends State<ObservationLevelTile> {
       ),
     );
   }
-
 }

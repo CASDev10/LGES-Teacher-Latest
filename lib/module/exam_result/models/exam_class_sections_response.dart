@@ -4,9 +4,11 @@
 
 import 'dart:convert';
 
-ExamClassSectionsResponse examClassSectionsResponseFromJson(dynamic json) => ExamClassSectionsResponse.fromJson(json);
+ExamClassSectionsResponse examClassSectionsResponseFromJson(dynamic json) =>
+    ExamClassSectionsResponse.fromJson(json);
 
-String examClassSectionsResponseToJson(ExamClassSectionsResponse data) => json.encode(data.toJson());
+String examClassSectionsResponseToJson(ExamClassSectionsResponse data) =>
+    json.encode(data.toJson());
 
 class ExamClassSectionsResponse {
   String result;
@@ -19,11 +21,14 @@ class ExamClassSectionsResponse {
     required this.data,
   });
 
-  factory ExamClassSectionsResponse.fromJson(Map<String, dynamic> json) => ExamClassSectionsResponse(
-    result: json["result"],
-    message: json["message"],
-    data: List<ExamClassSectionModel>.from(json["data"].map((x) => ExamClassSectionModel.fromJson(x))),
-  );
+  factory ExamClassSectionsResponse.fromJson(Map<String, dynamic> json) =>
+      ExamClassSectionsResponse(
+        result: json["result"],
+        message: json["message"],
+        data: List<ExamClassSectionModel>.from(
+          json["data"].map((x) => ExamClassSectionModel.fromJson(x)),
+        ),
+      );
 
   Map<String, dynamic> toJson() => {
     "result": result,
@@ -47,13 +52,14 @@ class ExamClassSectionModel {
     required this.sessionIdFk,
   });
 
-  factory ExamClassSectionModel.fromJson(Map<String, dynamic> json) => ExamClassSectionModel(
-    sectionId: json["SectionId"],
-    sessionName: json["SessionName"],
-    sectionName: json["SectionName"],
-    sectionCode: json["SectionCode"],
-    sessionIdFk: json["SessionIdFk"],
-  );
+  factory ExamClassSectionModel.fromJson(Map<String, dynamic> json) =>
+      ExamClassSectionModel(
+        sectionId: json["SectionId"],
+        sessionName: json["SessionName"],
+        sectionName: json["SectionName"],
+        sectionCode: json["SectionCode"],
+        sessionIdFk: json["SessionIdFk"],
+      );
 
   Map<String, dynamic> toJson() => {
     "SectionId": sectionId,

@@ -4,9 +4,11 @@
 
 import 'dart:convert';
 
-ObservationLevelsResponse observationLevelsResponseFromJson(dynamic json) => ObservationLevelsResponse.fromJson(json);
+ObservationLevelsResponse observationLevelsResponseFromJson(dynamic json) =>
+    ObservationLevelsResponse.fromJson(json);
 
-String observationLevelsResponseToJson(ObservationLevelsResponse data) => json.encode(data.toJson());
+String observationLevelsResponseToJson(ObservationLevelsResponse data) =>
+    json.encode(data.toJson());
 
 class ObservationLevelsResponse {
   String result;
@@ -19,11 +21,14 @@ class ObservationLevelsResponse {
     required this.data,
   });
 
-  factory ObservationLevelsResponse.fromJson(Map<String, dynamic> json) => ObservationLevelsResponse(
-    result: json["result"],
-    message: json["message"],
-    data: List<ObservationLevelModel>.from(json["data"].map((x) => ObservationLevelModel.fromJson(x))),
-  );
+  factory ObservationLevelsResponse.fromJson(Map<String, dynamic> json) =>
+      ObservationLevelsResponse(
+        result: json["result"],
+        message: json["message"],
+        data: List<ObservationLevelModel>.from(
+          json["data"].map((x) => ObservationLevelModel.fromJson(x)),
+        ),
+      );
 
   Map<String, dynamic> toJson() => {
     "result": result,
@@ -55,17 +60,22 @@ class ObservationLevelModel {
     required this.deletedDate,
   });
 
-  factory ObservationLevelModel.fromJson(Map<String, dynamic> json) => ObservationLevelModel(
-    levelId: json["LevelId"],
-    level: json["Level"],
-    isDeleted: json["IsDeleted"],
-    createdBy: json["CreatedBy"],
-    createdDate: DateTime.parse(json["CreatedDate"]),
-    modifiedBy: json["ModifiedBy"],
-    modifiedDate: json["ModifiedDate"] == null ? null : DateTime.parse(json["ModifiedDate"]),
-    deletedBy: json["DeletedBy"],
-    deletedDate: json["DeletedDate"] == null ? null : DateTime.parse(json["DeletedDate"]),
-  );
+  factory ObservationLevelModel.fromJson(Map<String, dynamic> json) =>
+      ObservationLevelModel(
+        levelId: json["LevelId"],
+        level: json["Level"],
+        isDeleted: json["IsDeleted"],
+        createdBy: json["CreatedBy"],
+        createdDate: DateTime.parse(json["CreatedDate"]),
+        modifiedBy: json["ModifiedBy"],
+        modifiedDate: json["ModifiedDate"] == null
+            ? null
+            : DateTime.parse(json["ModifiedDate"]),
+        deletedBy: json["DeletedBy"],
+        deletedDate: json["DeletedDate"] == null
+            ? null
+            : DateTime.parse(json["DeletedDate"]),
+      );
 
   Map<String, dynamic> toJson() => {
     "LevelId": levelId,

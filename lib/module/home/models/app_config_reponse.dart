@@ -4,9 +4,11 @@
 
 import 'dart:convert';
 
-MobileAppConfigResponse mobileAppConfigResponseFromJson(dynamic json) => MobileAppConfigResponse.fromJson(json);
+MobileAppConfigResponse mobileAppConfigResponseFromJson(dynamic json) =>
+    MobileAppConfigResponse.fromJson(json);
 
-String mobileAppConfigResponseToJson(MobileAppConfigResponse data) => json.encode(data.toJson());
+String mobileAppConfigResponseToJson(MobileAppConfigResponse data) =>
+    json.encode(data.toJson());
 
 class MobileAppConfigResponse {
   String result;
@@ -19,11 +21,12 @@ class MobileAppConfigResponse {
     required this.data,
   });
 
-  factory MobileAppConfigResponse.fromJson(Map<String, dynamic> json) => MobileAppConfigResponse(
-    result: json["result"],
-    message: json["message"],
-    data: AppConfigModel.fromJson(json["data"]),
-  );
+  factory MobileAppConfigResponse.fromJson(Map<String, dynamic> json) =>
+      MobileAppConfigResponse(
+        result: json["result"],
+        message: json["message"],
+        data: AppConfigModel.fromJson(json["data"]),
+      );
 
   Map<String, dynamic> toJson() => {
     "result": result,
@@ -36,31 +39,32 @@ class AppConfigModel {
   List<AttendanceTime> attendanceTime;
   List<AllPrivilege> allPrivilege;
 
-  AppConfigModel({
-    required this.attendanceTime,
-    required this.allPrivilege,
-  });
+  AppConfigModel({required this.attendanceTime, required this.allPrivilege});
 
   factory AppConfigModel.fromJson(Map<String, dynamic> json) => AppConfigModel(
-    attendanceTime: List<AttendanceTime>.from(json["AttendanceTime"].map((x) => AttendanceTime.fromJson(x))),
-    allPrivilege: List<AllPrivilege>.from(json["AllPrivilege"].map((x) => AllPrivilege.fromJson(x))),
+    attendanceTime: List<AttendanceTime>.from(
+      json["AttendanceTime"].map((x) => AttendanceTime.fromJson(x)),
+    ),
+    allPrivilege: List<AllPrivilege>.from(
+      json["AllPrivilege"].map((x) => AllPrivilege.fromJson(x)),
+    ),
   );
 
   Map<String, dynamic> toJson() => {
     "AttendanceTime": List<dynamic>.from(attendanceTime.map((x) => x.toJson())),
     "AllPrivilege": List<dynamic>.from(allPrivilege.map((x) => x.toJson())),
   };
-  static  AppConfigModel empty = AppConfigModel(attendanceTime: [], allPrivilege: []);
+  static AppConfigModel empty = AppConfigModel(
+    attendanceTime: [],
+    allPrivilege: [],
+  );
 }
 
 class AllPrivilege {
   int privilegeId;
   String description;
 
-  AllPrivilege({
-    required this.privilegeId,
-    required this.description,
-  });
+  AllPrivilege({required this.privilegeId, required this.description});
 
   factory AllPrivilege.fromJson(Map<String, dynamic> json) => AllPrivilege(
     privilegeId: json["PrivilegeId"],
@@ -91,6 +95,4 @@ class AttendanceTime {
     "AttendanceStartTime": attendanceStartTime,
     "AttendanceEndTime": attendanceEndTime,
   };
-
-
 }

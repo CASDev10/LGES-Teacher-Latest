@@ -12,38 +12,46 @@ class LoginCubit extends Cubit<LoginState> {
   final AuthRepository _authenticationRepo;
 
   void toggleShowPassword() => emit(
-        state.copyWith(
-          isPasswordVisible: !state.isPasswordHidden,
-          loginStatus: LoginStatus.none,
-        ),
-      );
+    state.copyWith(
+      isPasswordVisible: !state.isPasswordHidden,
+      loginStatus: LoginStatus.none,
+    ),
+  );
 
-  void enableAutoValidateMode() => emit(
-        state.copyWith(
-          isAutoValidate: true,
-          loginStatus: LoginStatus.none,
-        ),
-      );
+  void enableAutoValidateMode() =>
+      emit(state.copyWith(isAutoValidate: true, loginStatus: LoginStatus.none));
 
-  Future login(LoginInput loginInput,bool isKeepMeLoggedIn) async {
+  Future login(LoginInput loginInput, bool isKeepMeLoggedIn) async {
     emit(state.copyWith(loginStatus: LoginStatus.submitting));
     try {
-      AuthResponse authResponse = await _authenticationRepo.login(loginInput,isKeepMeLoggedIn);
+      AuthResponse authResponse = await _authenticationRepo.login(
+        loginInput,
+        isKeepMeLoggedIn,
+      );
       if (authResponse.result == ApiResult.success) {
         emit(state.copyWith(loginStatus: LoginStatus.success));
       } else {
-        emit(state.copyWith(
+        emit(
+          state.copyWith(
             loginStatus: LoginStatus.failure,
-            failure: HighPriorityException(authResponse.message)));
+            failure: HighPriorityException(authResponse.message),
+          ),
+        );
       }
     } on BaseFailure catch (exception) {
-      emit(state.copyWith(
+      emit(
+        state.copyWith(
           loginStatus: LoginStatus.failure,
-          failure: HighPriorityException(exception.message)));
+          failure: HighPriorityException(exception.message),
+        ),
+      );
     } catch (e) {
-      emit(state.copyWith(
+      emit(
+        state.copyWith(
           loginStatus: LoginStatus.failure,
-          failure: HighPriorityException(e.toString())));
+          failure: HighPriorityException(e.toString()),
+        ),
+      );
     }
   }
 }

@@ -56,371 +56,405 @@ class _SubmitObservationScreenState extends State<SubmitObservationScreen> {
     return MultiBlocProvider(
       providers: [
         BlocProvider(
-            create: (context) =>
-                FetchObservationAreasCubit(sl())..getObservationAreas()),
+          create: (context) =>
+              FetchObservationAreasCubit(sl())..getObservationAreas(),
+        ),
         BlocProvider(create: (context) => SubmitObservationCubit(sl())),
       ],
       child: BaseScaffold(
         backgroundColor: AppColors.primaryDark,
-        appBar: const CustomAppbar(
-          'Teacher Observation',
-          centerTitle: true,
-        ),
+        appBar: const CustomAppbar('Teacher Observation', centerTitle: true),
         body: Container(
           width: double.infinity,
           height: MediaQuery.of(context).size.height,
           decoration: const BoxDecoration(
             color: AppColors.whiteColor,
             borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(50), topRight: Radius.circular(50)),
+              topLeft: Radius.circular(50),
+              topRight: Radius.circular(50),
+            ),
           ),
-          child: BlocBuilder<FetchObservationAreasCubit,
-              FetchObservationAreasState>(
-            builder: (context, state) {
-              if (state.fetchObservationAreasStatus ==
-                  FetchObservationAreasStatus.loading) {
-                return Center(
-                  child: LoadingIndicator(),
-                );
-              } else if (state.fetchObservationAreasStatus ==
-                  FetchObservationAreasStatus.success) {
-                return SingleChildScrollView(
-                  padding: EdgeInsets.all(30),
-                  child: Column(
-                    children: [
-                      SizedBox(
-                        height: 10,
-                      ),
-                      CustomTextField(
-                        hintText: "Search",
-                        height: 50,
-                        bottomMargin: 0,
-                      ),
-                      Container(
-                        margin: EdgeInsets.only(bottom: 30, top: 20),
-                        decoration: const BoxDecoration(
-                          color: AppColors.whiteColor,
-                          borderRadius: BorderRadius.all(Radius.circular(15)),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Color(0xffDDDDDD),
-                              blurRadius: 8,
-                              spreadRadius: .5,
-                              offset: Offset(0.0, 0.0),
-                            )
-                          ],
-                        ),
-                        child: Column(
-                          children: [
-                            Container(
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: 20, vertical: 10),
-                              decoration: BoxDecoration(
-                                color: AppColors.lightGreyColor,
-                                borderRadius: BorderRadius.only(
-                                    topLeft: Radius.circular(15),
-                                    topRight: Radius.circular(15)),
-                              ),
-                              child: Row(
-                                children: [
-                                  Expanded(
-                                      child: TextView(
-                                    'Code',
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.normal,
-                                    textAlign: TextAlign.start,
-                                    color: AppColors.blackColor,
-                                  )),
-                                  Expanded(
-                                      child: TextView(
-                                    widget.employeeModel.empCode,
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.bold,
-                                    textAlign: TextAlign.end,
-                                    color: AppColors.primaryDark,
-                                  )),
-                                ],
-                              ),
-                            ),
-                            SizedBox(
-                              height: 6,
-                            ),
-                            Container(
-                              color: AppColors.lightGreyColor,
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: 20, vertical: 10),
-                              child: Row(
-                                children: [
-                                  Expanded(
-                                    child: TextView(
-                                      'Name',
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.normal,
-                                      textAlign: TextAlign.start,
-                                      color: AppColors.blackColor,
-                                    ),
-                                    flex: 1,
-                                  ),
-                                  Expanded(
-                                    child: TextView(
-                                      widget.employeeModel.empName,
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.bold,
-                                      textAlign: TextAlign.end,
-                                      color: AppColors.primaryDark,
-                                    ),
-                                    flex: 2,
-                                  ),
-                                ],
-                              ),
-                            ),
-                            SizedBox(
-                              height: 6,
-                            ),
-                            Container(
-                              color: AppColors.lightGreyColor,
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: 20, vertical: 10),
-                              child: Row(
-                                children: [
-                                  Expanded(
-                                      child: TextView(
-                                    'Department',
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.normal,
-                                    textAlign: TextAlign.start,
-                                    color: AppColors.blackColor,
-                                  )),
-                                  Expanded(
-                                      child: TextView(
-                                    widget.employeeModel.department,
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.bold,
-                                    textAlign: TextAlign.end,
-                                    color: AppColors.primaryDark,
-                                  )),
-                                ],
-                              ),
-                            ),
-                            SizedBox(
-                              height: 6,
-                            ),
-                            Container(
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: 20, vertical: 10),
-                              decoration: BoxDecoration(
-                                color: AppColors.lightGreyColor,
-                                borderRadius: BorderRadius.only(
-                                    bottomLeft: Radius.circular(15),
-                                    bottomRight: Radius.circular(15)),
-                              ),
-                              child: Row(
-                                children: [
-                                  Expanded(
-                                      child: TextView(
-                                    'Job Status',
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.normal,
-                                    textAlign: TextAlign.start,
-                                    color: AppColors.blackColor,
-                                  )),
-                                  Expanded(
-                                      child: TextView(
-                                    widget.employeeModel.jobStatus,
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.bold,
-                                    textAlign: TextAlign.end,
-                                    color: AppColors.primaryDark,
-                                  )),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Container(
-                        height: 50,
-                        decoration: BoxDecoration(
-                            color: AppColors.primaryDark,
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(12))),
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: Padding(
-                                padding: EdgeInsets.all(2),
-                                child: CustomButton(
-                                  onPressed: () {},
-                                  title: 'Area',
-                                  height: 44,
-                                ),
-                              ),
-                            ),
-                            Container(
-                              height: double.infinity,
+          child:
+              BlocBuilder<
+                FetchObservationAreasCubit,
+                FetchObservationAreasState
+              >(
+                builder: (context, state) {
+                  if (state.fetchObservationAreasStatus ==
+                      FetchObservationAreasStatus.loading) {
+                    return Center(child: LoadingIndicator());
+                  } else if (state.fetchObservationAreasStatus ==
+                      FetchObservationAreasStatus.success) {
+                    return SingleChildScrollView(
+                      padding: EdgeInsets.all(30),
+                      child: Column(
+                        children: [
+                          SizedBox(height: 10),
+                          CustomTextField(
+                            hintText: "Search",
+                            height: 50,
+                            bottomMargin: 0,
+                          ),
+                          Container(
+                            margin: EdgeInsets.only(bottom: 30, top: 20),
+                            decoration: const BoxDecoration(
                               color: AppColors.whiteColor,
-                              width: 2,
-                            ),
-                            Padding(
-                              padding: EdgeInsets.all(2),
-                              child: CustomButton(
-                            width: 150,
-                            onPressed: () {},
-                            title: 'Remarks',
-                            height: 44,
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(15),
                               ),
-                            )
-                          ],
-                        ),
-                      ),
-                      SizedBox(
-                        height: 20,
-                      ),
-                      Column(
-                        children: List.generate(
-                            state.observationModel!.observationArea.length,
-                            (index) {
-                          return AreaRemarksTile(
-                              areaName: state.observationModel!
-                                  .observationArea[index].areaName,
-                              observationRemarks:
-                                  state.observationModel!.observationRemarks,
-                              observationArea:
-                                  state.observationModel!.observationArea);
-                        }),
-                      ),
-                      SizedBox(
-                        height: 40,
-                      ),
-                      CustomDropDown(
-                        allPadding: 0,
-                        horizontalPadding: 15,
-                        isOutline: false,
-                        hintColor: AppColors.primaryDark,
-                        iconColor: AppColors.primaryDark,
-                        suffixIconPath: '',
-                        items: state.observationModel!.observationLevel
-                            .map((levels) => levels.level)
-                            .toList(),
-                        hint: 'Select Level',
-                        onSelect: (String value) {
-                          observationLevel = state.observationModel!.observationLevel
-                              .firstWhere((element) => element.level == value);
-                        },
-                      ),
-                      SizedBox(
-                        height: 16,
-                      ),
-                      CustomTextField(
-                        hintText: 'Select Date',
-                        height: 50,
-                        readOnly: true,
-                        bottomMargin: 0,
-                        controller: dateTextController,
-                        fontWeight: FontWeight.normal,
-                        inputType: TextInputType.text,
-                        fillColor: AppColors.lightGreyColor,
-                        hintColor: AppColors.primaryDark,
-                        suffixWidget: SvgPicture.asset(
-                          'assets/images/svg/ic_drop_down.svg',
-                          color: AppColors.primaryDark,
-                        ),
-                        onTap: () async {
-                          String date =
-                              await CustomDateTimePicker.selectDiaryDate(
-                                  context);
-                          DateTime dateTime =
-                              DateFormat("dd/MM/yyyy").parse(date);
-                          dateTextController.text =
-                              DateFormat("yyyy/MM/dd").format(dateTime);
-                        },
-                      ),
-                      SizedBox(
-                        height: 16,
-                      ),
-                      CustomTextField(
-                        hintText: 'Feedback',
-                        bottomMargin: 0,
-                        controller: feedbackController,
-                        maxLines: 10,
-                        fontWeight: FontWeight.normal,
-                        inputType: TextInputType.text,
-                        fillColor: AppColors.lightGreyColor,
-                        hintColor: AppColors.grey,
-                      ),
-                      SizedBox(
-                        height: 20,
-                      ),
-                      BlocConsumer<SubmitObservationCubit,
-                          SubmitObservationState>(
-                        listener: (context, state) {
-                          if(state.submitObservationStatus == SubmitObservationStatus.loading){
-                            DisplayUtils.showLoader();
-                          }else if(state.submitObservationStatus == SubmitObservationStatus.success){
-                            DisplayUtils.removeLoader();
-                            NavRouter.pop(context);
-                            DisplayUtils.showToast(context, "Teacher observation added successfully!");
-                          }else if(state.submitObservationStatus == SubmitObservationStatus.failure){
-                            DisplayUtils.removeLoader();
-                            DisplayUtils.showToast(context, state.failure.message);
-                          }
-                        },
-                        builder: (context, state) {
-                          return CustomButton(
-                            onPressed: () {
-                              if (areaRemarksList.isNotEmpty) {
-                                if(observationLevel!= null){
-                                  if (dateTextController.text.isNotEmpty) {
-                                    SubmitObservationInput input =
-                                    SubmitObservationInput(
-                                        empId: widget.employeeModel.empId,
-                                        submitDate: dateTextController.text
-                                            .trim()
-                                            .toString(),
-                                        levelIdFk: observationLevel!.levelId,
-                                        feedBack: feedbackController.text
-                                            .trim()
-                                            .toString(),
-                                        areaRemarks: areaRemarksList,
-                                        ucLoginUserId:
-                                        authRepository.user.userId,
-                                        ucUserFullName: "",
-                                        ucEntityId:
-                                        authRepository.user.entityId,
-                                        ucSchoolId:
-                                        authRepository.user.schoolId!);
-                                    print(jsonEncode(input));
-                                    context.read<SubmitObservationCubit>()..submitTeacherObservation(input);
-                                  } else {
-                                    DisplayUtils.showToast(
-                                        context, "Please select date!");
-                                  }
-                                }else {
-                                  DisplayUtils.showToast(
-                                      context, "Please select level!");
-                                }
-                              } else {
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Color(0xffDDDDDD),
+                                  blurRadius: 8,
+                                  spreadRadius: .5,
+                                  offset: Offset(0.0, 0.0),
+                                ),
+                              ],
+                            ),
+                            child: Column(
+                              children: [
+                                Container(
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: 20,
+                                    vertical: 10,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: AppColors.lightGreyColor,
+                                    borderRadius: BorderRadius.only(
+                                      topLeft: Radius.circular(15),
+                                      topRight: Radius.circular(15),
+                                    ),
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      Expanded(
+                                        child: TextView(
+                                          'Code',
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.normal,
+                                          textAlign: TextAlign.start,
+                                          color: AppColors.blackColor,
+                                        ),
+                                      ),
+                                      Expanded(
+                                        child: TextView(
+                                          widget.employeeModel.empCode,
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.bold,
+                                          textAlign: TextAlign.end,
+                                          color: AppColors.primaryDark,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                SizedBox(height: 6),
+                                Container(
+                                  color: AppColors.lightGreyColor,
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: 20,
+                                    vertical: 10,
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      Expanded(
+                                        child: TextView(
+                                          'Name',
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.normal,
+                                          textAlign: TextAlign.start,
+                                          color: AppColors.blackColor,
+                                        ),
+                                        flex: 1,
+                                      ),
+                                      Expanded(
+                                        child: TextView(
+                                          widget.employeeModel.empName,
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.bold,
+                                          textAlign: TextAlign.end,
+                                          color: AppColors.primaryDark,
+                                        ),
+                                        flex: 2,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                SizedBox(height: 6),
+                                Container(
+                                  color: AppColors.lightGreyColor,
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: 20,
+                                    vertical: 10,
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      Expanded(
+                                        child: TextView(
+                                          'Department',
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.normal,
+                                          textAlign: TextAlign.start,
+                                          color: AppColors.blackColor,
+                                        ),
+                                      ),
+                                      Expanded(
+                                        child: TextView(
+                                          widget.employeeModel.department,
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.bold,
+                                          textAlign: TextAlign.end,
+                                          color: AppColors.primaryDark,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                SizedBox(height: 6),
+                                Container(
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: 20,
+                                    vertical: 10,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: AppColors.lightGreyColor,
+                                    borderRadius: BorderRadius.only(
+                                      bottomLeft: Radius.circular(15),
+                                      bottomRight: Radius.circular(15),
+                                    ),
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      Expanded(
+                                        child: TextView(
+                                          'Job Status',
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.normal,
+                                          textAlign: TextAlign.start,
+                                          color: AppColors.blackColor,
+                                        ),
+                                      ),
+                                      Expanded(
+                                        child: TextView(
+                                          widget.employeeModel.jobStatus,
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.bold,
+                                          textAlign: TextAlign.end,
+                                          color: AppColors.primaryDark,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Container(
+                            height: 50,
+                            decoration: BoxDecoration(
+                              color: AppColors.primaryDark,
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(12),
+                              ),
+                            ),
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: Padding(
+                                    padding: EdgeInsets.all(2),
+                                    child: CustomButton(
+                                      onPressed: () {},
+                                      title: 'Area',
+                                      height: 44,
+                                    ),
+                                  ),
+                                ),
+                                Container(
+                                  height: double.infinity,
+                                  color: AppColors.whiteColor,
+                                  width: 2,
+                                ),
+                                Padding(
+                                  padding: EdgeInsets.all(2),
+                                  child: CustomButton(
+                                    width: 150,
+                                    onPressed: () {},
+                                    title: 'Remarks',
+                                    height: 44,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          SizedBox(height: 20),
+                          Column(
+                            children: List.generate(
+                              state.observationModel!.observationArea.length,
+                              (index) {
+                                return AreaRemarksTile(
+                                  areaName: state
+                                      .observationModel!
+                                      .observationArea[index]
+                                      .areaName,
+                                  observationRemarks: state
+                                      .observationModel!
+                                      .observationRemarks,
+                                  observationArea:
+                                      state.observationModel!.observationArea,
+                                );
+                              },
+                            ),
+                          ),
+                          SizedBox(height: 40),
+                          CustomDropDown(
+                            allPadding: 0,
+                            horizontalPadding: 15,
+                            isOutline: false,
+                            hintColor: AppColors.primaryDark,
+                            iconColor: AppColors.primaryDark,
+                            suffixIconPath: '',
+                            items: state.observationModel!.observationLevel
+                                .map((levels) => levels.level)
+                                .toList(),
+                            hint: 'Select Level',
+                            onSelect: (String value) {
+                              observationLevel = state
+                                  .observationModel!
+                                  .observationLevel
+                                  .firstWhere(
+                                    (element) => element.level == value,
+                                  );
+                            },
+                          ),
+                          SizedBox(height: 16),
+                          CustomTextField(
+                            hintText: 'Select Date',
+                            height: 50,
+                            readOnly: true,
+                            bottomMargin: 0,
+                            controller: dateTextController,
+                            fontWeight: FontWeight.normal,
+                            inputType: TextInputType.text,
+                            fillColor: AppColors.lightGreyColor,
+                            hintColor: AppColors.primaryDark,
+                            suffixWidget: SvgPicture.asset(
+                              'assets/images/svg/ic_drop_down.svg',
+                              color: AppColors.primaryDark,
+                            ),
+                            onTap: () async {
+                              String date =
+                                  await CustomDateTimePicker.selectDiaryDate(
+                                    context,
+                                  );
+                              DateTime dateTime = DateFormat(
+                                "dd/MM/yyyy",
+                              ).parse(date);
+                              dateTextController.text = DateFormat(
+                                "yyyy/MM/dd",
+                              ).format(dateTime);
+                            },
+                          ),
+                          SizedBox(height: 16),
+                          CustomTextField(
+                            hintText: 'Feedback',
+                            bottomMargin: 0,
+                            controller: feedbackController,
+                            maxLines: 10,
+                            fontWeight: FontWeight.normal,
+                            inputType: TextInputType.text,
+                            fillColor: AppColors.lightGreyColor,
+                            hintColor: AppColors.grey,
+                          ),
+                          SizedBox(height: 20),
+                          BlocConsumer<
+                            SubmitObservationCubit,
+                            SubmitObservationState
+                          >(
+                            listener: (context, state) {
+                              if (state.submitObservationStatus ==
+                                  SubmitObservationStatus.loading) {
+                                DisplayUtils.showLoader();
+                              } else if (state.submitObservationStatus ==
+                                  SubmitObservationStatus.success) {
+                                DisplayUtils.removeLoader();
+                                NavRouter.pop(context);
                                 DisplayUtils.showToast(
-                                    context, "Please select remarks!");
+                                  context,
+                                  "Teacher observation added successfully!",
+                                );
+                              } else if (state.submitObservationStatus ==
+                                  SubmitObservationStatus.failure) {
+                                DisplayUtils.removeLoader();
+                                DisplayUtils.showToast(
+                                  context,
+                                  state.failure.message,
+                                );
                               }
                             },
-                            title: 'Save',
-                            height: 50,
-                          );
-                        },
+                            builder: (context, state) {
+                              return CustomButton(
+                                onPressed: () {
+                                  if (areaRemarksList.isNotEmpty) {
+                                    if (observationLevel != null) {
+                                      if (dateTextController.text.isNotEmpty) {
+                                        SubmitObservationInput input =
+                                            SubmitObservationInput(
+                                              empId: widget.employeeModel.empId,
+                                              submitDate: dateTextController
+                                                  .text
+                                                  .trim()
+                                                  .toString(),
+                                              levelIdFk:
+                                                  observationLevel!.levelId,
+                                              feedBack: feedbackController.text
+                                                  .trim()
+                                                  .toString(),
+                                              areaRemarks: areaRemarksList,
+                                              ucLoginUserId:
+                                                  authRepository.user.userId,
+                                              ucUserFullName: "",
+                                              ucEntityId:
+                                                  authRepository.user.entityId,
+                                              ucSchoolId:
+                                                  authRepository.user.schoolId!,
+                                            );
+                                        print(jsonEncode(input));
+                                        context.read<SubmitObservationCubit>()
+                                          ..submitTeacherObservation(input);
+                                      } else {
+                                        DisplayUtils.showToast(
+                                          context,
+                                          "Please select date!",
+                                        );
+                                      }
+                                    } else {
+                                      DisplayUtils.showToast(
+                                        context,
+                                        "Please select level!",
+                                      );
+                                    }
+                                  } else {
+                                    DisplayUtils.showToast(
+                                      context,
+                                      "Please select remarks!",
+                                    );
+                                  }
+                                },
+                                title: 'Save',
+                                height: 50,
+                              );
+                            },
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                );
-              } else if (state.fetchObservationAreasStatus ==
-                  FetchObservationAreasStatus.loading) {
-                return Center(
-                  child: TextView(state.failure.message),
-                );
-              }
-              return SizedBox();
-            },
-          ),
+                    );
+                  } else if (state.fetchObservationAreasStatus ==
+                      FetchObservationAreasStatus.loading) {
+                    return Center(child: TextView(state.failure.message));
+                  }
+                  return SizedBox();
+                },
+              ),
         ),
         hMargin: 0,
       ),
@@ -460,10 +494,10 @@ class _AreaRemarksTileState extends State<AreaRemarksTile> {
                 height: 50,
                 decoration: BoxDecoration(
                   color: AppColors.lightGreyColor,
-                  borderRadius: BorderRadius.all(Radius.circular(10))
+                  borderRadius: BorderRadius.all(Radius.circular(10)),
                 ),
                 padding: EdgeInsets.symmetric(horizontal: 15, vertical: 6),
-                child:TextView(
+                child: TextView(
                   widget.areaName,
                   fontSize: 14,
                   fontWeight: FontWeight.normal,
@@ -471,12 +505,10 @@ class _AreaRemarksTileState extends State<AreaRemarksTile> {
                   color: AppColors.blackColor,
                   overflow: TextOverflow.ellipsis,
                   maxLines: 2,
-                ) ,
+                ),
               ),
             ),
-            SizedBox(
-              width: 10,
-            ),
+            SizedBox(width: 10),
             CustomDropDown(
               allPadding: 0,
               width: 150,
@@ -486,47 +518,61 @@ class _AreaRemarksTileState extends State<AreaRemarksTile> {
               iconColor: AppColors.primaryDark,
               suffixIconPath: '',
               items: widget.observationRemarks
-                  .where((item) => item.areaName
-                      .toString()
-                      .toLowerCase()
-                      .contains(widget.areaName.toLowerCase()))
+                  .where(
+                    (item) => item.areaName.toString().toLowerCase().contains(
+                      widget.areaName.toLowerCase(),
+                    ),
+                  )
                   .toList()
                   .map((remarks) => remarks.remarks)
                   .toList(),
               hint: 'Select Remarks',
               onSelect: (String value) {
-                ObservationArea model = widget.observationArea
-                    .firstWhere((element) => element.areaName == widget.areaName);
+                ObservationArea model = widget.observationArea.firstWhere(
+                  (element) => element.areaName == widget.areaName,
+                );
                 ObservationRemark remarksModel = widget.observationRemarks
                     .firstWhere((element) => element.remarks == value);
                 if (areaRemarksList.length > 0) {
                   AreaRemark areaRemark = areaRemarksList.firstWhere(
                     (element) => element.areaId == model.areaId,
                     orElse: () => AreaRemark(
-                        areaId: -1,
-                        remarksId: -1), // Default value when no element is found
+                      areaId: -1,
+                      remarksId: -1,
+                    ), // Default value when no element is found
                   );
                   if (areaRemark.areaId == -1) {
-                    areaRemarksList.add(AreaRemark(
-                        areaId: model.areaId, remarksId: remarksModel.remarksId));
+                    areaRemarksList.add(
+                      AreaRemark(
+                        areaId: model.areaId,
+                        remarksId: remarksModel.remarksId,
+                      ),
+                    );
                   } else {
-                    int index = areaRemarksList
-                        .indexWhere((item) => item.areaId == areaRemark.areaId);
+                    int index = areaRemarksList.indexWhere(
+                      (item) => item.areaId == areaRemark.areaId,
+                    );
                     areaRemarksList.removeAt(index);
-                    areaRemarksList.add(AreaRemark(
-                        areaId: model.areaId, remarksId: remarksModel.remarksId));
+                    areaRemarksList.add(
+                      AreaRemark(
+                        areaId: model.areaId,
+                        remarksId: remarksModel.remarksId,
+                      ),
+                    );
                   }
                 } else {
-                  areaRemarksList.add(AreaRemark(
-                      areaId: model.areaId, remarksId: remarksModel.remarksId));
+                  areaRemarksList.add(
+                    AreaRemark(
+                      areaId: model.areaId,
+                      remarksId: remarksModel.remarksId,
+                    ),
+                  );
                 }
               },
             ),
           ],
         ),
-        SizedBox(
-          height: 10,
-        )
+        SizedBox(height: 10),
       ],
     );
   }
