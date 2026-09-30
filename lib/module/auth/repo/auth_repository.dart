@@ -25,10 +25,20 @@ class AuthRepository {
     bool isKeepMeLoggedIn,
   ) async {
     try {
+      log('==================== LOGIN REQUEST ====================');
+      log('Endpoint: ${Endpoints.login}');
+      log('Request Body: ${jsonEncode(loginInput.toJson())}');
+      log('======================================================');
+
       var response = await _networkService.post(
         Endpoints.login,
         data: loginInput.toJson(),
       );
+
+      log('==================== LOGIN RESPONSE ===================');
+      log('Response Data: ${response is Map || response is List ? jsonEncode(response) : response}');
+      log('======================================================');
+
       AuthResponse authResponse = AuthResponse.fromJson(response);
       if (authResponse.result == ApiResult.success) {
         //_saveToken(authResponse.user.token);
@@ -36,10 +46,18 @@ class AuthRepository {
         setKeepMeLoggedIn(isKeepMeLoggedIn);
       }
       return authResponse;
-    } on BaseFailure catch (_) {
+    } on BaseFailure catch (e) {
+      log('==================== LOGIN FAILURE ====================');
+      log('BaseFailure: ${e.message}');
+      log('======================================================');
       rethrow;
     } on TypeError catch (e) {
       log('TYPE error stackTrace :: ${e.stackTrace}');
+      rethrow;
+    } catch (e) {
+      log('==================== LOGIN ERROR ======================');
+      log('Error: $e');
+      log('======================================================');
       rethrow;
     }
   }

@@ -38,7 +38,12 @@ import '../../evaluation/cubit/evaluation_areas_cubit/evaluation_areas_state.dar
 import '../../events/pages/events_screen.dart';
 import '../../file_sharing/pages/file_sharing_screen.dart';
 import '../../students_attendance/pages/attendance_filter_screen.dart';
+import '../../students_attendance/pages/attendance_monitoring_screen.dart';
+import '../../teacher_observation/pages/teacher_observation_screen.dart';
 import '../repo/home_repo.dart';
+import '../widgets/dashboard_stats_overview.dart';
+import '../widgets/weekly_attendance_card.dart';
+import 'full_report_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -134,7 +139,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       borderRadius: BorderRadius.circular(10),
                     ),
                   ),
-                  const SizedBox(height: 40),
+                  const SizedBox(height: 30),
                   CustomButton(
                     title: "Mark Attendance",
                     borderRadius: 12,
@@ -143,7 +148,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       _gotoAttendance();
                     },
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 16),
                   CustomButton(
                     title: "Attendance History",
                     borderRadius: 12,
@@ -152,7 +157,19 @@ class _HomeScreenState extends State<HomeScreen> {
                       NavRouter.push(context, AttendanceFilterScreen());
                     },
                   ),
-                  const SizedBox(height: 40),
+                  const SizedBox(height: 16),
+                  CustomButton(
+                    title: "I'm Principal",
+                    borderRadius: 12,
+                    onPressed: () {
+                      Navigator.pop(context);
+                      NavRouter.push(
+                        context,
+                        const AttendanceMonitoringScreen(),
+                      );
+                    },
+                  ),
+                  const SizedBox(height: 30),
                   CustomButton(
                     title: "Cancel",
                     borderRadius: 12,
@@ -203,13 +220,13 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                       width: double.infinity,
                       decoration: const BoxDecoration(
-                        color: AppColors.primaryDark,
-                        // image: DecorationImage(
-                        //   fit: BoxFit.cover,
-                        //   image: AssetImage(
-                        //     "assets/images/png/bg_home_top_view.png",
-                        //   ),
-                        // ),
+                        // color: AppColors.primaryDark,
+                        image: DecorationImage(
+                          fit: BoxFit.cover,
+                          image: AssetImage(
+                            "assets/images/png/bg_home_top_view.png",
+                          ),
+                        ),
                       ),
                       child: Padding(
                         padding: const EdgeInsets.all(20),
@@ -269,96 +286,94 @@ class _HomeScreenState extends State<HomeScreen> {
                               ],
                             ),
                             const SizedBox(height: 10),
-                            BlocBuilder<
-                              DashboardStateCubit,
-                              DashboardStateState
-                            >(
-                              builder: (context, dashboardState) {
-                                if (dashboardState.dashboardStateStatus ==
-                                    DashboardStateStatus.loading) {
-                                  return const SizedBox(
-                                    height: 160,
-                                    child: Center(
-                                      child: CircularProgressIndicator(
-                                        valueColor:
-                                            AlwaysStoppedAnimation<Color>(
-                                              Colors.white,
-                                            ),
-                                      ),
-                                    ),
-                                  );
-                                }
-
-                                if (dashboardState.dashboardStateStatus ==
-                                        DashboardStateStatus.success &&
-                                    dashboardState.dashboardStats != null) {
-                                  final stats = dashboardState.dashboardStats!;
-                                  final studentStat =
-                                      stats.studentAttendanceStatList != null &&
-                                          stats
-                                              .studentAttendanceStatList!
-                                              .isNotEmpty
-                                      ? stats.studentAttendanceStatList!.first
-                                      : null;
-                                  final teacherStat =
-                                      stats.employeeAtteandanceStatList !=
-                                              null &&
-                                          stats
-                                              .employeeAtteandanceStatList!
-                                              .isNotEmpty
-                                      ? stats.employeeAtteandanceStatList!.first
-                                      : null;
-
-                                  if (studentStat != null ||
-                                      teacherStat != null) {
-                                    return TodayStatsCard(
-                                      studentPresent:
-                                          studentStat?.presentCount ?? 0,
-                                      studentAbsent:
-                                          studentStat?.absentCount ?? 0,
-                                      studentLeave:
-                                          studentStat?.leaveCount ?? 0,
-                                      teacherPresent:
-                                          teacherStat?.presentCount ?? 0,
-                                      teacherAbsent:
-                                          teacherStat?.absentCount ?? 0,
-                                      teacherLeave:
-                                          teacherStat?.leaveCount ?? 0,
-                                      studentTotal:
-                                          studentStat?.totalStudent ?? 0,
-                                      teacherTotal:
-                                          teacherStat?.totalEmployees ?? 0,
-                                      totalDiaries:
-                                          dashboardState
-                                              .dashboardStats
-                                              ?.diaryStatList
-                                              ?.first
-                                              .diariesSent ??
-                                          0,
-                                    );
-                                  }
-                                }
-
-                                // Fallback UI (Logo) when data is null, empty, or failed
-                                return Column(
-                                  children: [
-                                    const SizedBox(height: 15),
-                                    Align(
-                                      alignment: Alignment.center,
-                                      child: Image.asset(
-                                        "assets/images/png/app_logo.png",
-                                        height: 150,
-                                        width: 150,
-                                      ),
-                                    ),
-                                  ],
-                                );
-                              },
+                            Align(
+                              alignment: Alignment.center,
+                              child: Image.asset(
+                                "assets/images/png/app_logo.png",
+                                height: 105,
+                                width: 105,
+                                fit: BoxFit.contain,
+                              ),
                             ),
+                            const SizedBox(height: 50),
                           ],
                         ),
                       ),
                     ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 12,
+                      ),
+                      child: BlocBuilder<
+                        DashboardStateCubit,
+                        DashboardStateState
+                      >(
+                        builder: (context, dashboardState) {
+                          int totalStudents = 1248;
+                          int totalTeachers = 86;
+                          String schoolAttendance = "88%";
+                          int pendingLeaves = 12;
+
+                          if (dashboardState.dashboardStateStatus ==
+                                  DashboardStateStatus.success &&
+                              dashboardState.dashboardStats != null) {
+                            final stats = dashboardState.dashboardStats!;
+                            final studentStat =
+                                stats.studentAttendanceStatList?.isNotEmpty ==
+                                        true
+                                    ? stats.studentAttendanceStatList!.first
+                                    : null;
+                            final teacherStat =
+                                stats.employeeAtteandanceStatList?.isNotEmpty ==
+                                        true
+                                    ? stats.employeeAtteandanceStatList!.first
+                                    : null;
+
+                            if (studentStat?.totalStudent != null &&
+                                studentStat!.totalStudent! > 0) {
+                              totalStudents = studentStat.totalStudent!;
+                              if (studentStat.presentCount != null) {
+                                schoolAttendance =
+                                    "${((studentStat.presentCount! / totalStudents) * 100).round()}%";
+                              }
+                            }
+                            if (teacherStat?.totalEmployees != null &&
+                                teacherStat!.totalEmployees! > 0) {
+                              totalTeachers = teacherStat.totalEmployees!;
+                            }
+                            if (studentStat?.leaveCount != null ||
+                                teacherStat?.leaveCount != null) {
+                              final totalLeaves =
+                                  (studentStat?.leaveCount ?? 0) +
+                                  (teacherStat?.leaveCount ?? 0);
+                              if (totalLeaves > 0) {
+                                pendingLeaves = totalLeaves;
+                              }
+                            }
+                          }
+
+                          return DashboardStatsOverview(
+                            totalStudents: totalStudents,
+                            totalTeachers: totalTeachers,
+                            schoolAttendance: schoolAttendance,
+                            pendingLeaves: pendingLeaves,
+                          );
+                        },
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 4,
+                      ),
+                      child: WeeklyAttendanceCard(
+                        onFullReportTap: () {
+                          NavRouter.push(context, const FullReportScreen());
+                        },
+                      ),
+                    ),
+                    const SizedBox(height: 12),
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 20),
                       child: Column(
@@ -522,6 +537,51 @@ class _HomeScreenState extends State<HomeScreen> {
                                   onTap: () {
                                     NavRouter.push(context, LeavesScreen());
                                   },
+                                ),
+                              ),
+                            ],
+                          ),
+                          Container(
+                            width: double.infinity,
+                            color: AppColors.dividerColor,
+                            height: 1,
+                          ),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: GestureDetector(
+                                  onTap: () {
+                                    // Leave Approval clicked - do nothing
+                                  },
+                                  child: HomeTabCard(
+                                    isSvg: false,
+                                    homeTabModel: HomeTabModel(
+                                      "Leave Approval",
+                                      "assets/images/png/leave_approval.png",
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              Container(
+                                width: 1,
+                                color: AppColors.dividerColor,
+                                height: 200,
+                              ),
+                              Expanded(
+                                child: GestureDetector(
+                                  onTap: () {
+                                    NavRouter.push(
+                                      context,
+                                      const TeacherObservationScreen(),
+                                    );
+                                  },
+                                  child: HomeTabCard(
+                                    isSvg: false,
+                                    homeTabModel: HomeTabModel(
+                                      "Teacher Evaluation",
+                                      "assets/images/png/teacher_evaluation.png",
+                                    ),
+                                  ),
                                 ),
                               ),
                             ],
@@ -704,7 +764,11 @@ class HomeTabCard extends StatelessWidget {
                   height: 120,
                   width: double.infinity,
                 )
-              : Image.asset(homeTabModel.imagePath, height: 120),
+              : Image.asset(
+                  homeTabModel.imagePath,
+                  height: 120,
+                  fit: BoxFit.contain,
+                ),
           const SizedBox(height: 20),
           Container(
             width: double.infinity,
