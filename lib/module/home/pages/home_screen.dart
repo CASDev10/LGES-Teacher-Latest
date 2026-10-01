@@ -39,7 +39,8 @@ import '../../events/pages/events_screen.dart';
 import '../../file_sharing/pages/file_sharing_screen.dart';
 import '../../students_attendance/pages/attendance_filter_screen.dart';
 import '../../students_attendance/pages/attendance_monitoring_screen.dart';
-import '../../teacher_observation/pages/teacher_observation_screen.dart';
+import '../../leave_request/pages/leave_approval_screen.dart';
+import '../../teacher_observation/pages/teacher_evaluations_screen.dart';
 import '../repo/home_repo.dart';
 import '../widgets/dashboard_stats_overview.dart';
 import '../widgets/weekly_attendance_card.dart';
@@ -305,10 +306,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         horizontal: 16,
                         vertical: 12,
                       ),
-                      child: BlocBuilder<
-                        DashboardStateCubit,
-                        DashboardStateState
-                      >(
+                      child: BlocBuilder<DashboardStateCubit, DashboardStateState>(
                         builder: (context, dashboardState) {
                           int totalStudents = 1248;
                           int totalTeachers = 86;
@@ -321,14 +319,14 @@ class _HomeScreenState extends State<HomeScreen> {
                             final stats = dashboardState.dashboardStats!;
                             final studentStat =
                                 stats.studentAttendanceStatList?.isNotEmpty ==
-                                        true
-                                    ? stats.studentAttendanceStatList!.first
-                                    : null;
+                                    true
+                                ? stats.studentAttendanceStatList!.first
+                                : null;
                             final teacherStat =
                                 stats.employeeAtteandanceStatList?.isNotEmpty ==
-                                        true
-                                    ? stats.employeeAtteandanceStatList!.first
-                                    : null;
+                                    true
+                                ? stats.employeeAtteandanceStatList!.first
+                                : null;
 
                             if (studentStat?.totalStudent != null &&
                                 studentStat!.totalStudent! > 0) {
@@ -419,42 +417,42 @@ class _HomeScreenState extends State<HomeScreen> {
                             color: AppColors.dividerColor,
                             height: 1,
                           ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Expanded(
-                                child: GestureDetector(
-                                  child: HomeTabCard(
-                                    homeTabModel: HomeTabModel(
-                                      "Student Evaluation",
-                                      "assets/images/svg/ic_student_evaluation_tab2.svg",
-                                    ),
-                                  ),
-                                  onTap: () {
-                                    showStudentEvaluationAreas(context);
-                                  },
-                                ),
-                              ),
-                              Container(
-                                width: 1,
-                                color: AppColors.dividerColor,
-                                height: 200,
-                              ),
-                              Expanded(
-                                child: GestureDetector(
-                                  onTap: () {
-                                    NavRouter.push(context, EventsScreen());
-                                  },
-                                  child: HomeTabCard(
-                                    homeTabModel: HomeTabModel(
-                                      "EVENTS",
-                                      "assets/images/svg/leaves1.svg",
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
+                          // Row(
+                          //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          //   children: [
+                          //     Expanded(
+                          //       child: GestureDetector(
+                          //         child: HomeTabCard(
+                          //           homeTabModel: HomeTabModel(
+                          //             "Student Evaluation",
+                          //             "assets/images/svg/ic_student_evaluation_tab2.svg",
+                          //           ),
+                          //         ),
+                          //         onTap: () {
+                          //           showStudentEvaluationAreas(context);
+                          //         },
+                          //       ),
+                          //     ),
+                          //     Container(
+                          //       width: 1,
+                          //       color: AppColors.dividerColor,
+                          //       height: 200,
+                          //     ),
+                          //     Expanded(
+                          //       child: GestureDetector(
+                          //         onTap: () {
+                          //           NavRouter.push(context, EventsScreen());
+                          //         },
+                          //         child: HomeTabCard(
+                          //           homeTabModel: HomeTabModel(
+                          //             "EVENTS",
+                          //             "assets/images/svg/leaves1.svg",
+                          //           ),
+                          //         ),
+                          //       ),
+                          //     ),
+                          //   ],
+                          // ),
                           Container(
                             width: double.infinity,
                             color: AppColors.dividerColor,
@@ -551,7 +549,10 @@ class _HomeScreenState extends State<HomeScreen> {
                               Expanded(
                                 child: GestureDetector(
                                   onTap: () {
-                                    // Leave Approval clicked - do nothing
+                                    NavRouter.push(
+                                      context,
+                                      const LeaveApprovalScreen(),
+                                    );
                                   },
                                   child: HomeTabCard(
                                     isSvg: false,
@@ -572,7 +573,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   onTap: () {
                                     NavRouter.push(
                                       context,
-                                      const TeacherObservationScreen(),
+                                      const TeacherEvaluationsScreen(),
                                     );
                                   },
                                   child: HomeTabCard(
