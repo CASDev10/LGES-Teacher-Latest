@@ -31,12 +31,11 @@ import '../../../components/loading_indicator.dart';
 import '../../../components/text_view.dart';
 import '../../../core/di/service_locator.dart';
 import '../../../utils/display/display_utils.dart';
-import '../../chat/pages/conversation_screen.dart';
+import '../../chat/dialogs/chat_role_selection_dialog.dart';
 import '../../class_section/pages/class_section_screen.dart';
 import '../../evaluation/cubit/evaluation_areas_cubit/evaluation_areas_cubit.dart';
 import '../../evaluation/cubit/evaluation_areas_cubit/evaluation_areas_state.dart';
-import '../../events/pages/events_screen.dart';
-import '../../file_sharing/pages/file_sharing_screen.dart';
+import '../../file_sharing/dialogs/notification_role_selection_dialog.dart';
 import '../../students_attendance/pages/attendance_filter_screen.dart';
 import '../../students_attendance/pages/attendance_monitoring_screen.dart';
 import '../../leave_request/pages/leave_approval_screen.dart';
@@ -487,9 +486,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                     ),
                                   ),
                                   onTap: () {
-                                    NavRouter.push(
+                                    NotificationRoleSelectionDialog.show(
                                       context,
-                                      const FileSharingScreen(),
                                     );
                                   },
                                 ),
@@ -506,10 +504,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               Expanded(
                                 child: GestureDetector(
                                   onTap: () {
-                                    NavRouter.push(
-                                      context,
-                                      ConversationsScreen(),
-                                    );
+                                    ChatRoleSelectionDialog.show(context);
                                   },
                                   child: HomeTabCard(
                                     homeTabModel: HomeTabModel(
