@@ -234,7 +234,6 @@ class _ApplyLeaveDialogueState extends State<ApplyLeaveDialogue> {
                                         result = await FilePicker.platform
                                             .pickFiles(
                                               type: FileType.custom,
-                                              allowMultiple: false,
                                               allowedExtensions: [
                                                 'pdf',
                                                 'doc',
