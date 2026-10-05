@@ -11,7 +11,7 @@ plugins {
 android {
     namespace = "com.cas.lgesTeacherApp"
     compileSdk = 36
-    ndkVersion = "27.0.12077973"
+    ndkVersion = "28.2.13676358"
 
     compileOptions {
         isCoreLibraryDesugaringEnabled = true
@@ -35,18 +35,23 @@ android {
     }
 
     signingConfigs {
-        create("release") {
-            storeFile = file("E:/LGES-Teacher-Latest/app_secret/lges_keystore.jks")
-            storePassword = "lges!@#123"
-            keyAlias = "lges"
-            keyPassword = "lges!@#123"
+        val keystoreFile = rootProject.file("../app_secret/lges_keystore.jks")
+        if (keystoreFile.exists()) {
+            create("release") {
+                storeFile = keystoreFile
+                storePassword = "lges!@#123"
+                keyAlias = "lges"
+                keyPassword = "lges!@#123"
+            }
         }
     }
 
     buildTypes {
         release {
-            isMinifyEnabled = true
-            signingConfig = signingConfigs.getByName("release")
+            isMinifyEnabled = false
+            isShrinkResources = false
+            val releaseConfig = signingConfigs.findByName("release")
+            signingConfig = releaseConfig ?: signingConfigs.getByName("debug")
         }
     }
 }
