@@ -77,7 +77,7 @@ class _ChatDetailScreenViewState extends State<ChatDetailScreenView> {
 
   Future<void> _pickFile() async {
     final result = await FilePicker.platform.pickFiles();
-    if (result != null && result.files.single.path != null) {}
+    if (result != null) {}
   }
 
   void _scrollToBottom() {

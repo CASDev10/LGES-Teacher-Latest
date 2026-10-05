@@ -451,7 +451,6 @@ class _FileSharingScreenState extends State<FileSharingScreen> {
                           onPressed: () async {
                             result = await FilePicker.platform.pickFiles(
                               type: FileType.custom,
-                              allowMultiple: false,
                               allowedExtensions: [
                                 'jpg',
                                 'jpeg',
